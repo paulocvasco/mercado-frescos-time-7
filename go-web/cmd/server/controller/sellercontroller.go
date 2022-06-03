@@ -39,14 +39,23 @@ func (c *Sellers) Store() gin.HandlerFunc  {
 
 func (c *Sellers) GetAll() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
-	p, _ := c.service.GetAll()
+	p, err := c.service.GetAll()
+	if err != nil {
+		ctx.JSON(400, gin.H{"error": "Sem resultados",})
+			return
+	}	
 	ctx.JSON(200, p)
 	}
 }
 
 func (c *Sellers) GetId() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
-	id, _ := strconv.Atoi(ctx.Param("id"))
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(401, gin.H{
+			"error": "Parametro de busca invalido"})
+		return	
+	}
 	p, err := c.service.GetId(int(id))
 	if err != nil {
 		ctx.JSON(401, gin.H{
@@ -54,6 +63,49 @@ func (c *Sellers) GetId() gin.HandlerFunc  {
 		return	
 	}
 	ctx.JSON(200, p)
+	}
+}
+
+func (c *Sellers) Update() gin.HandlerFunc  {
+	return func(ctx *gin.Context) {
+		id, err := strconv.Atoi(ctx.Param("id"))
+		if err != nil {
+			ctx.JSON(401, gin.H{
+				"error": "Parametro de busca invalido"})
+			return	
+		}
+		var json seller.Seller
+        if err := ctx.ShouldBindJSON(&json); err == nil {
+			p, err := c.service.Update(json, id)
+			if err != nil {
+				ctx.JSON(401, gin.H{
+					"error": err.Error()})
+				return	
+			}
+			ctx.JSON(200, p)
+		
+        } else {
+            ctx.JSON(404, gin.H{"error": "Erro: não foi possivel converter o json em struct"})
+        }	
+	}
+}
+
+func (c *Sellers) Delete() gin.HandlerFunc  {
+	return func(ctx *gin.Context) {
+		id, err := strconv.Atoi(ctx.Param("id"))
+		if err != nil {
+			ctx.JSON(401, gin.H{
+				"error": "Parametro de busca invalido"})
+			return	
+		}
+			err = c.service.Delete(id)
+			if err != nil {
+				ctx.JSON(401, gin.H{
+					"error": err.Error()})
+				return	
+			}
+			ctx.JSON(204, gin.H{
+				"sucess": "Arquivo deletado"})
 	}
 }
 

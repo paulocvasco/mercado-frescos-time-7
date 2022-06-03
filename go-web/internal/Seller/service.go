@@ -3,6 +3,8 @@ package seller
 type Service interface {
 	GetAll() ([]Seller, error)
 	GetId(indice int) (Seller, error)
+	Update(s Seller, id int) (Seller, error)
+	Delete(id int) (error)
 	Store(cid string, company_name string, address string, telephone string) (Seller, error)
 }
 
@@ -24,6 +26,22 @@ func (s *service) GetId(indice int) (Seller, error){
 		return Seller{}, err
 	}
 	return ps, nil
+}
+
+func (s *service) Update(sel Seller, id int) (Seller, error){
+	ps, err := s.repository.Update(sel, id)
+	if err != nil {
+		return Seller{}, err
+	}
+	return ps, nil
+}
+
+func (s *service) Delete(id int) (error){
+	err := s.repository.Delete(id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *service) Store(cid string, company_name string, address string, telephone string) (Seller, error) {
