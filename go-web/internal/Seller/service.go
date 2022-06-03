@@ -2,6 +2,7 @@ package seller
 
 type Service interface {
 	GetAll() ([]Seller, error)
+	GetId(indice int) (Seller, error)
 	Store(cid string, company_name string, address string, telephone string) (Seller, error)
 }
 
@@ -13,6 +14,14 @@ func (s *service) GetAll() ([]Seller, error){
 	ps, err := s.repository.GetAll()
 	if err != nil {
 		return nil, err
+	}
+	return ps, nil
+}
+
+func (s *service) GetId(indice int) (Seller, error){
+	ps, err := s.repository.GetId(indice)
+	if err != nil {
+		return Seller{}, err
 	}
 	return ps, nil
 }
