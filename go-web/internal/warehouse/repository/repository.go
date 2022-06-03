@@ -72,6 +72,20 @@ func (w *Warehouses) Delete(id int) error {
 	return nil
 }
 
+var repository Warehouses
+
+type Repository interface {
+	Create(Warehouse)
+	Update(int, Warehouse) error
+	GetAll() Warehouses
+	GetByID(int) (Warehouse, error)
+	Delete(int) error
+}
+
+func NewRepository() Repository {
+	return &repository
+}
+
 func calculateCode(info ...string) string {
 	var builder strings.Builder
 	for _, s := range info {
