@@ -51,6 +51,30 @@ func (b *BuyerController) GetId() gin.HandlerFunc {
 	}
 }
 
+func (b *BuyerController) Creat() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		var input request
+		if err := context.ShouldBindJSON(&input); err != nil {
+			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+		}
+
+		buyer, err := b.service.Creat(int(input.ID), int(input.CardNumberID), input.FirstName, input.LastName)
+
+		if err != nil {
+			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+			return
+		}
+		context.JSON(http.StatusOK, buyer)
+	}
+}
+
+type request struct {
+	ID           int    `json:"id" binding:"required"`
+	CardNumberID int    `json:"card_number_id" binding:"required"`
+	FirstName    string `json:"first_name" binding:"required"`
+	LastName     string `json:"last_name" binding:"required"`
+}
+
 //rotas
 // GET /api/v1/buyers
 // GET /api/v1/buyers/:id
