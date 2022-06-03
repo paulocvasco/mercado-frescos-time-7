@@ -2,15 +2,14 @@ package main
 
 import (
 	"mercado-frescos-time-7/go-web/cmd/server/controller"
-	"mercado-frescos-time-7/go-web/internal/warehouse/repository"
-	"mercado-frescos-time-7/go-web/internal/warehouse/services"
+	"mercado-frescos-time-7/go-web/internal/warehouse"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	repository := repository.NewRepository()
-	service := services.NewService(repository)
+	repository := warehouse.NewRepository()
+	service := warehouse.NewService(repository)
 	controller := controller.NewController(service)
 
 	routers := gin.Default()

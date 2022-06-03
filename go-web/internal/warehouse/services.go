@@ -1,9 +1,8 @@
-package services
+package warehouse
 
 import (
 	"encoding/json"
 	customerrors "mercado-frescos-time-7/go-web/internal/custom_errors"
-	"mercado-frescos-time-7/go-web/internal/warehouse/repository"
 	"strconv"
 )
 
@@ -16,10 +15,10 @@ type Service interface {
 }
 
 type service struct {
-	repository repository.Repository
+	repository Repository
 }
 
-func NewService(r repository.Repository) Service {
+func NewService(r Repository) Service {
 	newService := &service{
 		repository: r,
 	}
@@ -52,7 +51,7 @@ func (s *service) GetByID(id string) (string, error) {
 }
 
 func (s *service) Create(data []byte) error {
-	var newWarehouse repository.Warehouse
+	var newWarehouse Warehouse
 	err := json.Unmarshal(data, &newWarehouse)
 	if err != nil {
 		return err
@@ -83,7 +82,7 @@ func (s *service) Update(id string, data []byte) error {
 		return customerrors.ErrorInvalidIDParameter
 	}
 
-	var updatedWarehouse repository.Warehouse
+	var updatedWarehouse Warehouse
 	err = json.Unmarshal(data, &updatedWarehouse)
 	if err != nil {
 		return err

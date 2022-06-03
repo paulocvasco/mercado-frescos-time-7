@@ -1,25 +1,17 @@
-package repository
+package warehouse
 
 import (
 	"crypto/sha256"
 	"encoding/base64"
 	customerrors "mercado-frescos-time-7/go-web/internal/custom_errors"
+	"mercado-frescos-time-7/go-web/internal/models"
 	"strconv"
 	"strings"
 )
 
-type Warehouses struct {
-	Warehouse []Warehouse `json:"data"`
-}
+type Warehouses models.Warehouses
 
-type Warehouse struct {
-	ID                 int    `json:"id"`
-	Address            string `json:"address"`
-	Telephone          string `json:"telephone"`
-	WarehouseCode      string `json:"warehouse_code"`
-	MinimunCapacity    int    `json:"minimun_capacity"`
-	MinimunTemperature int    `json:"minimun_temperature"`
-}
+type Warehouse models.Warehouse
 
 var repository Warehouses
 
@@ -41,7 +33,7 @@ func (w *Warehouses) Create(new Warehouse) {
 	new.ID = lastID + 1
 	new.WarehouseCode = calculateCode(new.Address, new.Telephone, strconv.Itoa(new.MinimunCapacity), strconv.Itoa(new.MinimunTemperature))
 
-	w.Warehouse = append(w.Warehouse, new)
+	w.Warehouse = append(w.Warehouse, models.Warehouse(new))
 	lastID++
 }
 
@@ -54,7 +46,7 @@ func (w *Warehouses) Update(id int, newValues Warehouse) error {
 	var index int
 	for i, w := range w.Warehouse {
 		if w.ID == id {
-			warehouse = w
+			warehouse = Warehouse(w)
 			index = i
 			break
 		}
@@ -73,7 +65,7 @@ func (w *Warehouses) Update(id int, newValues Warehouse) error {
 	}
 	warehouse.WarehouseCode = calculateCode(warehouse.Address, warehouse.Telephone, strconv.Itoa(warehouse.MinimunCapacity), strconv.Itoa(warehouse.MinimunTemperature))
 
-	w.Warehouse[index] = warehouse
+	w.Warehouse[index] = models.Warehouse(warehouse)
 	return nil
 }
 
@@ -88,7 +80,7 @@ func (w *Warehouses) GetByID(id int) (Warehouse, error) {
 
 	for _, w := range repository.Warehouse {
 		if w.ID == id {
-			return w, nil
+			return Warehouse(w), nil
 		}
 	}
 	return Warehouse{}, customerrors.ErrorInvalidID

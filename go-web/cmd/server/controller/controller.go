@@ -3,7 +3,7 @@ package controller
 import (
 	"io/ioutil"
 	customerrors "mercado-frescos-time-7/go-web/internal/custom_errors"
-	"mercado-frescos-time-7/go-web/internal/warehouse/services"
+	"mercado-frescos-time-7/go-web/internal/warehouse"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,10 +18,10 @@ type Controller interface {
 }
 
 type controller struct {
-	service services.Service
+	service warehouse.Service
 }
 
-func NewController(s services.Service) Controller {
+func NewController(s warehouse.Service) Controller {
 	newController := &controller{
 		service: s,
 	}
