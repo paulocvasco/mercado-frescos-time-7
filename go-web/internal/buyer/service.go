@@ -26,3 +26,10 @@ func (s service) GetId(id int) ([]Buyer, error) {
 	}
 	return response, nil
 }
+func (s service) Creat(id, card_number_id int, first_name, last_name string) (Buyer, error) {
+	response, err := s.repository.Creat(id, card_number_id, first_name, last_name)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
