@@ -1,4 +1,8 @@
-package sectionRepository
+package sections
+
+import (
+	"fmt"
+)
 
 type Section struct {
 	ID                  int `json:"id"`
@@ -12,50 +16,96 @@ type Section struct {
 	Product_type_id     int `json:"product_type_id"`
 }
 
-var sts []Section
-var lastID int
+type Sections struct {
+	Section []Section `json:"data"`
+}
 
 type Repository interface {
-	GetAll() ([]Section, error)
-	GetById()
-	Store(id,
-		section_number,
-		current_temperature,
-		minimum_temperature,
-		current_capacity,
-		minimum_capacity,
-		maximim_capacity,
-		warehouse_id,
-		product_type_id int) (Section, error)
-	LastID() (int, error)
+	GetAll() Sections
+	GetById(int) (Section, error)
+	Store(Section)
+	Update(int, Section) error
+	Delete(int) error
 }
 
-type repository struct {
-}
+var repository Sections
+
+var lastID int
 
 func NewRepository() Repository {
-	repo := &repository{}
-	return repo
+	return &repository
 }
 
-func (r *repository) GetAll() ([]Section, error) {
-	return sts, nil
+func (s *Sections) GetAll() Sections {
+	return *s
 }
 
-func (r *repository) GetById() {
+func (s *Sections) GetById(id int) (Section, error) {
+	if id < 0 || id > lastID {
+		return Section{}, fmt.Errorf("invalid id")
+	}
+	for _, s := range repository.Section {
+		if s.ID == id {
+			return s, nil
+		}
+	}
+	return Section{}, nil
 }
 
-func (r *repository) Store(id, section_number, current_temperature, minimum_temperature,
-	current_capacity, minimum_capacity, maximim_capacity, warehouse_id, product_type_id int) (Section, error) {
-
-	section := Section{id, section_number, current_temperature, minimum_temperature,
-		current_capacity, minimum_capacity, maximim_capacity, warehouse_id, product_type_id}
-	sts = append(sts, section)
-	lastID = section.ID
-
-	return section, nil
+func (s *Sections) Store(newSection Section) {
+	newSection.ID = lastID
+	s.Section = append(s.Section, newSection)
+	lastID++
 }
 
-func (r *repository) LastID() (int, error) {
-	return lastID, nil
+func (s *Sections) Update(id int, newSection Section) error {
+	st, err := s.GetById(id)
+
+	if err != nil {
+		return err
+	}
+
+	if (st != Section{}) {
+		return fmt.Errorf("empty section")
+	}
+
+	st.Current_temperature = newSection.Current_temperature
+	st.Minimum_temperature = newSection.Minimum_temperature
+
+	if newSection.Section_number < 0 {
+		st.Section_number = newSection.Section_number
+	}
+	if newSection.Current_capacity < 0 {
+		st.Current_capacity = newSection.Current_capacity
+	}
+	if newSection.Minimum_capacity < 0 {
+		st.Minimum_capacity = newSection.Minimum_capacity
+	}
+	if newSection.Maximim_capacity < 0 {
+		st.Maximim_capacity = newSection.Maximim_capacity
+	}
+	if newSection.Warehouse_id < 0 {
+		st.Warehouse_id = newSection.Warehouse_id
+	}
+	if newSection.Product_type_id < 0 {
+		st.Product_type_id = newSection.Product_type_id
+	}
+
+	s.Section[id] = st
+
+	return nil
+}
+
+func (s *Sections) Delete(id int) error {
+	if id < 0 || id > lastID {
+		return fmt.Errorf("invalid id")
+	}
+	for i, section := range s.Section {
+		if section.ID == id {
+			s.Section = append(s.Section[:i], s.Section[i+1:]...)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("invalid id")
 }
