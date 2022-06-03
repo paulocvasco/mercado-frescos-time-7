@@ -1,8 +1,8 @@
 package buyer
 
-type Service interface {
+type Repository interface {
 	GetAll() ([]Buyer, error)
-	GetId() (Buyer, error)
+	GetId(id int) (Buyer, error)
 	Creat(id, card_number_id int, first_name, last_name string) (Buyer, error)
 	Updat(id, card_number_id int, first_name, last_name string) (Buyer, error)
 	Delete(id int) error

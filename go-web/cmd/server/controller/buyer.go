@@ -1,7 +1,8 @@
 package buyer
 
 import (
-	buyer "mercado-frescos-time-7/go-web/internal/buyer/services"
+	"fmt"
+	"mercado-frescos-time-7/go-web/internal/buyer"
 	"net/http"
 	"strconv"
 
@@ -92,6 +93,25 @@ func (b *BuyerController) Update() gin.HandlerFunc {
 			return
 		}
 		context.JSON(http.StatusOK, buyer)
+	}
+}
+func (b *BuyerController) Delete() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		id := context.Param("id")
+		intId, err := strconv.Atoi(id)
+
+		if err != nil {
+			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
+			return
+		}
+		err = b.service.Delete(intId)
+		if err != nil {
+			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		context.JSON(http.StatusOK, gin.H{
+			"message": fmt.Sprintf(" %d deleted with success.", intId),
+		})
 	}
 }
 

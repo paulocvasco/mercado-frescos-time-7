@@ -19,3 +19,10 @@ func (s service) GetAll() ([]Buyer, error) {
 	}
 	return response, nil
 }
+func (s service) GetId(id int) ([]Buyer, error) {
+	response, err := s.repository.GetId(id)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
