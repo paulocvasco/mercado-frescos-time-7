@@ -52,6 +52,18 @@ func (w *Warehouses) Update(id int, newValues Warehouse) error {
 	return nil
 }
 
+func (w *Warehouses) GetAll() Warehouses {
+	return *w
+}
+
+func (w *Warehouses) GetByID(id int) (Warehouse, error) {
+	if id < 0 || id >= len(w.Warehouse) {
+		return Warehouse{}, customerrors.ErrorInvalidID
+	}
+
+	return (w.Warehouse)[id], nil
+}
+
 func calculateCode(info ...string) string {
 	var builder strings.Builder
 	for _, s := range info {
