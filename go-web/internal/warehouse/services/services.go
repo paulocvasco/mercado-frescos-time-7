@@ -80,7 +80,7 @@ func (s *service) Create(data []byte) error {
 func (s *service) Update(id string, data []byte) error {
 	index, err := strconv.Atoi(id)
 	if err != nil {
-		return err
+		return customerrors.ErrorInvalidIDParameter
 	}
 
 	var updatedWarehouse repository.Warehouse
