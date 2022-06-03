@@ -21,19 +21,44 @@ type Warehouse struct {
 	MinimunTemperature int    `json:"minimun_temperature"`
 }
 
+var repository Warehouses
+
+var lastID int
+
+type Repository interface {
+	Create(Warehouse)
+	Update(int, Warehouse) error
+	GetAll() Warehouses
+	GetByID(int) (Warehouse, error)
+	Delete(int) error
+}
+
+func NewRepository() Repository {
+	return &repository
+}
+
 func (w *Warehouses) Create(new Warehouse) {
-	new.ID = len(w.Warehouse) + 1
+	new.ID = lastID + 1
 	new.WarehouseCode = calculateCode(new.Address, new.Telephone, strconv.Itoa(new.MinimunCapacity), strconv.Itoa(new.MinimunTemperature))
 
 	w.Warehouse = append(w.Warehouse, new)
+	lastID++
 }
 
 func (w *Warehouses) Update(id int, newValues Warehouse) error {
-	if id < 0 || id > len(w.Warehouse) {
+	if id < 0 || id > lastID {
 		return customerrors.ErrorInvalidID
 	}
 
-	warehouse := w.Warehouse[id]
+	var warehouse Warehouse
+	var index int
+	for i, w := range w.Warehouse {
+		if w.ID == id {
+			warehouse = w
+			index = i
+			break
+		}
+	}
 	if newValues.Address != "" {
 		warehouse.Address = newValues.Address
 	}
@@ -48,7 +73,7 @@ func (w *Warehouses) Update(id int, newValues Warehouse) error {
 	}
 	warehouse.WarehouseCode = calculateCode(warehouse.Address, warehouse.Telephone, strconv.Itoa(warehouse.MinimunCapacity), strconv.Itoa(warehouse.MinimunTemperature))
 
-	w.Warehouse[id] = warehouse
+	w.Warehouse[index] = warehouse
 	return nil
 }
 
@@ -57,33 +82,30 @@ func (w *Warehouses) GetAll() Warehouses {
 }
 
 func (w *Warehouses) GetByID(id int) (Warehouse, error) {
-	if id < 0 || id >= len(w.Warehouse) {
+	if id < 0 || id > lastID {
 		return Warehouse{}, customerrors.ErrorInvalidID
 	}
 
-	return (w.Warehouse)[id], nil
+	for _, w := range repository.Warehouse {
+		if w.ID == id {
+			return w, nil
+		}
+	}
+	return Warehouse{}, customerrors.ErrorInvalidID
 }
 
 func (w *Warehouses) Delete(id int) error {
-	if id < 0 || id >= len(w.Warehouse) {
+	if id < 0 || id > lastID {
 		return customerrors.ErrorInvalidID
 	}
-	w.Warehouse = append(w.Warehouse[:id], w.Warehouse[id+1:]...)
-	return nil
-}
 
-var repository Warehouses
-
-type Repository interface {
-	Create(Warehouse)
-	Update(int, Warehouse) error
-	GetAll() Warehouses
-	GetByID(int) (Warehouse, error)
-	Delete(int) error
-}
-
-func NewRepository() Repository {
-	return &repository
+	for index, warehouse := range w.Warehouse {
+		if warehouse.ID == id {
+			w.Warehouse = append(w.Warehouse[:index], w.Warehouse[index+1:]...)
+			return nil
+		}
+	}
+	return customerrors.ErrorInvalidID
 }
 
 func calculateCode(info ...string) string {
