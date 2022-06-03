@@ -64,6 +64,14 @@ func (w *Warehouses) GetByID(id int) (Warehouse, error) {
 	return (w.Warehouse)[id], nil
 }
 
+func (w *Warehouses) Delete(id int) error {
+	if id < 0 || id >= len(w.Warehouse) {
+		return customerrors.ErrorInvalidID
+	}
+	w.Warehouse = append(w.Warehouse[:id], w.Warehouse[id+1:]...)
+	return nil
+}
+
 func calculateCode(info ...string) string {
 	var builder strings.Builder
 	for _, s := range info {
