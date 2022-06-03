@@ -3,6 +3,7 @@ package buyer
 import (
 	buyer "mercado-frescos-time-7/go-web/internal/buyer/services"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,6 +29,25 @@ func (b *BuyerController) GetAll() gin.HandlerFunc {
 			return
 		}
 		context.JSON(http.StatusOK, all)
+	}
+}
+
+func (b *BuyerController) GetId() gin.HandlerFunc {
+	return func(context *gin.Context) {
+
+		id := context.Param("id")
+		intId, err := strconv.Atoi(id)
+
+		if err != nil {
+			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
+			return
+		}
+		buyerId, err := b.service.GetId(intId)
+		if err != nil {
+			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
+			return
+		}
+		context.JSON(http.StatusOK, buyerId)
 	}
 }
 
