@@ -64,6 +64,33 @@ func (b *BuyerController) Creat() gin.HandlerFunc {
 			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 			return
 		}
+		context.JSON(http.StatusCreated, buyer)
+	}
+}
+func (b *BuyerController) Update() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		id := context.Param("id")
+		intId, err := strconv.Atoi(id)
+
+		if err != nil {
+			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
+			return
+		}
+		var newInput request
+		if err := context.ShouldBindJSON(&newInput); err != nil {
+			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+		}
+		if newInput.ID != intId {
+			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
+			return
+		}
+
+		buyer, err := b.service.Creat(int(newInput.ID), int(newInput.CardNumberID), newInput.FirstName, newInput.LastName)
+
+		if err != nil {
+			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
 		context.JSON(http.StatusOK, buyer)
 	}
 }
