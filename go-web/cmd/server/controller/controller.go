@@ -21,6 +21,13 @@ type controller struct {
 	service services.Service
 }
 
+func NewController(s services.Service) Controller {
+	newController := &controller{
+		service: s,
+	}
+	return newController
+}
+
 func (control *controller) GetAll(c *gin.Context) {
 	response, err := control.service.GetAll()
 	if err != nil {
