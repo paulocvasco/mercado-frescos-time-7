@@ -46,8 +46,9 @@ func (w *Warehouses) Update(id int, newValues Warehouse) error {
 	if newValues.MinimunTemperature != 0 {
 		warehouse.MinimunCapacity = newValues.MinimunTemperature
 	}
+	warehouse.WarehouseCode = calculateCode(warehouse.Address, warehouse.Telephone, strconv.Itoa(warehouse.MinimunCapacity), strconv.Itoa(warehouse.MinimunTemperature))
 
-	w.Warehouse[id] = newValues
+	w.Warehouse[id] = warehouse
 	return nil
 }
 
