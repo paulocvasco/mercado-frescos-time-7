@@ -9,4 +9,5 @@ var (
 	ErrorMissingTelephone   = errors.New("telephone parameter is required")
 	ErrorMissingCapacity    = errors.New("capacity parameter is required")
 	ErrorMissingTemperature = errors.New("temperature parameter is required")
+	ErrorItemNotFound       = errors.New("item not found")
 )
