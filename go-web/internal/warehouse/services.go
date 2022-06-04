@@ -7,8 +7,8 @@ import (
 )
 
 type Service interface {
-	GetAll() (string, error)
-	GetByID(string) (string, error)
+	GetAll() (Warehouses, error)
+	GetByID(string) (*Warehouse, error)
 	Create([]byte) error
 	Update(string, []byte) error
 	Delete(string) error
@@ -25,29 +25,22 @@ func NewService(r Repository) Service {
 	return newService
 }
 
-func (s *service) GetAll() (string, error) {
+func (s *service) GetAll() (Warehouses, error) {
 	data := s.repository.GetAll()
-	response, err := json.Marshal(data)
-	if err != nil {
-		return "", err
-	}
-	return string(response), nil
+	return data, nil
 }
 
-func (s *service) GetByID(id string) (string, error) {
+func (s *service) GetByID(id string) (*Warehouse, error) {
 	index, err := strconv.Atoi(id)
 	if err != nil {
-		return "", customerrors.ErrorInvalidIDParameter
+		return nil, customerrors.ErrorInvalidIDParameter
 	}
 	data, err := s.repository.GetByID(index)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	response, err := json.Marshal(data)
-	if err != nil {
-		return "", err
-	}
-	return string(response), nil
+
+	return &data, nil
 }
 
 func (s *service) Create(data []byte) error {
