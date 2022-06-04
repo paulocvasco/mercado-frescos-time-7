@@ -42,31 +42,26 @@ func (w *Warehouses) Update(id int, newValues Warehouse) error {
 		return customerrors.ErrorInvalidID
 	}
 
-	var warehouse Warehouse
-	var index int
-	for i, w := range w.Warehouse {
-		if w.ID == id {
-			warehouse = Warehouse(w)
-			index = i
-			break
+	for i, warehouse := range w.Warehouse {
+		if warehouse.ID == id {
+			if newValues.Address != "" {
+				warehouse.Address = newValues.Address
+			}
+			if newValues.Telephone != "" {
+				warehouse.Telephone = newValues.Telephone
+			}
+			if newValues.MinimunCapacity != 0 {
+				warehouse.MinimunCapacity = newValues.MinimunCapacity
+			}
+			if newValues.MinimunTemperature != 0 {
+				warehouse.MinimunCapacity = newValues.MinimunTemperature
+			}
+			warehouse.WarehouseCode = calculateCode(warehouse.Address, warehouse.Telephone, strconv.Itoa(warehouse.MinimunCapacity), strconv.Itoa(warehouse.MinimunTemperature))
+			w.Warehouse[i] = warehouse
+			return nil
 		}
 	}
-	if newValues.Address != "" {
-		warehouse.Address = newValues.Address
-	}
-	if newValues.Telephone != "" {
-		warehouse.Telephone = newValues.Telephone
-	}
-	if newValues.MinimunCapacity != 0 {
-		warehouse.MinimunCapacity = newValues.MinimunCapacity
-	}
-	if newValues.MinimunTemperature != 0 {
-		warehouse.MinimunCapacity = newValues.MinimunTemperature
-	}
-	warehouse.WarehouseCode = calculateCode(warehouse.Address, warehouse.Telephone, strconv.Itoa(warehouse.MinimunCapacity), strconv.Itoa(warehouse.MinimunTemperature))
-
-	w.Warehouse[index] = models.Warehouse(warehouse)
-	return nil
+	return customerrors.ErrorItemNotFound
 }
 
 func (w *Warehouses) GetAll() Warehouses {
