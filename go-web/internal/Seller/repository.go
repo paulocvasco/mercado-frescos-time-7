@@ -2,16 +2,10 @@ package seller
 
 import ("errors"
 "golang.org/x/exp/slices"
+"mercado-frescos-time-7/go-web/internal/Seller/models"
 )
 
-type Seller struct {
-	ID    int  `json:"id"`
-	Cid  string  `json:"cid"`
-	Company_name string  `json:"company_name"`
-	Address string  `json:"address"`
-	Telephone  string `json:"telephone"`
-}
-
+type Seller models.Seller
 var ps []Seller
 var lastID int
 
