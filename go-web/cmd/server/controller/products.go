@@ -24,14 +24,14 @@ func NewRepository(p service.Service) ProductHandler {
 
 func (ph *ProductHandler) GetAllProducts() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		obj, err := ph.service.GetAll()
+		pp, err := ph.service.GetAll()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"message": "erro interno, tente mais tarde",
 			})
 			return
 		}
-		c.JSON(http.StatusOK, obj)
+		c.JSON(http.StatusOK, gin.H{"data": pp})
 	}
 }
 
