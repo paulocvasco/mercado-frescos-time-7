@@ -10,7 +10,7 @@ type Service interface {
 	Insert(product model.Product) (model.Product, error)
 	GetAll() ([]model.Product, error)
 	GetById(id int) (model.Product, error)
-	Update(id int, product model.Product) error
+	Update(id int, product model.Product) (model.Product, error)
 	Delete(id int) error
 }
 
@@ -53,17 +53,17 @@ func (s *service) GetById(id int) (model.Product, error) {
 	return p, err
 }
 
-func (s *service) Update(id int, product model.Product) error {
+func (s *service) Update(id int, product model.Product) (model.Product, error) {
 	oldProduct, err := s.repository.GetById(id)
 	if err != nil {
-		return err
+		return model.Product{}, err
 	}
 	product.Id = oldProduct.Id
 	err = s.repository.Update(product)
 	if err != nil {
-		return err
+		return model.Product{}, err
 	}
-	return nil
+	return product, nil
 }
 
 func (s *service) Delete(id int) error {

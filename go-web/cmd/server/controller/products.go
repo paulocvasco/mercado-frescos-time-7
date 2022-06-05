@@ -46,8 +46,8 @@ func (ph *ProductHandler) GetProduct() gin.HandlerFunc {
 		}
 		obj, err := ph.service.GetById(id)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "erro interno, tente mais tarde",
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": "id não encontrado",
 			})
 			return
 		}
@@ -60,10 +60,9 @@ func (ph *ProductHandler) SaveProducts() gin.HandlerFunc {
 		newProduct := saveProduct{}
 		err := c.ShouldBindJSON(&newProduct)
 		var ve validator.ValidationErrors
-		fmt.Println(err)
 		if errors.As(err, &ve) {
 			for _, v := range ve {
-				c.JSON(http.StatusBadRequest, gin.H{
+				c.JSON(http.StatusUnprocessableEntity, gin.H{
 					"message": fmt.Sprintf("erro no campo: %v", v.Field()),
 				})
 				return
@@ -122,12 +121,12 @@ func (ph *ProductHandler) UpdateProducts() gin.HandlerFunc {
 		}
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"message": "id inválido",
 			})
 			return
 		}
-		err = ph.service.Update(id, p)
+		p, err = ph.service.Update(id, p)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"message": "erro interno, tente mais tarde",
@@ -149,27 +148,27 @@ func (ph *ProductHandler) DeleteProducts() gin.HandlerFunc {
 		}
 		err = ph.service.Delete(id)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "erro interno, tente mais tarde",
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": "id não encontrado",
 			})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{
-			"status": 200,
+		c.JSON(http.StatusNoContent, gin.H{
+			"status": 204,
 		})
 	}
 }
 
 type saveProduct struct {
-	Product_code                     string  `json:"product_code"`
-	Description                      string  `json:"description"`
-	Width                            float64 `json:"width"`
-	Height                           float64 `json:"height"`
-	Length                           float64 `json:"lenght"`
-	Net_weight                       float64 `json:"netweight"`
-	Expiration_rate                  int     `json:"expiration_rate"`
-	Recommended_freezing_temperature float64 `json:"recommended_freezing_temperature"`
-	Freezing_rate                    float64 `json:"freezing_rate"`
-	Product_type_id                  int     `json:"product_type_id" `
-	Seller_id                        int     `json:"seller_id"`
+	Product_code                     string  `json:"product_code" binding:"required"`
+	Description                      string  `json:"description" binding:"required"`
+	Width                            float64 `json:"width" binding:"required"`
+	Height                           float64 `json:"height" binding:"required"`
+	Length                           float64 `json:"lenght" binding:"required"`
+	Net_weight                       float64 `json:"netweight" binding:"required"`
+	Expiration_rate                  int     `json:"expiration_rate" binding:"required"`
+	Recommended_freezing_temperature float64 `json:"recommended_freezing_temperature" binding:"required"`
+	Freezing_rate                    float64 `json:"freezing_rate" binding:"required"`
+	Product_type_id                  int     `json:"product_type_id" binding:"required"`
+	Seller_id                        int     `json:"seller_id" binding:"required"`
 }
