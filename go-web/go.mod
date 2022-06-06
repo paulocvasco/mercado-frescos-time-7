@@ -12,7 +12,10 @@ require (
 	golang.org/x/exp v0.0.0-20220602145555-4a0574d9293f
 )
 
-require github.com/go-sql-driver/mysql v1.6.0
+require (
+	github.com/go-sql-driver/mysql v1.6.0
+	github.com/joho/godotenv v1.4.0
+)
 
 require github.com/joho/godotenv v1.4.0 // indirect
 
