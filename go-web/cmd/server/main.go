@@ -9,7 +9,8 @@ import (
 func main() {
 	r := gin.Default()
 
-	routers.InstanceWarehouse(r)
+	routes.InstanceProducts(r)
+	routes.InstanceWarehouse(r)
 
 	r.Run()
 }
