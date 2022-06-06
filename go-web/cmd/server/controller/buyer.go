@@ -2,7 +2,6 @@ package server
 
 import (
 	"fmt"
-	"log"
 	"mercado-frescos-time-7/go-web/internal/buyer"
 	"net/http"
 	"strconv"
@@ -86,12 +85,12 @@ func (b *BuyerController) Update() gin.HandlerFunc {
 			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
 			return
 		}
-		var newInput requestPost
+		var newInput RequestPost
 		if err := context.ShouldBindJSON(&newInput); err != nil {
 			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 		}
 
-		buyer, err := b.service.Update(intId, int(newInput.CardNumberID), newInput.FirstName, newInput.LastName)
+		buyer, err := b.service.Update(intId, buyer.RequestPost(newInput))
 
 		if err != nil {
 			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -111,7 +110,6 @@ func (b *BuyerController) Delete() gin.HandlerFunc {
 			return
 		}
 		err = b.service.Delete(intId)
-		log.Println(err)
 		if err != nil {
 			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
@@ -128,10 +126,10 @@ type request struct {
 	FirstName    string `json:"first_name" binding:"required"`
 	LastName     string `json:"last_name" binding:"required"`
 }
-type requestPost struct {
-	CardNumberID int    `json:"card_number_id" binding:"required"`
-	FirstName    string `json:"first_name" binding:"required"`
-	LastName     string `json:"last_name" binding:"required"`
+type RequestPost struct {
+	CardNumberID int    `json:"card_number_id"`
+	FirstName    string `json:"first_name"`
+	LastName     string `json:"last_name"`
 }
 
 //rotas
