@@ -3,7 +3,6 @@ package service
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"mercado-frescos-time-7/go-web/internal/products/model"
 	r "mercado-frescos-time-7/go-web/internal/products/repository"
 
@@ -67,7 +66,7 @@ func (s *service) Update(id int, product []byte) (model.Product, error) {
 	if err != nil {
 		return model.Product{}, err
 	}
-	var updateProduct model.Product 
+	var updateProduct model.Product
 	json.Unmarshal(patch, &updateProduct)
 
 	err = s.repository.Update(updateProduct)
