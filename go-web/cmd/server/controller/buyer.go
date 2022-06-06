@@ -1,7 +1,6 @@
-package buyer
+package server
 
 import (
-	"fmt"
 	"mercado-frescos-time-7/go-web/internal/buyer"
 	"net/http"
 	"strconv"
@@ -10,7 +9,7 @@ import (
 )
 
 type Buyer struct {
-	ID             string
+	ID             int
 	Card_number_id int
 	First_name     string
 	Last_name      string
@@ -18,6 +17,12 @@ type Buyer struct {
 
 type BuyerController struct {
 	service buyer.Service
+}
+
+func NewController(b buyer.Service) *BuyerController {
+	return &BuyerController{
+		service: b,
+	}
 }
 
 func (b *BuyerController) GetAll() gin.HandlerFunc {
@@ -57,6 +62,7 @@ func (b *BuyerController) Creat() gin.HandlerFunc {
 		var input request
 		if err := context.ShouldBindJSON(&input); err != nil {
 			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+			return
 		}
 
 		buyer, err := b.service.Creat(int(input.ID), int(input.CardNumberID), input.FirstName, input.LastName)
@@ -68,52 +74,53 @@ func (b *BuyerController) Creat() gin.HandlerFunc {
 		context.JSON(http.StatusCreated, buyer)
 	}
 }
-func (b *BuyerController) Update() gin.HandlerFunc {
-	return func(context *gin.Context) {
-		id := context.Param("id")
-		intId, err := strconv.Atoi(id)
 
-		if err != nil {
-			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
-			return
-		}
-		var newInput request
-		if err := context.ShouldBindJSON(&newInput); err != nil {
-			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
-		}
-		if newInput.ID != intId {
-			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
-			return
-		}
+// func (b *BuyerController) Update() gin.HandlerFunc {
+// 	return func(context *gin.Context) {
+// 		id := context.Param("id")
+// 		intId, err := strconv.Atoi(id)
 
-		buyer, err := b.service.Creat(int(newInput.ID), int(newInput.CardNumberID), newInput.FirstName, newInput.LastName)
+// 		if err != nil {
+// 			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
+// 			return
+// 		}
+// 		var newInput request
+// 		if err := context.ShouldBindJSON(&newInput); err != nil {
+// 			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+// 		}
+// 		if newInput.ID != intId {
+// 			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
+// 			return
+// 		}
 
-		if err != nil {
-			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-			return
-		}
-		context.JSON(http.StatusOK, buyer)
-	}
-}
-func (b *BuyerController) Delete() gin.HandlerFunc {
-	return func(context *gin.Context) {
-		id := context.Param("id")
-		intId, err := strconv.Atoi(id)
+// 		buyer, err := b.service.Creat(int(newInput.ID), int(newInput.CardNumberID), newInput.FirstName, newInput.LastName)
 
-		if err != nil {
-			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
-			return
-		}
-		err = b.service.Delete(intId)
-		if err != nil {
-			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-			return
-		}
-		context.JSON(http.StatusOK, gin.H{
-			"message": fmt.Sprintf(" %d deleted with success.", intId),
-		})
-	}
-}
+// 		if err != nil {
+// 			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+// 			return
+// 		}
+// 		context.JSON(http.StatusOK, buyer)
+// 	}
+// }
+// func (b *BuyerController) Delete() gin.HandlerFunc {
+// 	return func(context *gin.Context) {
+// 		id := context.Param("id")
+// 		intId, err := strconv.Atoi(id)
+
+// 		if err != nil {
+// 			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
+// 			return
+// 		}
+// 		err = b.service.Delete(intId)
+// 		if err != nil {
+// 			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+// 			return
+// 		}
+// 		context.JSON(http.StatusOK, gin.H{
+// 			"message": fmt.Sprintf(" %d deleted with success.", intId),
+// 		})
+// 	}
+// }
 
 type request struct {
 	ID           int    `json:"id" binding:"required"`
