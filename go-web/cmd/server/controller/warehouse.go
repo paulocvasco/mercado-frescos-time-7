@@ -10,25 +10,25 @@ import (
 )
 
 type Controller interface {
-	GetAll(*gin.Context)
-	GetByID(*gin.Context)
-	Create(*gin.Context)
-	Update(*gin.Context)
-	Delete(*gin.Context)
+	GetAllWarehouse(*gin.Context)
+	GetByIDWarehouse(*gin.Context)
+	CreateWarehouse(*gin.Context)
+	UpdateWarehouse(*gin.Context)
+	DeleteWarehouse(*gin.Context)
 }
 
 type controller struct {
 	service warehouse.Service
 }
 
-func NewController(s warehouse.Service) Controller {
+func NewControllerWarehouse(s warehouse.Service) Controller {
 	newController := &controller{
 		service: s,
 	}
 	return newController
 }
 
-func (control *controller) GetAll(c *gin.Context) {
+func (control *controller) GetAllWarehouse(c *gin.Context) {
 	response, err := control.service.GetAll()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
@@ -37,7 +37,7 @@ func (control *controller) GetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (control *controller) GetByID(c *gin.Context) {
+func (control *controller) GetByIDWarehouse(c *gin.Context) {
 	param := c.Param("id")
 	response, err := control.service.GetByID(param)
 	if err != nil {
@@ -54,7 +54,7 @@ func (control *controller) GetByID(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (control *controller) Create(c *gin.Context) {
+func (control *controller) CreateWarehouse(c *gin.Context) {
 	body := c.Request.Body
 	defer body.Close()
 
@@ -83,7 +83,7 @@ func (control *controller) Create(c *gin.Context) {
 	c.JSON(http.StatusOK, nil)
 }
 
-func (control *controller) Update(c *gin.Context) {
+func (control *controller) UpdateWarehouse(c *gin.Context) {
 	id := c.Param("id")
 	body := c.Request.Body
 	defer body.Close()
@@ -109,7 +109,7 @@ func (control *controller) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, nil)
 }
 
-func (control *controller) Delete(c *gin.Context) {
+func (control *controller) DeleteWarehouse(c *gin.Context) {
 	id := c.Param("id")
 
 	err := control.service.Delete(id)
