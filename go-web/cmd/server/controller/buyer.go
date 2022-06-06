@@ -127,9 +127,9 @@ type request struct {
 	LastName     string `json:"last_name" binding:"required"`
 }
 type RequestPost struct {
-	CardNumberID *int   `json:"card_number_id"`
-	FirstName    string `json:"first_name"`
-	LastName     string `json:"last_name"`
+	CardNumberID *int   `json:"card_number_id,omitempty" `
+	FirstName    string `json:"first_name,omitempty"`
+	LastName     string `json:"last_name,omitempty"`
 }
 
 //rotas
