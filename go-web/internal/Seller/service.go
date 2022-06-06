@@ -1,7 +1,8 @@
 package seller
 
-import "encoding/json"
-
+import ("encoding/json"
+jsonpatch "github.com/evanphx/json-patch/v5"
+)
 type Service interface {
 	GetAll() ([]Seller, error)
 	GetId(indice int) (Seller, error)
@@ -31,8 +32,18 @@ func (s *service) GetId(indice int) (Seller, error) {
 }
 
 func (s *service) Update(sel []byte, id int) (Seller, error) {
+	oldSeller, err := s.repository.GetId(id)
+	if err != nil {
+		return Seller{}, err
+	}
+	oldSellerJSON, _ := json.Marshal(oldSeller)
+	patch, err := jsonpatch.MergePatch(oldSellerJSON, sel)
+	if err != nil {
+		return Seller{}, err
+	}
+	
 	var updatedSeller Seller
-	err := json.Unmarshal(sel, &updatedSeller)
+	err = json.Unmarshal(patch, &updatedSeller)
 	if err != nil {
 		return Seller{}, err
 	}
