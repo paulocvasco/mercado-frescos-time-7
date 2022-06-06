@@ -16,6 +16,13 @@ func LastID() int {
 	return lastID
 }
 
+func ValidateID(id int) bool {
+	if id < 0 || id > lastID {
+		return false
+	}
+	return true
+}
+
 type Repository interface {
 	GetAll() Sections
 	GetById(int) (Section, error)
@@ -64,25 +71,12 @@ func (s *Sections) Update(id int, newSection Section) error {
 
 	st.Current_temperature = newSection.Current_temperature
 	st.Minimum_temperature = newSection.Minimum_temperature
-
-	if newSection.Section_number < 0 {
-		st.Section_number = newSection.Section_number
-	}
-	if newSection.Current_capacity < 0 {
-		st.Current_capacity = newSection.Current_capacity
-	}
-	if newSection.Minimum_capacity < 0 {
-		st.Minimum_capacity = newSection.Minimum_capacity
-	}
-	if newSection.Maximum_capacity < 0 {
-		st.Maximum_capacity = newSection.Maximum_capacity
-	}
-	if newSection.Warehouse_id < 0 {
-		st.Warehouse_id = newSection.Warehouse_id
-	}
-	if newSection.Product_type_id < 0 {
-		st.Product_type_id = newSection.Product_type_id
-	}
+	st.Section_number = newSection.Section_number
+	st.Current_capacity = newSection.Current_capacity
+	st.Minimum_capacity = newSection.Minimum_capacity
+	st.Maximum_capacity = newSection.Maximum_capacity
+	st.Warehouse_id = newSection.Warehouse_id
+	st.Product_type_id = newSection.Product_type_id
 
 	s.Section[id] = models.Section(st)
 
@@ -90,9 +84,6 @@ func (s *Sections) Update(id int, newSection Section) error {
 }
 
 func (s *Sections) Delete(id int) error {
-	if id < 0 || id > lastID {
-		return fmt.Errorf("invalid id")
-	}
 	for i, section := range s.Section {
 		if section.ID == id {
 			s.Section = append(s.Section[:i], s.Section[i+1:]...)

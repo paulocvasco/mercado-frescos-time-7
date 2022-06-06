@@ -81,6 +81,25 @@ func (s *service) Update(id string, data []byte) error {
 		return err
 	}
 
+	if newSection.Section_number < 0 {
+		return fmt.Errorf("")
+	}
+	if newSection.Current_capacity < 0 {
+		return fmt.Errorf("")
+	}
+	if newSection.Minimum_capacity < 0 {
+		return fmt.Errorf("")
+	}
+	if newSection.Maximum_capacity < 0 {
+		return fmt.Errorf("")
+	}
+	if newSection.Warehouse_id < 0 {
+		return fmt.Errorf("")
+	}
+	if newSection.Product_type_id < 0 {
+		return fmt.Errorf("")
+	}
+
 	err = s.repository.Update(index, newSection)
 	if err != nil {
 		return err
@@ -94,8 +113,12 @@ func (s *service) Delete(id string) error {
 	if err != nil {
 		return err
 	}
+	if !ValidateID(index) {
+		return err
+	}
 
 	err = s.repository.Delete(index)
+
 	if err != nil {
 		return err
 	}
