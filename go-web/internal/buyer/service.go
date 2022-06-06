@@ -2,7 +2,6 @@ package buyer
 
 import (
 	"encoding/json"
-	"log"
 	b "mercado-frescos-time-7/go-web/internal/models"
 
 	jsonpatch "github.com/evanphx/json-patch/v5"
@@ -55,14 +54,9 @@ func (s *service) Update(id int, body RequestPost) (b.Buyer, error) {
 	if err != nil {
 		return getById, err
 	}
-	log.Println(getById)
-	log.Println(body)
-
 	buyerMarch, err := json.Marshal(getById)
-	log.Println(buyerMarch)
-
 	bodyMarch, err := json.Marshal(body)
-	log.Println(bodyMarch)
+
 	buyerPatch, err := jsonpatch.MergeMergePatches(buyerMarch, bodyMarch)
 
 	if err != nil {
