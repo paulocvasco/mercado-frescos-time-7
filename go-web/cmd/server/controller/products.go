@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"mercado-frescos-time-7/go-web/internal/products/model"
-	service "mercado-frescos-time-7/go-web/internal/products/services"
+	"mercado-frescos-time-7/go-web/internal/products"
 	"net/http"
 	"strconv"
 
@@ -14,10 +13,10 @@ import (
 )
 
 type ProductHandler struct {
-	service service.Service
+	service products.Service
 }
 
-func NewRepository(p service.Service) ProductHandler {
+func NewRepository(p products.Service) ProductHandler {
 	return ProductHandler{
 		service: p,
 	}
@@ -61,15 +60,28 @@ func (ph *ProductHandler) SaveProducts() gin.HandlerFunc {
 		newProduct := saveProduct{}
 		err := c.ShouldBindJSON(&newProduct)
 		var ve validator.ValidationErrors
-		if errors.As(err, &ve) {
-			for _, v := range ve {
-				c.JSON(http.StatusUnprocessableEntity, gin.H{
-					"message": fmt.Sprintf("erro no campo: %v", v.Field()),
+		var js *json.SyntaxError
+		if err != nil {
+			if errors.As(err, &ve) {
+				for _, v := range ve {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"message": fmt.Sprintf("erro no campo: %v", v.Field()),
+					})
+					return
+				}
+			} else if errors.As(err, &js) {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"message": "confira a estrutura do JSON",
+				})
+				return
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"message": "erro interno",
 				})
 				return
 			}
 		}
-		p := model.Product{
+		p := products.Product{
 			Product_code:                     newProduct.Product_code,
 			Description:                      newProduct.Description,
 			Width:                            newProduct.Width,
@@ -98,10 +110,23 @@ func (ph *ProductHandler) UpdateProducts() gin.HandlerFunc {
 		updateProduct := updateProduct{}
 		err := c.ShouldBindJSON(&updateProduct)
 		var ve validator.ValidationErrors
-		if errors.As(err, &ve) {
-			for _, v := range ve {
+		var js *json.SyntaxError
+		if err != nil {
+			if errors.As(err, &ve) {
+				for _, v := range ve {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"message": fmt.Sprintf("erro no campo: %v", v.Field()),
+					})
+					return
+				}
+			} else if errors.As(err, &js) {
 				c.JSON(http.StatusBadRequest, gin.H{
-					"message": fmt.Sprintf("erro no campo: %v", v.Field()),
+					"message": "confira a estrutura do JSON",
+				})
+				return
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"message": "erro interno",
 				})
 				return
 			}
