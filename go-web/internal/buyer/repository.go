@@ -10,7 +10,7 @@ type Repository interface {
 	GetId(id int) (b.Buyer, error)
 	Creat(id, card_number_id int, first_name, last_name string) (b.Buyer, error)
 	Update(id, card_number_id int, first_name, last_name string) (b.Buyer, error)
-	// Delete(id int) error
+	Delete(id int) error
 }
 
 var db []b.Buyer = []b.Buyer{}
@@ -61,4 +61,18 @@ func (r *repository) Update(id, card_number_id int, first_name, last_name string
 		return returnDB, fmt.Errorf("product %d não encontrado", id)
 	}
 	return returnDB, nil
+}
+func (r *repository) Delete(id int) error {
+	deleted := false
+	for i := range db {
+		if db[i].ID == id {
+			db = append(db[:i], db[i+1:]...)
+			deleted = true
+		}
+	}
+	if !deleted {
+		return fmt.Errorf("product %d não encontrado", id)
+	}
+	return nil
+
 }

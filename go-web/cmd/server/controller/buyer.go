@@ -1,6 +1,8 @@
 package server
 
 import (
+	"fmt"
+	"log"
 	"mercado-frescos-time-7/go-web/internal/buyer"
 	"net/http"
 	"strconv"
@@ -84,16 +86,12 @@ func (b *BuyerController) Update() gin.HandlerFunc {
 			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
 			return
 		}
-		var newInput request
+		var newInput requestPost
 		if err := context.ShouldBindJSON(&newInput); err != nil {
 			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 		}
-		if newInput.ID != intId {
-			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
-			return
-		}
 
-		buyer, err := b.service.Update(int(newInput.ID), int(newInput.CardNumberID), newInput.FirstName, newInput.LastName)
+		buyer, err := b.service.Update(intId, int(newInput.CardNumberID), newInput.FirstName, newInput.LastName)
 
 		if err != nil {
 			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -103,28 +101,34 @@ func (b *BuyerController) Update() gin.HandlerFunc {
 	}
 }
 
-// func (b *BuyerController) Delete() gin.HandlerFunc {
-// 	return func(context *gin.Context) {
-// 		id := context.Param("id")
-// 		intId, err := strconv.Atoi(id)
+func (b *BuyerController) Delete() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		id := context.Param("id")
+		intId, err := strconv.Atoi(id)
 
-// 		if err != nil {
-// 			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
-// 			return
-// 		}
-// 		err = b.service.Delete(intId)
-// 		if err != nil {
-// 			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-// 			return
-// 		}
-// 		context.JSON(http.StatusOK, gin.H{
-// 			"message": fmt.Sprintf(" %d deleted with success.", intId),
-// 		})
-// 	}
-// }
+		if err != nil {
+			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
+			return
+		}
+		err = b.service.Delete(intId)
+		log.Println(err)
+		if err != nil {
+			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		context.JSON(http.StatusOK, gin.H{
+			"message": fmt.Sprintf(" %d deleted with success.", intId),
+		})
+	}
+}
 
 type request struct {
 	ID           int    `json:"id" binding:"required"`
+	CardNumberID int    `json:"card_number_id" binding:"required"`
+	FirstName    string `json:"first_name" binding:"required"`
+	LastName     string `json:"last_name" binding:"required"`
+}
+type requestPost struct {
 	CardNumberID int    `json:"card_number_id" binding:"required"`
 	FirstName    string `json:"first_name" binding:"required"`
 	LastName     string `json:"last_name" binding:"required"`

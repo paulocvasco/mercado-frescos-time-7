@@ -7,7 +7,7 @@ type Service interface {
 	GetId(id int) (b.Buyer, error)
 	Creat(id, card_number_id int, first_name, last_name string) (b.Buyer, error)
 	Update(id, card_number_id int, first_name, last_name string) (b.Buyer, error)
-	// Delete(id int) error
+	Delete(id int) error
 }
 
 type service struct {
@@ -51,11 +51,10 @@ func (s service) Update(id, card_number_id int, first_name, last_name string) (b
 	return response, nil
 }
 
-// func (s service) Delete(id int) error {
-
-// 	err := s.repository.Delete(id)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return err
-// }
+func (s service) Delete(id int) error {
+	err := s.repository.Delete(id)
+	if err != nil {
+		return err
+	}
+	return err
+}
