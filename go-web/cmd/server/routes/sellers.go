@@ -13,11 +13,11 @@ func InstanceSeller(r *gin.Engine) {
 	service := seller.NewService(repo)
 	p := controller.NewSellers(service)
 
-	r.GET("/sellers", p.GetAll())
-	r.GET("/sellers/:id", p.GetId())
-	r.POST("/sellers", p.Store())
-	r.PATCH("/sellers/:id", p.Update())
-	r.DELETE("/sellers/:id", p.Delete())
+	r.GET("/sellers", p.SeellersGetAll())
+	r.GET("/sellers/:id", p.SeellersGetId())
+	r.POST("/sellers", p.SeellersStore())
+	r.PATCH("/sellers/:id", p.SeellersUpdate())
+	r.DELETE("/sellers/:id", p.SeellersDelete())
 
 }
 

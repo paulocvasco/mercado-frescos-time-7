@@ -19,7 +19,7 @@ type request struct {
 	Telephone  string `json:"telephone" binding:"required"`
 }
 
-func (c *Sellers) Store() gin.HandlerFunc  {
+func (c *Sellers) SeellersStore() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 		var req request
 		if err := ctx.Bind(&req); err != nil {
@@ -38,7 +38,7 @@ func (c *Sellers) Store() gin.HandlerFunc  {
 }
 
 
-func (c *Sellers) GetAll() gin.HandlerFunc  {
+func (c *Sellers) SeellersGetAll() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 	p, err := c.service.GetAll()
 	if err != nil {
@@ -49,7 +49,7 @@ func (c *Sellers) GetAll() gin.HandlerFunc  {
 	}
 }
 
-func (c *Sellers) GetId() gin.HandlerFunc  {
+func (c *Sellers) SeellersGetId() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -67,7 +67,7 @@ func (c *Sellers) GetId() gin.HandlerFunc  {
 	}
 }
 
-func (c *Sellers) Update() gin.HandlerFunc  {
+func (c *Sellers) SeellersUpdate() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
@@ -93,7 +93,7 @@ func (c *Sellers) Update() gin.HandlerFunc  {
 	}
 }
 
-func (c *Sellers) Delete() gin.HandlerFunc  {
+func (c *Sellers) SeellersDelete() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
