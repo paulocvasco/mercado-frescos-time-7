@@ -1,4 +1,4 @@
-package routers
+package routes
 
 import (
 	server "mercado-frescos-time-7/go-web/cmd/server/controller"
