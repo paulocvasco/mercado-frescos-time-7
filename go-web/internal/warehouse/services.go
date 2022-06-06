@@ -75,13 +75,7 @@ func (s *service) Update(id string, data []byte) error {
 		return customerrors.ErrorInvalidIDParameter
 	}
 
-	var updatedWarehouse Warehouse
-	err = json.Unmarshal(data, &updatedWarehouse)
-	if err != nil {
-		return err
-	}
-
-	err = s.repository.Update(index, updatedWarehouse)
+	err = s.repository.Update(index, data)
 	if err != nil {
 		return err
 	}
