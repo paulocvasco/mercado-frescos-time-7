@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"io/ioutil"
 	seller "mercado-frescos-time-7/go-web/internal/Seller"
 	"strconv"
 
@@ -74,19 +75,21 @@ func (c *Sellers) Update() gin.HandlerFunc  {
 				"error": "Parametro de busca invalido"})
 			return	
 		}
-		var json seller.Seller
-        if err := ctx.ShouldBindJSON(&json); err == nil {
-			p, err := c.service.Update(json, id)
-			if err != nil {
-				ctx.JSON(401, gin.H{
-					"error": err.Error()})
-				return	
-			}
-			ctx.JSON(200, p)
-		
-        } else {
-            ctx.JSON(404, gin.H{"error": "Erro: não foi possivel converter o json em struct"})
-        }	
+		body := ctx.Request.Body
+		defer body.Close()
+	
+		data, err := ioutil.ReadAll(body)
+		if err != nil {
+			ctx.JSON(401, err)
+			return
+		}
+		p, err := c.service.Update(data, id)
+		if err != nil {
+			ctx.JSON(401, gin.H{
+				"error": err.Error()})
+			return	
+		}
+		ctx.JSON(200, p)	
 	}
 }
 

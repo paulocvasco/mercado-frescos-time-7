@@ -47,13 +47,21 @@ func (r *repository) GetId(indice int) (Seller, error) {
 	return Seller{}, errors.New("id não encontrado")
 }
 
-func (r *repository) Update(s Seller, id int) (Seller, error) {
+func (r *repository) Update(newValues Seller, id int) (Seller, error) {
 	for	k, v := range ps{
 		if v.ID == id {
-			v.Cid = s.Cid
-			v.Company_name = s.Company_name
-			v.Address = s.Address
-			v.Telephone = s.Telephone
+			if newValues.Address != "" {
+				v.Address = newValues.Address
+			}
+			if newValues.Cid != "" {
+				v.Cid = newValues.Cid
+			}
+			if newValues.Company_name != "" {
+				v.Company_name = newValues.Company_name
+			}
+			if newValues.Telephone != "" {
+				v.Telephone = newValues.Telephone
+			}
 			ps[k] = v
 			return v, nil
 		}
