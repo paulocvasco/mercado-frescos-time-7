@@ -3,10 +3,13 @@ package warehouse
 import (
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/json"
 	customerrors "mercado-frescos-time-7/go-web/internal/custom_errors"
 	"mercado-frescos-time-7/go-web/internal/models"
 	"strconv"
 	"strings"
+
+	jsonpatch "github.com/evanphx/json-patch"
 )
 
 type Warehouses models.Warehouses
@@ -19,7 +22,7 @@ var lastID int
 
 type Repository interface {
 	Create(Warehouse)
-	Update(int, Warehouse) error
+	Update(int, []byte) error
 	GetAll() Warehouses
 	GetByID(int) (Warehouse, error)
 	Delete(int) error
@@ -37,24 +40,24 @@ func (w *Warehouses) Create(new Warehouse) {
 	lastID++
 }
 
-func (w *Warehouses) Update(id int, newValues Warehouse) error {
+func (w *Warehouses) Update(id int, data []byte) error {
 	if id < 0 || id > lastID {
 		return customerrors.ErrorInvalidID
 	}
 
 	for i, warehouse := range w.Warehouse {
 		if warehouse.ID == id {
-			if newValues.Address != "" {
-				warehouse.Address = newValues.Address
+			warehouseBytes, err := json.Marshal(warehouse)
+			if err != nil {
+				return err
 			}
-			if newValues.Telephone != "" {
-				warehouse.Telephone = newValues.Telephone
+			patchedWarehouse, err := jsonpatch.MergePatch(warehouseBytes, data)
+			if err != nil {
+				return err
 			}
-			if newValues.MinimunCapacity != 0 {
-				warehouse.MinimunCapacity = newValues.MinimunCapacity
-			}
-			if newValues.MinimunTemperature != 0 {
-				warehouse.MinimunCapacity = newValues.MinimunTemperature
+			err = json.Unmarshal(patchedWarehouse, &warehouse)
+			if err != nil {
+				return err
 			}
 			warehouse.WarehouseCode = calculateCode(warehouse.Address, warehouse.Telephone, strconv.Itoa(warehouse.MinimunCapacity), strconv.Itoa(warehouse.MinimunTemperature))
 			w.Warehouse[i] = warehouse
