@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	customerrors "mercado-frescos-time-7/go-web/internal/custom_errors"
 	"strconv"
+
+	jsonpatch "github.com/evanphx/json-patch"
 )
 
 type Service interface {
@@ -75,7 +77,25 @@ func (s *service) Update(id string, data []byte) error {
 		return customerrors.ErrorInvalidIDParameter
 	}
 
-	err = s.repository.Update(index, data)
+	warehouse, err := s.repository.GetByID(index)
+	if err != nil {
+		return err
+	}
+
+	warehouseBytes, err := json.Marshal(warehouse)
+	if err != nil {
+		return err
+	}
+	patchedWarehouse, err := jsonpatch.MergePatch(warehouseBytes, data)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(patchedWarehouse, &warehouse)
+	if err != nil {
+		return err
+	}
+
+	err = s.repository.Update(index, warehouse)
 	if err != nil {
 		return err
 	}
