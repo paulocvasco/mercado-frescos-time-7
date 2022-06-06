@@ -3,13 +3,14 @@ package sections
 import (
 	"encoding/json"
 	"fmt"
+	"mercado-frescos-time-7/go-web/internal/models"
 	"strconv"
 )
 
 type Service interface {
 	GetAll() (Sections, error)
 	GetById(string) (*Section, error)
-	Store([]byte) error
+	Store(models.Section) error
 	Update(string, []byte) error
 	Delete(string) error
 }
@@ -43,32 +44,28 @@ func (s *service) GetById(id string) (*Section, error) {
 	return &data, nil
 }
 
-func (s *service) Store(data []byte) error {
-	var newSection Section
-	err := json.Unmarshal(data, &newSection)
+func (s *service) Store(section models.Section) error {
+
+	if section.Current_capacity < 0 {
+		return fmt.Errorf("invalid current capacity")
+	}
+	if section.Minimum_capacity < 0 {
+		return fmt.Errorf("invalid minimum capacity")
+	}
+	if section.Maximum_capacity < 0 {
+		return fmt.Errorf("invalid maximum capacity")
+	}
+	if section.Warehouse_id < 0 {
+		return fmt.Errorf("invalid warehouse id")
+	}
+	if section.Product_type_id < 0 {
+		return fmt.Errorf("invalid product type id")
+	}
+
+	err := s.repository.Store(section)
 	if err != nil {
-		return err
+		return fmt.Errorf("internal system error")
 	}
-
-	// validate request fields
-	if newSection.Current_capacity < 0 {
-		return fmt.Errorf("missing current capacity")
-	}
-	if newSection.Minimum_capacity < 0 {
-		return fmt.Errorf("missing current capacity")
-	}
-	if newSection.Maximim_capacity < 0 {
-		return fmt.Errorf("missing current capacity")
-	}
-	if newSection.Warehouse_id < 0 {
-		return fmt.Errorf("missing current capacity")
-	}
-	if newSection.Product_type_id < 0 {
-		return fmt.Errorf("missing current capacity")
-	}
-
-	s.repository.Store(newSection)
-
 	return nil
 }
 

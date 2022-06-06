@@ -12,10 +12,14 @@ var repository Sections
 
 var lastID int
 
+func LastID() int {
+	return lastID
+}
+
 type Repository interface {
 	GetAll() Sections
 	GetById(int) (Section, error)
-	Store(Section)
+	Store(models.Section) error
 	Update(int, Section) error
 	Delete(int) error
 }
@@ -40,10 +44,11 @@ func (s *Sections) GetById(id int) (Section, error) {
 	return Section{}, nil
 }
 
-func (s *Sections) Store(newSection Section) {
+func (s *Sections) Store(newSection models.Section) error {
 	newSection.ID = lastID
 	s.Section = append(s.Section, models.Section(newSection))
 	lastID++
+	return nil
 }
 
 func (s *Sections) Update(id int, newSection Section) error {
@@ -53,7 +58,7 @@ func (s *Sections) Update(id int, newSection Section) error {
 		return err
 	}
 
-	if (st != Section{}) {
+	if (st == Section{}) {
 		return fmt.Errorf("empty section")
 	}
 
@@ -69,8 +74,8 @@ func (s *Sections) Update(id int, newSection Section) error {
 	if newSection.Minimum_capacity < 0 {
 		st.Minimum_capacity = newSection.Minimum_capacity
 	}
-	if newSection.Maximim_capacity < 0 {
-		st.Maximim_capacity = newSection.Maximim_capacity
+	if newSection.Maximum_capacity < 0 {
+		st.Maximum_capacity = newSection.Maximum_capacity
 	}
 	if newSection.Warehouse_id < 0 {
 		st.Warehouse_id = newSection.Warehouse_id
