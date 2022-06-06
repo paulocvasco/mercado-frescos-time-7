@@ -16,7 +16,7 @@ type ProductHandler struct {
 	service products.Service
 }
 
-func NewRepository(p products.Service) ProductHandler {
+func NewProductHandler(p products.Service) ProductHandler {
 	return ProductHandler{
 		service: p,
 	}

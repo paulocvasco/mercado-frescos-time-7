@@ -10,7 +10,7 @@ import (
 func InstanceProducts(r *gin.Engine) {
 	repo := products.NewRepository()
 	serv := products.NewService(repo)
-	pr := controller.NewRepository(serv)
+	pr := controller.NewProductHandler(serv)
 
 	group := r.Group("/products")
 	{
