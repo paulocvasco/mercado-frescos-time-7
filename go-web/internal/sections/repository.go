@@ -2,23 +2,15 @@ package sections
 
 import (
 	"fmt"
+	"mercado-frescos-time-7/go-web/internal/models"
 )
 
-type Section struct {
-	ID                  int `json:"id"`
-	Section_number      int `json:"section_number"`
-	Current_temperature int `json:"current_temperature"`
-	Minimum_temperature int `json:"minimum_temperature"`
-	Current_capacity    int `json:"current_capacity"`
-	Minimum_capacity    int `json:"minimum_capacity"`
-	Maximim_capacity    int `json:"maximim_capacity"`
-	Warehouse_id        int `json:"warehouse_id"`
-	Product_type_id     int `json:"product_type_id"`
-}
+type Section models.Section
+type Sections models.Sections
 
-type Sections struct {
-	Section []Section `json:"data"`
-}
+var repository Sections
+
+var lastID int
 
 type Repository interface {
 	GetAll() Sections
@@ -27,10 +19,6 @@ type Repository interface {
 	Update(int, Section) error
 	Delete(int) error
 }
-
-var repository Sections
-
-var lastID int
 
 func NewRepository() Repository {
 	return &repository
@@ -46,7 +34,7 @@ func (s *Sections) GetById(id int) (Section, error) {
 	}
 	for _, s := range repository.Section {
 		if s.ID == id {
-			return s, nil
+			return Section(s), nil
 		}
 	}
 	return Section{}, nil
@@ -54,7 +42,7 @@ func (s *Sections) GetById(id int) (Section, error) {
 
 func (s *Sections) Store(newSection Section) {
 	newSection.ID = lastID
-	s.Section = append(s.Section, newSection)
+	s.Section = append(s.Section, models.Section(newSection))
 	lastID++
 }
 
@@ -91,7 +79,7 @@ func (s *Sections) Update(id int, newSection Section) error {
 		st.Product_type_id = newSection.Product_type_id
 	}
 
-	s.Section[id] = st
+	s.Section[id] = models.Section(st)
 
 	return nil
 }
