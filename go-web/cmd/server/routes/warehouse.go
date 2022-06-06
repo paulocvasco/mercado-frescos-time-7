@@ -1,4 +1,4 @@
-package routers
+package routes
 
 import (
 	"mercado-frescos-time-7/go-web/cmd/server/controller"
@@ -10,13 +10,13 @@ import (
 func InstanceWarehouse(r *gin.Engine) {
 	repository := warehouse.NewRepository()
 	service := warehouse.NewService(repository)
-	controller := controller.NewController(service)
+	controller := controller.NewControllerWarehouse(service)
 
 	wr := r.Group("/api/v1/warehouses")
-	wr.GET("", controller.GetAll)
-	wr.GET("/:id", controller.GetByID)
-	wr.POST("", controller.Create)
-	wr.PATCH("/:id", controller.Update)
-	wr.DELETE("/:id", controller.Delete)
+	wr.GET("/", controller.GetAllWarehouse)
+	wr.GET("/:id", controller.GetByIDWarehouse)
+	wr.POST("/", controller.CreateWarehouse)
+	wr.PATCH("/:id", controller.UpdateWarehouse)
+	wr.DELETE("/:id", controller.DeleteWarehouse)
 
 }
