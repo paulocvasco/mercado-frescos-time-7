@@ -42,7 +42,7 @@ func (controller *controller) GetById(ctx *gin.Context) {
 	id := ctx.Param("id")
 	response, err := controller.service.GetById(id)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		ctx.JSON(404, web.NewResponse(404, response, "Section não encontrada"))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -51,7 +51,7 @@ func (controller *controller) GetById(ctx *gin.Context) {
 func (controller *controller) Store(ctx *gin.Context) {
 	newSection := storeSection{}
 	err := ctx.ShouldBindJSON(&newSection)
-	// tratar erros + especificamente
+
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
@@ -71,15 +71,15 @@ func (controller *controller) Store(ctx *gin.Context) {
 	err = controller.service.Store(section)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, "")
+		ctx.JSON(422, web.NewResponse(422, nil, "Não contém os campos necessários"))
 		return
 	}
 
-	ctx.JSON(http.StatusOK, section)
+	ctx.JSON(201, web.NewResponse(201, section, "Section criada com sucesso!"))
 }
 
 func (controller *controller) Update(ctx *gin.Context) {
-	newSection := models.Section{}
+	newSection := updateSection{}
 	err := ctx.ShouldBindJSON(&newSection)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
@@ -93,10 +93,10 @@ func (controller *controller) Update(ctx *gin.Context) {
 	id := ctx.Param("id")
 	err = controller.service.Update(id, section)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		ctx.JSON(404, web.NewResponse(404, nil, "Section não encontrada!"))
 		return
 	}
-	ctx.JSON(http.StatusOK, nil)
+	ctx.JSON(200, web.NewResponse(20, section, "Section atualizada com sucesso!"))
 }
 
 func (controller *controller) Delete(ctx *gin.Context) {
@@ -105,10 +105,10 @@ func (controller *controller) Delete(ctx *gin.Context) {
 	err := controller.service.Delete(id)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		ctx.JSON(404, web.NewResponse(404, nil, "Section não encontrada!"))
 		return
 	}
-	ctx.JSON(http.StatusOK, nil)
+	ctx.JSON(204, web.NewResponse(204, nil, "Section deletada com sucesso!"))
 }
 
 type storeSection struct {
@@ -120,4 +120,15 @@ type storeSection struct {
 	Maximum_capacity    int `json:"Maximum_capacity" binding:"required"`
 	Warehouse_id        int `json:"warehouse_id" binding:"required"`
 	Product_type_id     int `json:"product_type_id" binding:"required"`
+}
+
+type updateSection struct {
+	Section_number      int `json:"section_number,omitempty"`
+	Current_temperature int `json:"current_temperature,omitempty"`
+	Minimum_temperature int `json:"minimum_temperature,omitempty"`
+	Current_capacity    int `json:"current_capacity,omitempty"`
+	Minimum_capacity    int `json:"minimum_capacity,omitempty"`
+	Maximum_capacity    int `json:"Maximum_capacity,omitempty"`
+	Warehouse_id        int `json:"warehouse_id,omitempty"`
+	Product_type_id     int `json:"product_type_id,omitempty"`
 }

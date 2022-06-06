@@ -3,6 +3,7 @@ package sections
 import (
 	"encoding/json"
 	"fmt"
+	customerrors "mercado-frescos-time-7/go-web/internal/custom_errors"
 	"mercado-frescos-time-7/go-web/internal/models"
 	"strconv"
 )
@@ -46,25 +47,28 @@ func (s *service) GetById(id string) (*Section, error) {
 
 func (s *service) Store(section models.Section) error {
 
+	if section.Section_number < 0 {
+		return customerrors.ErrorSectionNumber
+	}
 	if section.Current_capacity < 0 {
-		return fmt.Errorf("invalid current capacity")
+		return customerrors.ErrorCurrentCapacity
 	}
 	if section.Minimum_capacity < 0 {
-		return fmt.Errorf("invalid minimum capacity")
+		return customerrors.ErrorMinimumCapacity
 	}
 	if section.Maximum_capacity < 0 {
-		return fmt.Errorf("invalid maximum capacity")
+		return customerrors.ErrorMaximumCapacity
 	}
 	if section.Warehouse_id < 0 {
-		return fmt.Errorf("invalid warehouse id")
+		return customerrors.ErrorWarehouseID
 	}
 	if section.Product_type_id < 0 {
-		return fmt.Errorf("invalid product type id")
+		return customerrors.ErrorProductTypeID
 	}
 
 	err := s.repository.Store(section)
 	if err != nil {
-		return fmt.Errorf("internal system error")
+		return fmt.Errorf("")
 	}
 	return nil
 }
@@ -82,25 +86,26 @@ func (s *service) Update(id string, data []byte) error {
 	}
 
 	if newSection.Section_number < 0 {
-		return fmt.Errorf("")
+		return customerrors.ErrorSectionNumber
 	}
 	if newSection.Current_capacity < 0 {
-		return fmt.Errorf("")
+		return customerrors.ErrorCurrentCapacity
 	}
 	if newSection.Minimum_capacity < 0 {
-		return fmt.Errorf("")
+		return customerrors.ErrorMinimumCapacity
 	}
 	if newSection.Maximum_capacity < 0 {
-		return fmt.Errorf("")
+		return customerrors.ErrorMaximumCapacity
 	}
 	if newSection.Warehouse_id < 0 {
-		return fmt.Errorf("")
+		return customerrors.ErrorWarehouseID
 	}
 	if newSection.Product_type_id < 0 {
-		return fmt.Errorf("")
+		return customerrors.ErrorProductTypeID
 	}
 
 	err = s.repository.Update(index, newSection)
+
 	if err != nil {
 		return err
 	}
