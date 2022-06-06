@@ -20,13 +20,13 @@ type BuyerController struct {
 	service buyer.Service
 }
 
-func NewController(b buyer.Service) *BuyerController {
+func BuyerNewController(b buyer.Service) *BuyerController {
 	return &BuyerController{
 		service: b,
 	}
 }
 
-func (b *BuyerController) GetAll() gin.HandlerFunc {
+func (b *BuyerController) BuyerGetAll() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		all, err := b.service.GetAll()
 		if err != nil {
@@ -39,7 +39,7 @@ func (b *BuyerController) GetAll() gin.HandlerFunc {
 	}
 }
 
-func (b *BuyerController) GetId() gin.HandlerFunc {
+func (b *BuyerController) BuyerGetId() gin.HandlerFunc {
 	return func(context *gin.Context) {
 
 		id := context.Param("id")
@@ -58,7 +58,7 @@ func (b *BuyerController) GetId() gin.HandlerFunc {
 	}
 }
 
-func (b *BuyerController) Creat() gin.HandlerFunc {
+func (b *BuyerController) BuyerCreat() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		var input request
 		if err := context.ShouldBindJSON(&input); err != nil {
@@ -76,7 +76,7 @@ func (b *BuyerController) Creat() gin.HandlerFunc {
 	}
 }
 
-func (b *BuyerController) Update() gin.HandlerFunc {
+func (b *BuyerController) BuyerUpdate() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		id := context.Param("id")
 		intId, err := strconv.Atoi(id)
@@ -100,7 +100,7 @@ func (b *BuyerController) Update() gin.HandlerFunc {
 	}
 }
 
-func (b *BuyerController) Delete() gin.HandlerFunc {
+func (b *BuyerController) BuyerDelete() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		id := context.Param("id")
 		intId, err := strconv.Atoi(id)
