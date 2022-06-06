@@ -2,16 +2,15 @@ package main
 
 import (
 	"mercado-frescos-time-7/go-web/cmd/server/controller"
-	"mercado-frescos-time-7/go-web/internal/products/repository"
-	service "mercado-frescos-time-7/go-web/internal/products/services"
+	"mercado-frescos-time-7/go-web/internal/products"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	r := gin.Default()
-	repo := repository.NewRepository()
-	serv := service.NewService(repo)
+	repo := products.NewRepository()
+	serv := products.NewService(repo)
 	pr := controller.NewRepository(serv)
 
 	group := r.Group("/products")
