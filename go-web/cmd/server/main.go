@@ -1,7 +1,7 @@
 package main
 
 import (
-	routers "mercado-frescos-time-7/go-web/cmd/server/routes"
+	routes "mercado-frescos-time-7/go-web/cmd/server/routes"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,7 +11,7 @@ func main() {
 
 	routes.InstanceBayer(r)
 	routes.InstanceProducts(r)
-	routes.InstanceWarehouse(r)
+	// routes.InstanceWarehouse(r) s
 
 	r.Run()
 }
