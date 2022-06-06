@@ -20,7 +20,7 @@ func main() {
 		group.GET("/:id", pr.GetProduct())
 		group.DELETE("/:id", pr.DeleteProducts())
 		group.POST("/", pr.SaveProducts())
-		group.PUT("/:id", pr.UpdateProducts())
+		group.PATCH("/:id", pr.UpdateProducts())
 	}
 
 	r.Run()

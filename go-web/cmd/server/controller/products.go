@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"mercado-frescos-time-7/go-web/internal/products/model"
@@ -94,10 +95,9 @@ func (ph *ProductHandler) SaveProducts() gin.HandlerFunc {
 
 func (ph *ProductHandler) UpdateProducts() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		newProduct := saveProduct{}
-		err := c.ShouldBindJSON(&newProduct)
+		updateProduct := updateProduct{}
+		err := c.ShouldBindJSON(&updateProduct)
 		var ve validator.ValidationErrors
-		fmt.Println(err)
 		if errors.As(err, &ve) {
 			for _, v := range ve {
 				c.JSON(http.StatusBadRequest, gin.H{
@@ -106,18 +106,12 @@ func (ph *ProductHandler) UpdateProducts() gin.HandlerFunc {
 				return
 			}
 		}
-		p := model.Product{
-			Product_code:                     newProduct.Product_code,
-			Description:                      newProduct.Description,
-			Width:                            newProduct.Width,
-			Height:                           newProduct.Height,
-			Length:                           newProduct.Length,
-			Net_weight:                       newProduct.Net_weight,
-			Expiration_rate:                  newProduct.Expiration_rate,
-			Recommended_freezing_temperature: newProduct.Recommended_freezing_temperature,
-			Freezing_rate:                    newProduct.Freezing_rate,
-			Product_type_id:                  newProduct.Product_type_id,
-			Seller_id:                        newProduct.Seller_id,
+		p, err := json.Marshal(updateProduct)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "erro interno tente novamente",
+			})
+			return
 		}
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
@@ -126,14 +120,14 @@ func (ph *ProductHandler) UpdateProducts() gin.HandlerFunc {
 			})
 			return
 		}
-		p, err = ph.service.Update(id, p)
+		product, err := ph.service.Update(id, p)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"message": "erro interno, tente mais tarde",
 			})
 			return
 		}
-		c.JSON(http.StatusOK, p)
+		c.JSON(http.StatusOK, product)
 	}
 }
 
@@ -171,4 +165,18 @@ type saveProduct struct {
 	Freezing_rate                    float64 `json:"freezing_rate" binding:"required"`
 	Product_type_id                  int     `json:"product_type_id" binding:"required"`
 	Seller_id                        int     `json:"seller_id" binding:"required"`
+}
+
+type updateProduct struct {
+	Product_code                     string  `json:"product_code,omitempty"`
+	Description                      string  `json:"description,omitempty"`
+	Width                            float64 `json:"width,omitempty"`
+	Height                           float64 `json:"height,omitempty"`
+	Length                           float64 `json:"lenght,omitempty"`
+	Net_weight                       float64 `json:"netweight,omitempty"`
+	Expiration_rate                  int     `json:"expiration_rate,omitempty"`
+	Recommended_freezing_temperature float64 `json:"recommended_freezing_temperature,omitempty"`
+	Freezing_rate                    float64 `json:"freezing_rate,omitempty"`
+	Product_type_id                  int     `json:"product_type_id,omitempty"`
+	Seller_id                        int     `json:"seller_id,omitempty"`
 }
