@@ -56,7 +56,6 @@ func (r *repository) Update(id int, newData model.Buyer) (model.Buyer, error) {
 	for i, value := range db {
 		if value.ID == id {
 			db[i] = model.Buyer(newData)
-			log.Println(value)
 			returnDB = model.Buyer(newData)
 			return returnDB, nil
 		}
