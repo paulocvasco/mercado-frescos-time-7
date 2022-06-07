@@ -2,8 +2,6 @@ package controller
 
 import (
 	"mercado-frescos-time-7/go-web/internal/employees"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 	"strconv"
 
@@ -14,22 +12,18 @@ type EmployeeController struct {
 	service employees.Service
 }
 
+<<<<<<< HEAD
 type requestEmployee struct {
 	CardNumberId string `json:"card_number_id" binding:"required"`
 	FirstName    string `json:"first_name" binding:"required"`
 	LastName     string `json:"last_name" binding:"required"`
-	WareHouseId  int    `json:"warehouse_id" binding:"required"`
+>>>>>>> f423d12 (add controller)
 }
 
 type RequestPatch struct {
 	CardNumberId string `json:"card_number_id,omitempty"`
-	FirstName    string `json:"first_name,omitempty"`
 	LastName     string `json:"last_name,omitempty"`
 	WareHouseId  int    `json:"warehouse_id,omitempty"`
-}
-
-type ResponseGetAll struct {
-	Response []employees.Employee `json:"employees"`
 }
 
 func (c *EmployeeController) GetAll() gin.HandlerFunc {
@@ -37,13 +31,11 @@ func (c *EmployeeController) GetAll() gin.HandlerFunc {
 		e, err := c.service.GetAll()
 
 		if err != nil {
-			status, msg := customerrors.ErrorHandleResponse(err)
-			res := web.NewResponse(status, nil, msg)
-			ctx.JSON(status, res)
+			ctx.JSON(404, gin.H{"error": "Não há resultados para a pesquisa"})
 			return
 		}
-		response := ResponseGetAll{e}
-		ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, response, ""))
+
+		ctx.JSON(http.StatusOK, e)
 	}
 }
 
@@ -51,21 +43,17 @@ func (c *EmployeeController) GetByID() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
-			status, msg := customerrors.ErrorHandleResponse(err)
-			res := web.NewResponse(status, nil, msg)
-			ctx.JSON(status, res)
+			ctx.JSON(404, gin.H{"error": "ID não encontrado"})
 			return
 		}
 
-		e, err := c.service.GetByID(id)
+		e, err := c.service.GetByID(int(id))
 		if err != nil {
-			status, msg := customerrors.ErrorHandleResponse(err)
-			res := web.NewResponse(status, nil, msg)
-			ctx.JSON(status, res)
+			ctx.JSON(404, gin.H{"error": err.Error()})
 			return
 		}
 
-		ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, e, ""))
+		ctx.JSON(http.StatusOK, e)
 	}
 }
 
@@ -74,9 +62,7 @@ func (c *EmployeeController) Update() gin.HandlerFunc {
 		id, err := strconv.Atoi(ctx.Param("id"))
 
 		if err != nil {
-			status, msg := customerrors.ErrorHandleResponse(err)
-			res := web.NewResponse(status, nil, msg)
-			ctx.JSON(status, res)
+			ctx.JSON(404, gin.H{"error": "ID inválido"})
 			return
 		}
 
@@ -85,21 +71,28 @@ func (c *EmployeeController) Update() gin.HandlerFunc {
 		err = ctx.ShouldBindJSON(&req)
 
 		if err != nil {
-			status, msg := customerrors.ErrorHandleResponse(err)
-			res := web.NewResponse(status, nil, msg)
-			ctx.JSON(status, res)
-			return
+			ctx.JSON(404, gin.H{"error": err.Error()})
 		}
 
-		e, err := c.service.Update(employees.RequestPatch(req), id)
+		if req.CardNumberId == "" {
+			ctx.JSON(400, gin.H{"error": "O campo Card Number é obrigatório"})
+		}
+
+		if req.FirstName == "" {
+			ctx.JSON(400, gin.H{"error": "O campo First Name é obrigatório"})
+		}
+
+		if req.LastName == "" {
+			ctx.JSON(400, gin.H{"error": "O campo Last Name é obrigatório"})
+		}
+
+		e, err := c.service.Update(employees.RequestPatch(req), int(id))
 
 		if err != nil {
-			status, msg := customerrors.ErrorHandleResponse(err)
-			res := web.NewResponse(status, nil, msg)
-			ctx.JSON(status, res)
+			ctx.JSON(404, gin.H{"error": err.Error()})
 			return
 		}
-		ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, e, ""))
+		ctx.JSON(200, e)
 
 	}
 }
@@ -107,25 +100,22 @@ func (c *EmployeeController) Update() gin.HandlerFunc {
 func (c *EmployeeController) Create() gin.HandlerFunc {
 
 	return func(ctx *gin.Context) {
-		var req requestEmployee
-		err := ctx.ShouldBindJSON(&req)
-		if err != nil {
-			status, msg := customerrors.ErrorHandleResponse(err)
-			res := web.NewResponse(status, nil, msg)
-			ctx.JSON(status, res)
+		var req request
+		if err := ctx.ShouldBindJSON(&req); err != nil {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
 			return
 		}
 
 		e, err := c.service.Create(req.CardNumberId, req.FirstName, req.LastName, req.WareHouseId)
 
 		if err != nil {
-			status, msg := customerrors.ErrorHandleResponse(err)
-			res := web.NewResponse(status, nil, msg)
-			ctx.JSON(status, res)
+			ctx.JSON(422, gin.H{"error": err.Error()})
 			return
 		}
 
-		ctx.JSON(http.StatusCreated, web.NewResponse(http.StatusCreated, e, ""))
+		ctx.JSON(201, e)
 	}
 
 }
@@ -135,21 +125,17 @@ func (c *EmployeeController) Delete() gin.HandlerFunc {
 		id, err := strconv.Atoi(ctx.Param("id"))
 
 		if err != nil {
-			status, msg := customerrors.ErrorHandleResponse(err)
-			res := web.NewResponse(status, nil, msg)
-			ctx.JSON(status, res)
+			ctx.JSON(404, gin.H{"error": "ID não encontrado"})
 			return
 		}
 
-		err = c.service.Delete(id)
+		err = c.service.Delete(int(id))
 		if err != nil {
-			status, msg := customerrors.ErrorHandleResponse(err)
-			res := web.NewResponse(status, nil, msg)
-			ctx.JSON(status, res)
+			ctx.JSON(404, gin.H{"error": err.Error()})
 			return
 		}
 
-		ctx.JSON(http.StatusNoContent, web.NewResponse(http.StatusNoContent, nil, ""))
+		ctx.JSON(204, id)
 
 	}
 }

@@ -10,7 +10,6 @@ import (
 func main() {
 
 	r := gin.Default()
-
 	r.Use(cors.Default())
 	routes.InstanceEmployee(r)
 	routes.InstanceSeller(r)
@@ -21,5 +20,7 @@ func main() {
 	routes.InstancePurchaseOrders(r)
 	routes.InstanceLocality(r)
 	routes.InstanceReportSellers(r)
+	r := gin.Default()
+
 	r.Run()
 }
