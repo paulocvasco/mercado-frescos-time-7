@@ -9,7 +9,7 @@ import (
 )
 
 type Service interface {
-	Insert(product models.Product) (models.Product, error)
+	Insert(newProduct []byte) (models.Product, error)
 	GetAll() ([]models.Product, error)
 	GetById(id int) (models.Product, error)
 	Update(id int, product []byte) (models.Product, error)
@@ -26,12 +26,27 @@ func NewService(r Repository) Service {
 	}
 }
 
-func (s *service) Insert(product models.Product) (models.Product, error) {
+func (s *service) Insert(newProduct []byte) (models.Product, error) {
 	id, err := s.repository.LastId()
 	if err != nil {
 		return models.Product{}, errors.New("erro interno tente mais tarde")
 	}
+	
+	product := models.Product{}
 	product.Id = id
+
+	productJSON, err := json.Marshal(product)
+	if err != nil {
+		return models.Product{}, errors.New("erro interno tente mais tarde")
+	}
+
+	productJSON, err = jsonpatch.MergePatch(productJSON, newProduct)
+	if err != nil {
+		return models.Product{}, errors.New("erro interno tente mais tarde")
+	}
+
+	json.Unmarshal(productJSON, &product)
+
 	p, err := s.repository.Insert(product)
 	if err != nil {
 		return models.Product{}, errors.New("erro interno tente mais tarde")

@@ -81,20 +81,14 @@ func (ph *ProductHandler) SaveProducts() gin.HandlerFunc {
 				return
 			}
 		}
-		p := products.Product{
-			Product_code:                     newProduct.Product_code,
-			Description:                      newProduct.Description,
-			Width:                            newProduct.Width,
-			Height:                           newProduct.Height,
-			Length:                           newProduct.Length,
-			Net_weight:                       newProduct.Net_weight,
-			Expiration_rate:                  newProduct.Expiration_rate,
-			Recommended_freezing_temperature: newProduct.Recommended_freezing_temperature,
-			Freezing_rate:                    newProduct.Freezing_rate,
-			Product_type_id:                  newProduct.Product_type_id,
-			Seller_id:                        newProduct.Seller_id,
+		pJSON, err := json.Marshal(newProduct)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "erro interno, tente mais tarde",
+			})
+			return
 		}
-		p, err = ph.service.Insert(p)
+		p, err := ph.service.Insert(pJSON)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"message": "erro interno, tente mais tarde",
