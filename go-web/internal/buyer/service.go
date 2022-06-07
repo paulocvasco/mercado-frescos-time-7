@@ -12,7 +12,7 @@ type Service interface {
 	GetAll() []model.Buyer
 	GetId(id int) (model.Buyer, error)
 	Creat(id, card_number_id int, first_name, last_name string) (model.Buyer, error)
-	Update(id int, body RequestPost) (model.Buyer, error)
+	Update(id int, body RequestPatch) (model.Buyer, error)
 	Delete(id int) error
 }
 
@@ -54,7 +54,7 @@ func (s *service) Creat(id, card_number_id int, first_name, last_name string) (m
 	return response, nil
 }
 
-func (s *service) Update(id int, body RequestPost) (model.Buyer, error) {
+func (s *service) Update(id int, body RequestPatch) (model.Buyer, error) {
 	getById, err := s.repository.GetId(id)
 
 	if err != nil {

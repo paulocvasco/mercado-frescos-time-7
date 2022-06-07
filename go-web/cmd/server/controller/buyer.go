@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"fmt"
 	"mercado-frescos-time-7/go-web/internal/buyer"
+	"mercado-frescos-time-7/go-web/internal/models"
 	"net/http"
 	"strconv"
 
@@ -54,7 +54,7 @@ func (b *BuyerController) BuyerGetId() gin.HandlerFunc {
 
 func (b *BuyerController) BuyerCreat() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		var input request
+		var input models.Buyer
 		if err := context.ShouldBindJSON(&input); err != nil {
 			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 			return
@@ -76,15 +76,15 @@ func (b *BuyerController) BuyerUpdate() gin.HandlerFunc {
 		intId, err := strconv.Atoi(id)
 
 		if err != nil {
-			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
+			context.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 			return
 		}
-		var newInput RequestPost
+		var newInput RequestPatch
 		if err := context.ShouldBindJSON(&newInput); err != nil {
 			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 		}
 
-		buyer, err := b.service.Update(intId, buyer.RequestPost(newInput))
+		buyer, err := b.service.Update(intId, buyer.RequestPatch(newInput))
 
 		if err != nil {
 			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -109,27 +109,12 @@ func (b *BuyerController) BuyerDelete() gin.HandlerFunc {
 			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
-		context.JSON(http.StatusOK, gin.H{
-			"message": fmt.Sprintf(" %d deleted with success.", intId),
-		})
+		context.JSON(http.StatusOK, gin.H{})
 	}
 }
 
-type request struct {
-	ID           int    `json:"id" binding:"required"`
-	CardNumberID int    `json:"card_number_id" binding:"required"`
-	FirstName    string `json:"first_name" binding:"required"`
-	LastName     string `json:"last_name" binding:"required"`
-}
-type RequestPost struct {
+type RequestPatch struct {
 	CardNumberID *int   `json:"card_number_id,omitempty" `
 	FirstName    string `json:"first_name,omitempty"`
 	LastName     string `json:"last_name,omitempty"`
 }
-
-//rotas
-// GET /api/v1/buyers
-// GET /api/v1/buyers/:id
-// POST /api/v1/buyers
-// PATCH /api/v1/buyers/:id
-// DELETE /api/v1/buyers/:id

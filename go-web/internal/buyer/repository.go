@@ -5,18 +5,11 @@ import (
 	model "mercado-frescos-time-7/go-web/internal/models"
 )
 
-type RequestPost struct {
+type RequestPatch struct {
 	CardNumberID *int   `json:"card_number_id,omitempty" `
 	FirstName    string `json:"first_name,omitempty"`
 	LastName     string `json:"last_name,omitempty"`
 }
-type Request struct {
-	ID           int    `json:"id" binding:"required"`
-	CardNumberID int    `json:"card_number_id" binding:"required"`
-	FirstName    string `json:"first_name" binding:"required"`
-	LastName     string `json:"last_name" binding:"required"`
-}
-
 type Repository interface {
 	GetAll() []model.Buyer
 	GetId(id int) (model.Buyer, error)
@@ -39,17 +32,13 @@ func (r *repository) GetAll() []model.Buyer {
 
 func (r *repository) GetId(id int) (model.Buyer, error) {
 	var getById model.Buyer
-	get := false
 	for i := range db {
 		if db[i].ID == id {
 			getById = db[i]
-			get = true
+			return getById, nil
 		}
 	}
-	if !get {
-		return getById, fmt.Errorf("product %d não encontrado", id)
-	}
-	return getById, nil
+	return getById, fmt.Errorf("product %d não encontrado", id)
 }
 
 func (r *repository) Creat(id, card_number_id int, first_name, last_name string) (model.Buyer, error) {
@@ -60,20 +49,15 @@ func (r *repository) Creat(id, card_number_id int, first_name, last_name string)
 
 func (r *repository) Update(id int, body model.Buyer) (model.Buyer, error) {
 	var returnDB model.Buyer
-	update := false
 
 	for i := range db {
 		if db[i].ID == id {
 			db[i] = model.Buyer(body)
 			returnDB = model.Buyer(body)
-			update = true
+			return returnDB, nil
 		}
 	}
-
-	if !update {
-		return returnDB, fmt.Errorf("product %d não encontrado", id)
-	}
-	return returnDB, nil
+	return returnDB, fmt.Errorf("product %d não encontrado", id)
 }
 
 func (r *repository) Delete(id int) error {
