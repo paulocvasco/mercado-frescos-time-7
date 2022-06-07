@@ -63,11 +63,11 @@ func (r *repository) Delete(id int) error {
 }
 
 func (r *repository) LastId() (int, error) {
-	ts := models.Products
-	maxId := ts[0].Id
-	for i := 1; i <= len(ts)-1; i++ {
-		if ts[i].Id > maxId {
-			maxId = ts[i].Id
+	pp := models.Products
+	maxId := pp[0].Id
+	for i := 1; i <= len(pp)-1; i++ {
+		if pp[i].Id > maxId {
+			maxId = pp[i].Id
 		}
 	}
 	return maxId + 1, nil
