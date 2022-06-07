@@ -16,7 +16,7 @@ type request struct {
 	CardNumberId string `json:"card_number_id" binding:"required"`
 	FirstName    string `json:"first_name" binding:"required"`
 	LastName     string `json:"last_name" binding:"required"`
-	WareHouseId  int    `json:"warehouse_id binding:"required"`
+	WareHouseId  int    `json:"warehouse_id" binding:"required"`
 }
 
 type RequestPatch struct {
@@ -72,18 +72,6 @@ func (c *EmployeeController) Update() gin.HandlerFunc {
 
 		if err != nil {
 			ctx.JSON(404, gin.H{"error": err.Error()})
-		}
-
-		if req.CardNumberId == "" {
-			ctx.JSON(400, gin.H{"error": "O campo Card Number é obrigatório"})
-		}
-
-		if req.FirstName == "" {
-			ctx.JSON(400, gin.H{"error": "O campo First Name é obrigatório"})
-		}
-
-		if req.LastName == "" {
-			ctx.JSON(400, gin.H{"error": "O campo Last Name é obrigatório"})
 		}
 
 		e, err := c.service.Update(employees.RequestPatch(req), int(id))

@@ -2,7 +2,7 @@ package buyer
 
 import (
 	"fmt"
-	"log"
+
 	model "mercado-frescos-time-7/go-web/internal/models"
 )
 
