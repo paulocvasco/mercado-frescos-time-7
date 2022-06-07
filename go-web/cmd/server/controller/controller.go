@@ -58,14 +58,14 @@ func (controller *controller) Store(ctx *gin.Context) {
 	}
 
 	section := models.Section{
-		Section_number:      newSection.Section_number,
-		Current_temperature: newSection.Current_temperature,
-		Minimum_temperature: newSection.Minimum_temperature,
-		Current_capacity:    newSection.Current_capacity,
-		Minimum_capacity:    newSection.Minimum_capacity,
-		Maximum_capacity:    newSection.Maximum_capacity,
-		Warehouse_id:        newSection.Warehouse_id,
-		Product_type_id:     newSection.Product_type_id,
+		SectionNumber:      newSection.SectionNumber,
+		CurrentTemperature: newSection.CurrentTemperature,
+		MinimumTemperature: newSection.MinimumTemperature,
+		CurrentCapacity:    newSection.CurrentCapacity,
+		MinimumCapacity:    newSection.MinimumCapacity,
+		MaximumCapacity:    newSection.MaximumCapacity,
+		WarehouseId:        newSection.WarehouseId,
+		ProductTypeId:      newSection.ProductTypeId,
 	}
 
 	err = controller.service.Store(section)
@@ -112,23 +112,23 @@ func (controller *controller) Delete(ctx *gin.Context) {
 }
 
 type storeSection struct {
-	Section_number      int `json:"section_number" binding:"required"`
-	Current_temperature int `json:"current_temperature" binding:"required"`
-	Minimum_temperature int `json:"minimum_temperature" binding:"required"`
-	Current_capacity    int `json:"current_capacity" binding:"required"`
-	Minimum_capacity    int `json:"minimum_capacity" binding:"required"`
-	Maximum_capacity    int `json:"Maximum_capacity" binding:"required"`
-	Warehouse_id        int `json:"warehouse_id" binding:"required"`
-	Product_type_id     int `json:"product_type_id" binding:"required"`
+	SectionNumber      int `json:"section_number" binding:"required"`
+	CurrentTemperature int `json:"current_temperature" binding:"required"`
+	MinimumTemperature int `json:"minimum_temperature" binding:"required"`
+	CurrentCapacity    int `json:"current_capacity" binding:"required"`
+	MinimumCapacity    int `json:"minimum_capacity" binding:"required"`
+	MaximumCapacity    int `json:"MaximumCapacity" binding:"required"`
+	WarehouseId        int `json:"warehouse_id" binding:"required"`
+	ProductTypeId      int `json:"product_type_id" binding:"required"`
 }
 
 type updateSection struct {
-	Section_number      int `json:"section_number,omitempty"`
-	Current_temperature int `json:"current_temperature,omitempty"`
-	Minimum_temperature int `json:"minimum_temperature,omitempty"`
-	Current_capacity    int `json:"current_capacity,omitempty"`
-	Minimum_capacity    int `json:"minimum_capacity,omitempty"`
-	Maximum_capacity    int `json:"Maximum_capacity,omitempty"`
-	Warehouse_id        int `json:"warehouse_id,omitempty"`
-	Product_type_id     int `json:"product_type_id,omitempty"`
+	SectionNumber      int `json:"section_number,omitempty"`
+	CurrentTemperature int `json:"current_temperature,omitempty"`
+	MinimumTemperature int `json:"minimum_temperature,omitempty"`
+	CurrentCapacity    int `json:"current_capacity,omitempty"`
+	MinimumCapacity    int `json:"minimum_capacity,omitempty"`
+	MaximumCapacity    int `json:"MaximumCapacity,omitempty"`
+	WarehouseId        int `json:"warehouse_id,omitempty"`
+	ProductTypeId      int `json:"product_type_id,omitempty"`
 }

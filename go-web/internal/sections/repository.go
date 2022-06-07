@@ -69,14 +69,14 @@ func (s *Sections) Update(id int, newSection Section) error {
 		return fmt.Errorf("empty section")
 	}
 
-	st.Current_temperature = newSection.Current_temperature
-	st.Minimum_temperature = newSection.Minimum_temperature
-	st.Section_number = newSection.Section_number
-	st.Current_capacity = newSection.Current_capacity
-	st.Minimum_capacity = newSection.Minimum_capacity
-	st.Maximum_capacity = newSection.Maximum_capacity
-	st.Warehouse_id = newSection.Warehouse_id
-	st.Product_type_id = newSection.Product_type_id
+	st.CurrentTemperature = newSection.CurrentTemperature
+	st.MinimumTemperature = newSection.MinimumTemperature
+	st.SectionNumber = newSection.SectionNumber
+	st.CurrentCapacity = newSection.CurrentCapacity
+	st.MinimumCapacity = newSection.MinimumCapacity
+	st.MaximumCapacity = newSection.MaximumCapacity
+	st.WarehouseId = newSection.WarehouseId
+	st.ProductTypeId = newSection.ProductTypeId
 
 	s.Section[id] = models.Section(st)
 

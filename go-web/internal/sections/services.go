@@ -47,22 +47,22 @@ func (s *service) GetById(id string) (*Section, error) {
 
 func (s *service) Store(section models.Section) error {
 
-	if section.Section_number < 0 {
+	if section.SectionNumber < 0 {
 		return customerrors.ErrorSectionNumber
 	}
-	if section.Current_capacity < 0 {
+	if section.CurrentCapacity < 0 {
 		return customerrors.ErrorCurrentCapacity
 	}
-	if section.Minimum_capacity < 0 {
+	if section.MinimumCapacity < 0 {
 		return customerrors.ErrorMinimumCapacity
 	}
-	if section.Maximum_capacity < 0 {
+	if section.MaximumCapacity < 0 {
 		return customerrors.ErrorMaximumCapacity
 	}
-	if section.Warehouse_id < 0 {
+	if section.WarehouseId < 0 {
 		return customerrors.ErrorWarehouseID
 	}
-	if section.Product_type_id < 0 {
+	if section.ProductTypeId < 0 {
 		return customerrors.ErrorProductTypeID
 	}
 
@@ -85,22 +85,22 @@ func (s *service) Update(id string, data []byte) error {
 		return err
 	}
 
-	if newSection.Section_number < 0 {
+	if newSection.SectionNumber < 0 {
 		return customerrors.ErrorSectionNumber
 	}
-	if newSection.Current_capacity < 0 {
+	if newSection.CurrentCapacity < 0 {
 		return customerrors.ErrorCurrentCapacity
 	}
-	if newSection.Minimum_capacity < 0 {
+	if newSection.MinimumCapacity < 0 {
 		return customerrors.ErrorMinimumCapacity
 	}
-	if newSection.Maximum_capacity < 0 {
+	if newSection.MaximumCapacity < 0 {
 		return customerrors.ErrorMaximumCapacity
 	}
-	if newSection.Warehouse_id < 0 {
+	if newSection.WarehouseId < 0 {
 		return customerrors.ErrorWarehouseID
 	}
-	if newSection.Product_type_id < 0 {
+	if newSection.ProductTypeId < 0 {
 		return customerrors.ErrorProductTypeID
 	}
 
