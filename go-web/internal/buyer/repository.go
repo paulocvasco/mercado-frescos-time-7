@@ -2,8 +2,7 @@ package buyer
 
 import (
 	"fmt"
-	"log"
-	b "mercado-frescos-time-7/go-web/internal/models"
+	model "mercado-frescos-time-7/go-web/internal/models"
 )
 
 type RequestPost struct {
@@ -19,14 +18,14 @@ type Request struct {
 }
 
 type Repository interface {
-	GetAll() ([]b.Buyer, error)
-	GetId(id int) (b.Buyer, error)
-	Creat(id, card_number_id int, first_name, last_name string) (b.Buyer, error)
-	Update(id int, body b.Buyer) (b.Buyer, error)
+	GetAll() ([]model.Buyer, error)
+	GetId(id int) (model.Buyer, error)
+	Creat(id, card_number_id int, first_name, last_name string) (model.Buyer, error)
+	Update(id int, body model.Buyer) (model.Buyer, error)
 	Delete(id int) error
 }
 
-var db []b.Buyer = []b.Buyer{}
+var db []model.Buyer = []model.Buyer{}
 
 type repository struct{}
 
@@ -34,12 +33,12 @@ func NewRepository() Repository {
 	return &repository{}
 }
 
-func (r *repository) GetAll() ([]b.Buyer, error) {
+func (r *repository) GetAll() ([]model.Buyer, error) {
 	return db, nil
 }
 
-func (r *repository) GetId(id int) (b.Buyer, error) {
-	var getById b.Buyer
+func (r *repository) GetId(id int) (model.Buyer, error) {
+	var getById model.Buyer
 	get := false
 	for i := range db {
 		if db[i].ID == id {
@@ -53,22 +52,20 @@ func (r *repository) GetId(id int) (b.Buyer, error) {
 	return getById, nil
 }
 
-func (r *repository) Creat(id, card_number_id int, first_name, last_name string) (b.Buyer, error) {
-	newBuyer := b.Buyer{id, card_number_id, first_name, last_name}
+func (r *repository) Creat(id, card_number_id int, first_name, last_name string) (model.Buyer, error) {
+	newBuyer := model.Buyer{ID: id, CardNumberID: card_number_id, FirstName: first_name, LastName: last_name}
 	db = append(db, newBuyer)
 	return newBuyer, nil
 }
 
-func (r *repository) Update(id int, body b.Buyer) (b.Buyer, error) {
-	var returnDB b.Buyer
+func (r *repository) Update(id int, body model.Buyer) (model.Buyer, error) {
+	var returnDB model.Buyer
 	update := false
-
-	log.Println(body)
 
 	for i := range db {
 		if db[i].ID == id {
-			db[i] = b.Buyer(body)
-			returnDB = b.Buyer(body)
+			db[i] = model.Buyer(body)
+			returnDB = model.Buyer(body)
 			update = true
 		}
 	}

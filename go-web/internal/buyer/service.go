@@ -2,16 +2,16 @@ package buyer
 
 import (
 	"encoding/json"
-	b "mercado-frescos-time-7/go-web/internal/models"
+	model "mercado-frescos-time-7/go-web/internal/models"
 
 	jsonpatch "github.com/evanphx/json-patch/v5"
 )
 
 type Service interface {
-	GetAll() ([]b.Buyer, error)
-	GetId(id int) (b.Buyer, error)
-	Creat(id, card_number_id int, first_name, last_name string) (b.Buyer, error)
-	Update(id int, body RequestPost) (b.Buyer, error)
+	GetAll() ([]model.Buyer, error)
+	GetId(id int) (model.Buyer, error)
+	Creat(id, card_number_id int, first_name, last_name string) (model.Buyer, error)
+	Update(id int, body RequestPost) (model.Buyer, error)
 	Delete(id int) error
 }
 
@@ -25,37 +25,43 @@ func NewService(r Repository) Service {
 	}
 }
 
-func (s *service) GetAll() ([]b.Buyer, error) {
+func (s *service) GetAll() ([]model.Buyer, error) {
 	response, err := s.repository.GetAll()
 	if err != nil {
 		return nil, err
 	}
 	return response, nil
 }
-func (s *service) GetId(id int) (b.Buyer, error) {
+func (s *service) GetId(id int) (model.Buyer, error) {
 	response, err := s.repository.GetId(id)
 	if err != nil {
-		return b.Buyer{}, err
+		return model.Buyer{}, err
 	}
 	return response, nil
 }
 
-func (s *service) Creat(id, card_number_id int, first_name, last_name string) (b.Buyer, error) {
+func (s *service) Creat(id, card_number_id int, first_name, last_name string) (model.Buyer, error) {
 	response, err := s.repository.Creat(id, card_number_id, first_name, last_name)
 	if err != nil {
-		return b.Buyer{}, err
+		return model.Buyer{}, err
 	}
 	return response, nil
 }
 
-func (s *service) Update(id int, body RequestPost) (b.Buyer, error) {
+func (s *service) Update(id int, body RequestPost) (model.Buyer, error) {
 	getById, err := s.repository.GetId(id)
 
 	if err != nil {
 		return getById, err
 	}
 	buyerMarch, err := json.Marshal(getById)
-	bodyMarch, err := json.Marshal(body)
+	if err != nil {
+		return getById, err
+	}
+	bodyMarch, _ := json.Marshal(body)
+	if err != nil {
+		return getById, err
+	}
 
 	buyerPatch, err := jsonpatch.MergeMergePatches(buyerMarch, bodyMarch)
 
