@@ -14,12 +14,12 @@ type Sellers struct {
 
 type request struct {
 	Cid  string  `json:"cid" binding:"required"`
-	Company_name string  `json:"company_name" binding:"required"`
+	CompanyName string  `json:"company_name" binding:"required"`
 	Address string  `json:"address" binding:"required"`
 	Telephone  string `json:"telephone" binding:"required"`
 }
 
-func (c *Sellers) SeellersStore() gin.HandlerFunc  {
+func (c *Sellers) SellersStore() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 		var req request
 		if err := ctx.Bind(&req); err != nil {
@@ -28,7 +28,7 @@ func (c *Sellers) SeellersStore() gin.HandlerFunc  {
 			})
 			return
 		}
-		p, err := c.service.Store(req.Cid, req.Company_name, req.Address, req.Telephone)
+		p, err := c.service.Store(req.Cid, req.CompanyName, req.Address, req.Telephone)
 		if err != nil {
 			ctx.JSON(409, gin.H{"error": err.Error(),})
 			return
@@ -38,7 +38,7 @@ func (c *Sellers) SeellersStore() gin.HandlerFunc  {
 }
 
 
-func (c *Sellers) SeellersGetAll() gin.HandlerFunc  {
+func (c *Sellers) SellersGetAll() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 	p, err := c.service.GetAll()
 	if err != nil {
@@ -49,11 +49,11 @@ func (c *Sellers) SeellersGetAll() gin.HandlerFunc  {
 	}
 }
 
-func (c *Sellers) SeellersGetId() gin.HandlerFunc  {
+func (c *Sellers) SellersGetId() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		ctx.JSON(401, gin.H{
+		ctx.JSON(404, gin.H{
 			"error": "Parametro de busca invalido"})
 		return	
 	}
@@ -67,7 +67,7 @@ func (c *Sellers) SeellersGetId() gin.HandlerFunc  {
 	}
 }
 
-func (c *Sellers) SeellersUpdate() gin.HandlerFunc  {
+func (c *Sellers) SellersUpdate() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
@@ -93,7 +93,7 @@ func (c *Sellers) SeellersUpdate() gin.HandlerFunc  {
 	}
 }
 
-func (c *Sellers) SeellersDelete() gin.HandlerFunc  {
+func (c *Sellers) SellersDelete() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
