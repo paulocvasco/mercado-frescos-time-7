@@ -1,7 +1,6 @@
 package sections
 
 import (
-	"fmt"
 	customErrors "mercado-frescos-time-7/go-web/internal/custom_errors"
 	"mercado-frescos-time-7/go-web/internal/models"
 )
@@ -69,7 +68,7 @@ func (s *Sections) Update(id int, newSection Section) error {
 	}
 
 	if (st == Section{}) {
-		return fmt.Errorf("empty section")
+		return customErrors.ErrorEmptySection
 	}
 
 	st.CurrentTemperature = newSection.CurrentTemperature

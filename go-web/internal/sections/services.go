@@ -2,7 +2,6 @@ package sections
 
 import (
 	"encoding/json"
-	"fmt"
 	customErrors "mercado-frescos-time-7/go-web/internal/custom_errors"
 	"mercado-frescos-time-7/go-web/internal/models"
 	"strconv"
@@ -69,7 +68,7 @@ func (s *service) Store(section models.Section) (models.Section, error) {
 
 	newSection, err := s.repository.Store(section)
 	if err != nil {
-		return models.Section{}, fmt.Errorf("erro ao salvar")
+		return models.Section{}, customErrors.ErrorStoreFailed
 	}
 	return newSection, nil
 }
@@ -83,7 +82,7 @@ func (s *service) Update(id string, data []byte) error {
 	_, err = repository.GetById(index)
 
 	if err != nil {
-		return fmt.Errorf("section not found")
+		return customErrors.ErrorInvalidID
 	}
 
 	var newSection Section
@@ -128,7 +127,7 @@ func (s *service) Delete(id string) error {
 	_, err = repository.GetById(index)
 
 	if err != nil {
-		return fmt.Errorf("section not found")
+		return customErrors.ErrorInvalidID
 	}
 
 	err = s.repository.Delete(index)
