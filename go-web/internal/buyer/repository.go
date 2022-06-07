@@ -2,6 +2,7 @@ package buyer
 
 import (
 	"fmt"
+	"log"
 	model "mercado-frescos-time-7/go-web/internal/models"
 )
 
@@ -13,9 +14,10 @@ type RequestPatch struct {
 type Repository interface {
 	GetAll() []model.Buyer
 	GetId(id int) (model.Buyer, error)
-	Creat(id, card_number_id int, first_name, last_name string) (model.Buyer, error)
+	Create(CardNumberID int, FirstName, LastName string) (model.Buyer, error)
 	Update(id int, body model.Buyer) (model.Buyer, error)
 	Delete(id int) error
+	GenerateID() int
 }
 
 var db []model.Buyer = []model.Buyer{}
@@ -32,45 +34,58 @@ func (r *repository) GetAll() []model.Buyer {
 
 func (r *repository) GetId(id int) (model.Buyer, error) {
 	var getById model.Buyer
-	for i := range db {
-		if db[i].ID == id {
-			getById = db[i]
+	for _, value := range db {
+		if value.ID == id {
+			getById = value
 			return getById, nil
 		}
 	}
-	return getById, fmt.Errorf("product %d não encontrado", id)
+	return getById, fmt.Errorf("Error")
 }
 
-func (r *repository) Creat(id, card_number_id int, first_name, last_name string) (model.Buyer, error) {
-	newBuyer := model.Buyer{ID: id, CardNumberID: card_number_id, FirstName: first_name, LastName: last_name}
+func (r *repository) Create(cardNumberID int, firstName, lastName string) (model.Buyer, error) {
+	newId := r.GenerateID()
+	newBuyer := model.Buyer{ID: newId, CardNumberID: cardNumberID, FirstName: firstName, LastName: lastName}
 	db = append(db, newBuyer)
 	return newBuyer, nil
 }
 
-func (r *repository) Update(id int, body model.Buyer) (model.Buyer, error) {
+func (r *repository) Update(id int, newData model.Buyer) (model.Buyer, error) {
 	var returnDB model.Buyer
 
-	for i := range db {
-		if db[i].ID == id {
-			db[i] = model.Buyer(body)
-			returnDB = model.Buyer(body)
+	for i, value := range db {
+		if value.ID == id {
+			db[i] = model.Buyer(newData)
+			log.Println(value)
+			returnDB = model.Buyer(newData)
 			return returnDB, nil
 		}
 	}
-	return returnDB, fmt.Errorf("product %d não encontrado", id)
+	return returnDB, fmt.Errorf("Error")
 }
 
 func (r *repository) Delete(id int) error {
-	deleted := false
-	for i := range db {
-		if db[i].ID == id {
+	for i, value := range db {
+		if value.ID == id {
 			db = append(db[:i], db[i+1:]...)
-			deleted = true
+			return nil
 		}
 	}
-	if !deleted {
-		return fmt.Errorf("product %d não encontrado", id)
-	}
-	return nil
+	return fmt.Errorf("Error")
 
+}
+
+var lastId []int
+
+func (r *repository) GenerateID() int {
+
+	if len(db) == 0 {
+		lastId = append(lastId, 1)
+		return 1
+	}
+
+	result := lastId[len(lastId)-1] + 1
+	lastId = append(lastId, result)
+
+	return result
 }

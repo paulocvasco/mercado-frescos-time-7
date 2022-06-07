@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InstanceBayer(r *gin.Engine) {
+func InstanceBuyer(r *gin.Engine) {
 	repo := buyer.NewRepository()
 	service := buyer.NewService(repo)
 	c := controller.BuyerNewController(service)
@@ -16,7 +16,7 @@ func InstanceBayer(r *gin.Engine) {
 
 	routes.GET("/", c.BuyerGetAll())
 	routes.GET("/:id", c.BuyerGetId())
-	routes.POST("/", c.BuyerCreat())
+	routes.POST("/", c.BuyerCreate())
 	routes.PATCH("/:id", c.BuyerUpdate())
 	routes.DELETE("/:id", c.BuyerDelete())
 }

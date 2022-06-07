@@ -9,13 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Buyer struct {
-	ID             int
-	Card_number_id int
-	First_name     string
-	Last_name      string
-}
-
 type BuyerController struct {
 	service buyer.Service
 }
@@ -40,7 +33,7 @@ func (b *BuyerController) BuyerGetId() gin.HandlerFunc {
 		intId, err := strconv.Atoi(id)
 
 		if err != nil {
-			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
+			context.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 			return
 		}
 		buyerId, err := b.service.GetId(intId)
@@ -52,7 +45,7 @@ func (b *BuyerController) BuyerGetId() gin.HandlerFunc {
 	}
 }
 
-func (b *BuyerController) BuyerCreat() gin.HandlerFunc {
+func (b *BuyerController) BuyerCreate() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		var input models.Buyer
 		if err := context.ShouldBindJSON(&input); err != nil {
@@ -60,7 +53,7 @@ func (b *BuyerController) BuyerCreat() gin.HandlerFunc {
 			return
 		}
 
-		buyer, err := b.service.Creat(int(input.ID), int(input.CardNumberID), input.FirstName, input.LastName)
+		buyer, err := b.service.Create(input.CardNumberID, input.FirstName, input.LastName)
 
 		if err != nil {
 			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
@@ -79,12 +72,12 @@ func (b *BuyerController) BuyerUpdate() gin.HandlerFunc {
 			context.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 			return
 		}
-		var newInput RequestPatch
+		var newInput buyer.RequestPatch
 		if err := context.ShouldBindJSON(&newInput); err != nil {
 			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 		}
 
-		buyer, err := b.service.Update(intId, buyer.RequestPatch(newInput))
+		buyer, err := b.service.Update(intId, newInput)
 
 		if err != nil {
 			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -111,10 +104,4 @@ func (b *BuyerController) BuyerDelete() gin.HandlerFunc {
 		}
 		context.JSON(http.StatusOK, gin.H{})
 	}
-}
-
-type RequestPatch struct {
-	CardNumberID *int   `json:"card_number_id,omitempty" `
-	FirstName    string `json:"first_name,omitempty"`
-	LastName     string `json:"last_name,omitempty"`
 }
