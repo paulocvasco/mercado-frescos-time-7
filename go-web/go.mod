@@ -3,8 +3,10 @@ module mercado-frescos-time-7/go-web
 go 1.18
 
 require (
+	github.com/evanphx/json-patch v0.5.2
 	github.com/evanphx/json-patch/v5 v5.6.0
-	github.com/gin-gonic/gin v1.8.0
+	github.com/gin-gonic/gin v1.8.1
+	github.com/go-playground/validator/v10 v10.11.0
 )
 
 require (

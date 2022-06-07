@@ -10,5 +10,8 @@ func main() {
 	r := gin.Default()
 
 	routes.InstanceBayer(r)
+	routes.InstanceProducts(r)
+	routes.InstanceWarehouse(r)
+
 	r.Run()
 }
