@@ -12,6 +12,7 @@ var lastID int
 type Repository interface {
 	GetAll() ([]Seller, error)
 	GetId(indice int) (Seller, error)
+	CheckCid(cid string) (Seller, error)
 	Update(s Seller, id int) (Seller, error)
 	Delete(id int) (error)
 	Store(id int, cid string, company_name string, address string, telephone string) (Seller, error)
@@ -47,6 +48,15 @@ func (r *repository) GetId(indice int) (Seller, error) {
 	return Seller{}, errors.New("id não encontrado")
 }
 
+func (r *repository) CheckCid(cid string) (Seller, error) {
+	for	_, v := range ps{
+		if v.Cid == cid {
+			return Seller{}, errors.New("cid já existente")
+		}
+	}
+	return Seller{}, nil
+}
+
 func (r *repository) Update(newValues Seller, id int) (Seller, error) {
 	for	k, v := range ps{
 		if v.ID == id {
@@ -74,6 +84,10 @@ func (r *repository) LastID() (int, error) {
 }
 
 func (r *repository) Store(id int, cid string, company_name string, address string, telephone string) (Seller, error) {
+	_, err := r.CheckCid(cid)
+	if err != nil {
+		return Seller{}, err
+	}
 	p := Seller{id, cid, company_name, address, telephone}
 	ps = append(ps, p)
 	lastID = p.ID
