@@ -10,14 +10,12 @@ func main() {
 
 	r := gin.Default()
 
-	routers.InstanceSeller(r)
+	routes.InstanceSeller(r)
 
-	r.Run()
-	r := gin.Default()
 
 	routes.InstanceBuyer(r)
 	routes.InstanceProducts(r)
 	routes.InstanceWarehouse(r)
 
-	r.Run(":7070")
+	r.Run()
 }
