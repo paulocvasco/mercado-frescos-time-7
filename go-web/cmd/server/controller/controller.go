@@ -30,10 +30,10 @@ func (c *Sellers) SeellersStore() gin.HandlerFunc  {
 		}
 		p, err := c.service.Store(req.Cid, req.Company_name, req.Address, req.Telephone)
 		if err != nil {
-			ctx.JSON(400, gin.H{"error": err.Error(),})
+			ctx.JSON(409, gin.H{"error": err.Error(),})
 			return
 		}
-		ctx.JSON(200, p)
+		ctx.JSON(201, p)
 	}
 }
 
@@ -59,7 +59,7 @@ func (c *Sellers) SeellersGetId() gin.HandlerFunc  {
 	}
 	p, err := c.service.GetId(int(id))
 	if err != nil {
-		ctx.JSON(401, gin.H{
+		ctx.JSON(404, gin.H{
 			"error": err.Error()})
 		return	
 	}
@@ -71,7 +71,7 @@ func (c *Sellers) SeellersUpdate() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
-			ctx.JSON(401, gin.H{
+			ctx.JSON(404, gin.H{
 				"error": "Parametro de busca invalido"})
 			return	
 		}
@@ -80,12 +80,12 @@ func (c *Sellers) SeellersUpdate() gin.HandlerFunc  {
 	
 		data, err := ioutil.ReadAll(body)
 		if err != nil {
-			ctx.JSON(401, err)
+			ctx.JSON(404, err)
 			return
 		}
 		p, err := c.service.Update(data, id)
 		if err != nil {
-			ctx.JSON(401, gin.H{
+			ctx.JSON(404, gin.H{
 				"error": err.Error()})
 			return	
 		}
@@ -97,18 +97,18 @@ func (c *Sellers) SeellersDelete() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
-			ctx.JSON(401, gin.H{
+			ctx.JSON(404, gin.H{
 				"error": "Parametro de busca invalido"})
 			return	
 		}
 			err = c.service.Delete(id)
 			if err != nil {
-				ctx.JSON(401, gin.H{
+				ctx.JSON(404, gin.H{
 					"error": err.Error()})
 				return	
 			}
 			ctx.JSON(204, gin.H{
-				"sucess": "Arquivo deletado"})
+				"sucess": "Vendedor deletado"})
 	}
 }
 
