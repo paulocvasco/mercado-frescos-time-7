@@ -9,8 +9,9 @@ import (
 func main() {
 	r := gin.Default()
 
+	routes.InstanceBuyer(r)
 	routes.InstanceProducts(r)
 	routes.InstanceWarehouse(r)
 
-	r.Run()
+	r.Run(":7070")
 }

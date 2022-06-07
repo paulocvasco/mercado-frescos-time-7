@@ -1,5 +1,14 @@
 package models
 
+type Buyers struct {
+	Buyer []Buyer `json:"buyers"`
+}
+type Buyer struct {
+	ID           int    `json:"id"`
+	CardNumberID int    `json:"card_number_id" binding:"required"`
+	FirstName    string `json:"first_name" binding:"required"`
+	LastName     string `json:"last_name" binding:"required"`
+}
 type Warehouses struct {
 	Warehouse []Warehouse `json:"warehouses"`
 }
