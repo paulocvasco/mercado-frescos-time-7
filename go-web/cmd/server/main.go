@@ -12,4 +12,9 @@ func main() {
 	routes.InstanceEmployee(r)
 
 	r.Run()
+	routes.InstanceBuyer(r)
+	routes.InstanceProducts(r)
+	routes.InstanceWarehouse(r)
+
+	r.Run(":7070")
 }
