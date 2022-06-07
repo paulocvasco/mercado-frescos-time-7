@@ -2,7 +2,6 @@ package buyer
 
 import (
 	"encoding/json"
-	"fmt"
 	model "mercado-frescos-time-7/go-web/internal/models"
 
 	jsonpatch "github.com/evanphx/json-patch/v5"
@@ -11,7 +10,7 @@ import (
 type Service interface {
 	GetAll() []model.Buyer
 	GetId(id int) (model.Buyer, error)
-	Creat(id, card_number_id int, first_name, last_name string) (model.Buyer, error)
+	Create(card_number_id int, first_name, last_name string) (model.Buyer, error)
 	Update(id int, body RequestPatch) (model.Buyer, error)
 	Delete(id int) error
 }
@@ -38,50 +37,44 @@ func (s *service) GetId(id int) (model.Buyer, error) {
 	return response, nil
 }
 
-func (s *service) Creat(id, card_number_id int, first_name, last_name string) (model.Buyer, error) {
+func (s *service) Create(cardNumberID int, firstName, lastName string) (model.Buyer, error) {
 
-	_, err := s.repository.GetId(id)
-
-	if err == nil {
-		return model.Buyer{}, fmt.Errorf("ID:%d já existente", id)
-
-	}
-
-	response, err := s.repository.Creat(id, card_number_id, first_name, last_name)
+	response, err := s.repository.Create(cardNumberID, firstName, lastName)
 	if err != nil {
 		return model.Buyer{}, err
 	}
 	return response, nil
 }
 
-func (s *service) Update(id int, body RequestPatch) (model.Buyer, error) {
+func (s *service) Update(id int, newData RequestPatch) (model.Buyer, error) {
 	getById, err := s.repository.GetId(id)
+	var emptyBuyer model.Buyer
 
 	if err != nil {
-		return getById, err
+		return emptyBuyer, err
 	}
-	buyerMarch, err := json.Marshal(getById)
+	buyerByte, err := json.Marshal(getById)
 	if err != nil {
-		return getById, err
+		return emptyBuyer, err
 	}
-	bodyMarch, _ := json.Marshal(body)
+	newDataByte, err := json.Marshal(newData)
 	if err != nil {
-		return getById, err
+		return emptyBuyer, err
 	}
 
-	buyerPatch, err := jsonpatch.MergeMergePatches(buyerMarch, bodyMarch)
+	buyerPatch, err := jsonpatch.MergeMergePatches(buyerByte, newDataByte)
 
 	if err != nil {
-		return getById, err
+		return emptyBuyer, err
 	}
 
 	err = json.Unmarshal(buyerPatch, &getById)
 	if err != nil {
-		return getById, err
+		return emptyBuyer, err
 	}
 	newUpdate, err := s.repository.Update(id, getById)
 	if err != nil {
-		return getById, err
+		return emptyBuyer, err
 	}
 	return newUpdate, nil
 }
@@ -91,5 +84,5 @@ func (s service) Delete(id int) error {
 	if err != nil {
 		return err
 	}
-	return err
+	return nil
 }
