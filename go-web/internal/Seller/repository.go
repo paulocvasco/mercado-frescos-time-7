@@ -1,11 +1,14 @@
 package seller
 
-import ("errors"
-"golang.org/x/exp/slices"
-"mercado-frescos-time-7/go-web/internal/Seller/models"
+import (
+	"errors"
+	"mercado-frescos-time-7/go-web/internal/Seller/models"
+
+	"golang.org/x/exp/slices"
 )
 
 type Seller models.Seller
+
 var ps []Seller
 var lastID int
 
@@ -14,12 +17,12 @@ type Repository interface {
 	GetId(indice int) (Seller, error)
 	CheckCid(cid string) (Seller, error)
 	Update(s Seller, id int) (Seller, error)
-	Delete(id int) (error)
+	Delete(id int) error
 	Store(id int, cid string, company_name string, address string, telephone string) (Seller, error)
 	LastID() (int, error)
-	}
+}
 
-type repository struct {}
+type repository struct{}
 
 func NewRepository() Repository {
 	return &repository{}
@@ -29,8 +32,8 @@ func (r *repository) GetAll() ([]Seller, error) {
 	return ps, nil
 }
 
-func (r *repository) Delete(id int) (error) {
-	for k, v := range ps{
+func (r *repository) Delete(id int) error {
+	for k, v := range ps {
 		if v.ID == id {
 			ps = slices.Delete(ps, k, k+1)
 			return nil
@@ -40,7 +43,7 @@ func (r *repository) Delete(id int) (error) {
 }
 
 func (r *repository) GetId(indice int) (Seller, error) {
-	for	_, v := range ps{
+	for _, v := range ps {
 		if v.ID == indice {
 			return v, nil
 		}
@@ -49,7 +52,7 @@ func (r *repository) GetId(indice int) (Seller, error) {
 }
 
 func (r *repository) CheckCid(cid string) (Seller, error) {
-	for	_, v := range ps{
+	for _, v := range ps {
 		if v.Cid == cid {
 			return Seller{}, errors.New("cid já existente")
 		}
@@ -58,7 +61,7 @@ func (r *repository) CheckCid(cid string) (Seller, error) {
 }
 
 func (r *repository) Update(newValues Seller, id int) (Seller, error) {
-	for	k, v := range ps{
+	for k, v := range ps {
 		if v.ID == id {
 			if newValues.Address != "" {
 				v.Address = newValues.Address
