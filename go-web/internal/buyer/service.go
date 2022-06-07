@@ -2,6 +2,7 @@ package buyer
 
 import (
 	"encoding/json"
+	"fmt"
 	model "mercado-frescos-time-7/go-web/internal/models"
 
 	jsonpatch "github.com/evanphx/json-patch/v5"
@@ -41,6 +42,14 @@ func (s *service) GetId(id int) (model.Buyer, error) {
 }
 
 func (s *service) Creat(id, card_number_id int, first_name, last_name string) (model.Buyer, error) {
+
+	_, err := s.repository.GetId(id)
+
+	if err == nil {
+		return model.Buyer{}, fmt.Errorf("ID:%d já existente", id)
+
+	}
+
 	response, err := s.repository.Creat(id, card_number_id, first_name, last_name)
 	if err != nil {
 		return model.Buyer{}, err

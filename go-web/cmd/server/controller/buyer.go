@@ -110,6 +110,7 @@ func (b *BuyerController) BuyerDelete() gin.HandlerFunc {
 			return
 		}
 		err = b.service.Delete(intId)
+
 		if err != nil {
 			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
