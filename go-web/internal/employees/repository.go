@@ -13,7 +13,7 @@ var lastID int
 type Repository interface {
 	GetAll() ([]Employee, error)
 	GetByID(id int) (Employee, error)
-	Create(id int, card_number_id int, first_name string, last_name string, warehouse_id int) (Employee, error)
+	Create(id int, card_number_id string, first_name string, last_name string, warehouse_id int) (Employee, error)
 	Update(e Employee, id int) (Employee, error)
 	Delete(id int) error
 	LastID() (int, error)
@@ -23,7 +23,7 @@ type repository struct {
 }
 
 // Create implements Repository
-func (r *repository) Create(id int, card_number_id int, first_name string, last_name string, warehouse_id int) (Employee, error) {
+func (r *repository) Create(id int, card_number_id string, first_name string, last_name string, warehouse_id int) (Employee, error) {
 	e := Employee{
 		ID:           id,
 		CardNumberId: card_number_id,
