@@ -28,13 +28,7 @@ func BuyerNewController(b buyer.Service) *BuyerController {
 
 func (b *BuyerController) BuyerGetAll() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		all, err := b.service.GetAll()
-		if err != nil {
-			context.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
+		all := b.service.GetAll()
 		context.JSON(http.StatusOK, all)
 	}
 }

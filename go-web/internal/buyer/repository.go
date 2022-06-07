@@ -18,7 +18,7 @@ type Request struct {
 }
 
 type Repository interface {
-	GetAll() ([]model.Buyer, error)
+	GetAll() []model.Buyer
 	GetId(id int) (model.Buyer, error)
 	Creat(id, card_number_id int, first_name, last_name string) (model.Buyer, error)
 	Update(id int, body model.Buyer) (model.Buyer, error)
@@ -33,8 +33,8 @@ func NewRepository() Repository {
 	return &repository{}
 }
 
-func (r *repository) GetAll() ([]model.Buyer, error) {
-	return db, nil
+func (r *repository) GetAll() []model.Buyer {
+	return db
 }
 
 func (r *repository) GetId(id int) (model.Buyer, error) {
