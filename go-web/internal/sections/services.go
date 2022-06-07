@@ -3,15 +3,15 @@ package sections
 import (
 	"encoding/json"
 	"fmt"
-	customerrors "mercado-frescos-time-7/go-web/internal/custom_errors"
+	customErrors "mercado-frescos-time-7/go-web/internal/custom_errors"
 	"mercado-frescos-time-7/go-web/internal/models"
 	"strconv"
 )
 
 type Service interface {
 	GetAll() (Sections, error)
-	GetById(string) (*Section, error)
-	Store(models.Section) error
+	GetById(string) (Section, error)
+	Store(models.Section) (models.Section, error)
 	Update(string, []byte) error
 	Delete(string) error
 }
@@ -32,51 +32,58 @@ func (s *service) GetAll() (Sections, error) {
 	return data, nil
 }
 
-func (s *service) GetById(id string) (*Section, error) {
+func (s *service) GetById(id string) (Section, error) {
 	index, err := strconv.Atoi(id)
 	if err != nil {
-		return nil, fmt.Errorf("invalid id")
+		return Section{}, customErrors.ErrorInvalidID
 	}
 	data, err := s.repository.GetById(index)
-	if err != nil {
-		return nil, err
+
+	if err != nil || (data == Section{}) {
+		return Section{}, customErrors.ErrorInvalidID
 	}
 
-	return &data, nil
+	return data, nil
 }
 
-func (s *service) Store(section models.Section) error {
+func (s *service) Store(section models.Section) (models.Section, error) {
 
 	if section.SectionNumber < 0 {
-		return customerrors.ErrorSectionNumber
+		return models.Section{}, customErrors.ErrorSectionNumber
 	}
 	if section.CurrentCapacity < 0 {
-		return customerrors.ErrorCurrentCapacity
+		return models.Section{}, customErrors.ErrorCurrentCapacity
 	}
 	if section.MinimumCapacity < 0 {
-		return customerrors.ErrorMinimumCapacity
+		return models.Section{}, customErrors.ErrorMinimumCapacity
 	}
 	if section.MaximumCapacity < 0 {
-		return customerrors.ErrorMaximumCapacity
+		return models.Section{}, customErrors.ErrorMaximumCapacity
 	}
 	if section.WarehouseId < 0 {
-		return customerrors.ErrorWarehouseID
+		return models.Section{}, customErrors.ErrorWarehouseID
 	}
 	if section.ProductTypeId < 0 {
-		return customerrors.ErrorProductTypeID
+		return models.Section{}, customErrors.ErrorProductTypeID
 	}
 
-	err := s.repository.Store(section)
+	newSection, err := s.repository.Store(section)
 	if err != nil {
-		return fmt.Errorf("")
+		return models.Section{}, fmt.Errorf("erro ao salvar")
 	}
-	return nil
+	return newSection, nil
 }
 
 func (s *service) Update(id string, data []byte) error {
 	index, err := strconv.Atoi(id)
 	if err != nil {
-		return fmt.Errorf("invalid id")
+		return customErrors.ErrorInvalidID
+	}
+
+	_, err = repository.GetById(index)
+
+	if err != nil {
+		return fmt.Errorf("section not found")
 	}
 
 	var newSection Section
@@ -86,22 +93,22 @@ func (s *service) Update(id string, data []byte) error {
 	}
 
 	if newSection.SectionNumber < 0 {
-		return customerrors.ErrorSectionNumber
+		return customErrors.ErrorSectionNumber
 	}
 	if newSection.CurrentCapacity < 0 {
-		return customerrors.ErrorCurrentCapacity
+		return customErrors.ErrorCurrentCapacity
 	}
 	if newSection.MinimumCapacity < 0 {
-		return customerrors.ErrorMinimumCapacity
+		return customErrors.ErrorMinimumCapacity
 	}
 	if newSection.MaximumCapacity < 0 {
-		return customerrors.ErrorMaximumCapacity
+		return customErrors.ErrorMaximumCapacity
 	}
 	if newSection.WarehouseId < 0 {
-		return customerrors.ErrorWarehouseID
+		return customErrors.ErrorWarehouseID
 	}
 	if newSection.ProductTypeId < 0 {
-		return customerrors.ErrorProductTypeID
+		return customErrors.ErrorProductTypeID
 	}
 
 	err = s.repository.Update(index, newSection)
@@ -118,8 +125,10 @@ func (s *service) Delete(id string) error {
 	if err != nil {
 		return err
 	}
-	if !ValidateID(index) {
-		return err
+	_, err = repository.GetById(index)
+
+	if err != nil {
+		return fmt.Errorf("section not found")
 	}
 
 	err = s.repository.Delete(index)

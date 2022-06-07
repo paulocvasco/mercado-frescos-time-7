@@ -51,9 +51,8 @@ func (controller *controller) GetById(ctx *gin.Context) {
 func (controller *controller) Store(ctx *gin.Context) {
 	newSection := storeSection{}
 	err := ctx.ShouldBindJSON(&newSection)
-
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		ctx.JSON(422, web.NewResponse(422, nil, "Não contém os campos necessários"))
 		return
 	}
 
@@ -68,10 +67,10 @@ func (controller *controller) Store(ctx *gin.Context) {
 		ProductTypeId:      newSection.ProductTypeId,
 	}
 
-	err = controller.service.Store(section)
+	section, err = controller.service.Store(section)
 
 	if err != nil {
-		ctx.JSON(422, web.NewResponse(422, nil, "Não contém os campos necessários"))
+		ctx.JSON(411, web.NewResponse(411, nil, err.Error()))
 		return
 	}
 
@@ -82,7 +81,7 @@ func (controller *controller) Update(ctx *gin.Context) {
 	newSection := updateSection{}
 	err := ctx.ShouldBindJSON(&newSection)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		ctx.JSON(422, web.NewResponse(422, nil, "Não contém os campos necessários"))
 		return
 	}
 	section, err := json.Marshal(newSection)
@@ -96,7 +95,7 @@ func (controller *controller) Update(ctx *gin.Context) {
 		ctx.JSON(404, web.NewResponse(404, nil, "Section não encontrada!"))
 		return
 	}
-	ctx.JSON(200, web.NewResponse(20, section, "Section atualizada com sucesso!"))
+	ctx.JSON(200, web.NewResponse(200, section, "Section atualizada com sucesso!"))
 }
 
 func (controller *controller) Delete(ctx *gin.Context) {
@@ -117,7 +116,7 @@ type storeSection struct {
 	MinimumTemperature int `json:"minimum_temperature" binding:"required"`
 	CurrentCapacity    int `json:"current_capacity" binding:"required"`
 	MinimumCapacity    int `json:"minimum_capacity" binding:"required"`
-	MaximumCapacity    int `json:"MaximumCapacity" binding:"required"`
+	MaximumCapacity    int `json:"maximum_capacity" binding:"required"`
 	WarehouseId        int `json:"warehouse_id" binding:"required"`
 	ProductTypeId      int `json:"product_type_id" binding:"required"`
 }
@@ -128,7 +127,7 @@ type updateSection struct {
 	MinimumTemperature int `json:"minimum_temperature,omitempty"`
 	CurrentCapacity    int `json:"current_capacity,omitempty"`
 	MinimumCapacity    int `json:"minimum_capacity,omitempty"`
-	MaximumCapacity    int `json:"MaximumCapacity,omitempty"`
+	MaximumCapacity    int `json:"maximum_capacity,omitempty"`
 	WarehouseId        int `json:"warehouse_id,omitempty"`
 	ProductTypeId      int `json:"product_type_id,omitempty"`
 }

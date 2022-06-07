@@ -2,6 +2,7 @@ package sections
 
 import (
 	"fmt"
+	customErrors "mercado-frescos-time-7/go-web/internal/custom_errors"
 	"mercado-frescos-time-7/go-web/internal/models"
 )
 
@@ -26,7 +27,7 @@ func ValidateID(id int) bool {
 type Repository interface {
 	GetAll() Sections
 	GetById(int) (Section, error)
-	Store(models.Section) error
+	Store(models.Section) (models.Section, error)
 	Update(int, Section) error
 	Delete(int) error
 }
@@ -40,22 +41,24 @@ func (s *Sections) GetAll() Sections {
 }
 
 func (s *Sections) GetById(id int) (Section, error) {
-	if id < 0 || id > lastID {
-		return Section{}, fmt.Errorf("invalid id")
+	if !ValidateID(id) {
+		return Section{}, customErrors.ErrorInvalidID
 	}
-	for _, s := range repository.Section {
-		if s.ID == id {
-			return Section(s), nil
+
+	for _, sec := range s.Section {
+		if sec.ID == id {
+			return Section(sec), nil
 		}
 	}
 	return Section{}, nil
 }
 
-func (s *Sections) Store(newSection models.Section) error {
+func (s *Sections) Store(newSection models.Section) (models.Section, error) {
 	newSection.ID = lastID
 	s.Section = append(s.Section, models.Section(newSection))
 	lastID++
-	return nil
+
+	return newSection, nil
 }
 
 func (s *Sections) Update(id int, newSection Section) error {
@@ -91,5 +94,5 @@ func (s *Sections) Delete(id int) error {
 		}
 	}
 
-	return fmt.Errorf("invalid id")
+	return customErrors.ErrorInvalidID
 }
