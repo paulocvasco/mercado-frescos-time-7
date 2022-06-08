@@ -1,5 +1,26 @@
 package models
 
+type Section struct {
+	ID                 int `json:"id"`
+	SectionNumber      int `json:"section_number"`
+	CurrentTemperature int `json:"current_temperature"`
+	MinimumTemperature int `json:"minimum_temperature"`
+	CurrentCapacity    int `json:"current_capacity"`
+	MinimumCapacity    int `json:"minimum_capacity"`
+	MaximumCapacity    int `json:"maximum_capacity"`
+	WarehouseId        int `json:"warehouse_id"`
+	ProductTypeId      int `json:"product_type_id"`
+}
+type Sections struct {
+	Section []Section `json:"sections"`
+}
+type Employee struct {
+	ID           int    `json:"id"`
+	CardNumberId string `json:"card_number_id"`
+	FirstName    string `json:"first_name"`
+	LastName     string `json:"last_name"`
+	WareHouseId  int    `json:"warehouse_id"`
+}
 type Buyers struct {
 	Buyer []Buyer `json:"buyers"`
 }
@@ -69,3 +90,10 @@ var Products []Product = []Product{
 }
 
 var LastId int
+type Seller struct {
+	ID    int  `json:"id"`
+	Cid  string  `json:"cid"`
+	Company_name string  `json:"company_name"`
+	Address string  `json:"address"`
+	Telephone  string `json:"telephone"`
+}
