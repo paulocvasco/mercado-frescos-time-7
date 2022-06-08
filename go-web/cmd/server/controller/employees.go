@@ -12,7 +12,7 @@ type EmployeeController struct {
 	service employees.Service
 }
 
-type request struct {
+type requestEmployee struct {
 	CardNumberId string `json:"card_number_id" binding:"required"`
 	FirstName    string `json:"first_name" binding:"required"`
 	LastName     string `json:"last_name" binding:"required"`
@@ -88,7 +88,7 @@ func (c *EmployeeController) Update() gin.HandlerFunc {
 func (c *EmployeeController) Create() gin.HandlerFunc {
 
 	return func(ctx *gin.Context) {
-		var req request
+		var req requestEmployee
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
