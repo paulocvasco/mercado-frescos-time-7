@@ -2,7 +2,7 @@ package seller
 
 import (
 	"errors"
-	"mercado-frescos-time-7/go-web/internal/Seller/models"
+	"mercado-frescos-time-7/go-web/internal/models"
 
 	"golang.org/x/exp/slices"
 )

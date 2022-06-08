@@ -1,7 +1,7 @@
 package sections
 
 import (
-	customErrors "mercado-frescos-time-7/go-web/internal/custom_errors"
+	customErrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/internal/models"
 )
 

@@ -2,8 +2,8 @@ package sections
 
 import (
 	"encoding/json"
-	customErrors "mercado-frescos-time-7/go-web/internal/custom_errors"
 	"mercado-frescos-time-7/go-web/internal/models"
+	customErrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"strconv"
 )
 
