@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Controller interface {
+type SectionsController interface {
 	GetAll(*gin.Context)
 	GetById(*gin.Context)
 	Store(*gin.Context)
@@ -18,18 +18,18 @@ type Controller interface {
 	Delete(*gin.Context)
 }
 
-type controller struct {
+type sectionsController struct {
 	service sections.Service
 }
 
-func NewController(s sections.Service) Controller {
-	newController := &controller{
+func NewController(s sections.Service) SectionsController {
+	newController := &sectionsController{
 		service: s,
 	}
 	return newController
 }
 
-func (controller *controller) GetAll(ctx *gin.Context) {
+func (controller *sectionsController) GetAll(ctx *gin.Context) {
 	response, err := controller.service.GetAll()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
@@ -38,7 +38,7 @@ func (controller *controller) GetAll(ctx *gin.Context) {
 	ctx.JSON(200, web.NewResponse(200, response, ""))
 }
 
-func (controller *controller) GetById(ctx *gin.Context) {
+func (controller *sectionsController) GetById(ctx *gin.Context) {
 	id := ctx.Param("id")
 	response, err := controller.service.GetById(id)
 	if err != nil {
@@ -48,7 +48,7 @@ func (controller *controller) GetById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (controller *controller) Store(ctx *gin.Context) {
+func (controller *sectionsController) Store(ctx *gin.Context) {
 	newSection := storeSection{}
 	err := ctx.ShouldBindJSON(&newSection)
 	if err != nil {
@@ -77,7 +77,7 @@ func (controller *controller) Store(ctx *gin.Context) {
 	ctx.JSON(201, web.NewResponse(201, section, "Section criada com sucesso!"))
 }
 
-func (controller *controller) Update(ctx *gin.Context) {
+func (controller *sectionsController) Update(ctx *gin.Context) {
 	newSection := updateSection{}
 	err := ctx.ShouldBindJSON(&newSection)
 	if err != nil {
@@ -98,7 +98,7 @@ func (controller *controller) Update(ctx *gin.Context) {
 	ctx.JSON(200, web.NewResponse(200, section, "Section atualizada com sucesso!"))
 }
 
-func (controller *controller) Delete(ctx *gin.Context) {
+func (controller *sectionsController) Delete(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	err := controller.service.Delete(id)
