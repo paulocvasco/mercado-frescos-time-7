@@ -2,14 +2,14 @@ package controller
 
 import (
 	"io/ioutil"
-	customerrors "mercado-frescos-time-7/go-web/internal/custom_errors"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/internal/warehouse"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-type Controller interface {
+type WarehousesController interface {
 	GetAllWarehouse(*gin.Context)
 	GetByIDWarehouse(*gin.Context)
 	CreateWarehouse(*gin.Context)
@@ -17,18 +17,18 @@ type Controller interface {
 	DeleteWarehouse(*gin.Context)
 }
 
-type controller struct {
+type warehousesController struct {
 	service warehouse.Service
 }
 
-func NewControllerWarehouse(s warehouse.Service) Controller {
-	newController := &controller{
+func NewControllerWarehouse(s warehouse.Service) WarehousesController {
+	newController := &warehousesController{
 		service: s,
 	}
 	return newController
 }
 
-func (control *controller) GetAllWarehouse(c *gin.Context) {
+func (control *warehousesController) GetAllWarehouse(c *gin.Context) {
 	response, err := control.service.GetAll()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
@@ -37,7 +37,7 @@ func (control *controller) GetAllWarehouse(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (control *controller) GetByIDWarehouse(c *gin.Context) {
+func (control *warehousesController) GetByIDWarehouse(c *gin.Context) {
 	param := c.Param("id")
 	response, err := control.service.GetByID(param)
 	if err != nil {
@@ -54,7 +54,7 @@ func (control *controller) GetByIDWarehouse(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (control *controller) CreateWarehouse(c *gin.Context) {
+func (control *warehousesController) CreateWarehouse(c *gin.Context) {
 	body := c.Request.Body
 	defer body.Close()
 
@@ -83,7 +83,7 @@ func (control *controller) CreateWarehouse(c *gin.Context) {
 	c.JSON(http.StatusOK, nil)
 }
 
-func (control *controller) UpdateWarehouse(c *gin.Context) {
+func (control *warehousesController) UpdateWarehouse(c *gin.Context) {
 	id := c.Param("id")
 	body := c.Request.Body
 	defer body.Close()
@@ -109,7 +109,7 @@ func (control *controller) UpdateWarehouse(c *gin.Context) {
 	c.JSON(http.StatusOK, nil)
 }
 
-func (control *controller) DeleteWarehouse(c *gin.Context) {
+func (control *warehousesController) DeleteWarehouse(c *gin.Context) {
 	id := c.Param("id")
 
 	err := control.service.Delete(id)
