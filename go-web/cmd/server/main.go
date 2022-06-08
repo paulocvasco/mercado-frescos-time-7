@@ -12,10 +12,10 @@ func main() {
 
 	routes.InstanceSeller(r)
 
-
 	routes.InstanceBuyer(r)
 	routes.InstanceProducts(r)
 	routes.InstanceWarehouse(r)
+	routes.InstanceUser(r)
 
 	r.Run()
 }
