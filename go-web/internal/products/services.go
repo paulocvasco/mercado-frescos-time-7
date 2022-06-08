@@ -2,7 +2,6 @@ package products
 
 import (
 	"encoding/json"
-	"errors"
 	"mercado-frescos-time-7/go-web/internal/models"
 
 	jsonpatch "github.com/evanphx/json-patch/v5"
@@ -29,27 +28,27 @@ func NewService(r Repository) Service {
 func (s *service) Insert(newProduct []byte) (models.Product, error) {
 	id, err := s.repository.LastId()
 	if err != nil {
-		return models.Product{}, errors.New("erro interno tente mais tarde")
+		return models.Product{}, err
 	}
-	
+
 	product := models.Product{}
 	product.Id = id
 
 	productJSON, err := json.Marshal(product)
 	if err != nil {
-		return models.Product{}, errors.New("erro interno tente mais tarde")
+		return models.Product{}, err
 	}
 
 	productJSON, err = jsonpatch.MergePatch(productJSON, newProduct)
 	if err != nil {
-		return models.Product{}, errors.New("erro interno tente mais tarde")
+		return models.Product{}, err
 	}
 
 	json.Unmarshal(productJSON, &product)
 
 	p, err := s.repository.Insert(product)
 	if err != nil {
-		return models.Product{}, errors.New("erro interno tente mais tarde")
+		return models.Product{}, err
 	}
 	return p, nil
 }
@@ -67,7 +66,7 @@ func (s *service) GetById(id int) (models.Product, error) {
 	if err != nil {
 		return models.Product{}, err
 	}
-	return p, err
+	return p, nil
 }
 
 func (s *service) Update(id int, product []byte) (models.Product, error) {
@@ -75,11 +74,13 @@ func (s *service) Update(id int, product []byte) (models.Product, error) {
 	if err != nil {
 		return models.Product{}, err
 	}
+
 	oldProductJSON, _ := json.Marshal(oldProduct)
 	patch, err := jsonpatch.MergePatch(oldProductJSON, product)
 	if err != nil {
 		return models.Product{}, err
 	}
+
 	var updateProduct models.Product
 	json.Unmarshal(patch, &updateProduct)
 

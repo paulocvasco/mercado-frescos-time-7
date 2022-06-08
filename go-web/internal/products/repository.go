@@ -1,7 +1,7 @@
 package products
 
 import (
-	"errors"
+	customerrors "mercado-frescos-time-7/go-web/internal/custom_errors"
 	"mercado-frescos-time-7/go-web/internal/models"
 )
 
@@ -36,7 +36,7 @@ func (r *repository) GetById(id int) (models.Product, error) {
 			return v, nil
 		}
 	}
-	return models.Product{}, errors.New("id não encontrado")
+	return models.Product{}, customerrors.ErrorInvalidID
 }
 
 func (r *repository) Update(product models.Product) error {
@@ -47,7 +47,7 @@ func (r *repository) Update(product models.Product) error {
 			return nil
 		}
 	}
-	return errors.New("id não encontrado")
+	return customerrors.ErrorInvalidID
 
 }
 
@@ -59,7 +59,7 @@ func (r *repository) Delete(id int) error {
 			return nil
 		}
 	}
-	return errors.New("id não encontrado")
+	return customerrors.ErrorInvalidID
 }
 
 func (r *repository) LastId() (int, error) {
