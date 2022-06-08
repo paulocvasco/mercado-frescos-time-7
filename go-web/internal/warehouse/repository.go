@@ -1,95 +1,84 @@
 package warehouse
 
 import (
-	"crypto/sha256"
-	"encoding/base64"
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"strconv"
-	"strings"
+
+	"github.com/google/uuid"
 )
 
-type Warehouses models.Warehouses
+type repository struct{}
 
 type Warehouse models.Warehouse
 
-var repository Warehouses
+var db []Warehouse
 
 var lastID int
 
 type Repository interface {
-	Create(Warehouse)
+	Create(Warehouse) Warehouse
 	Update(int, Warehouse) error
-	GetAll() Warehouses
+	GetAll() []Warehouse
 	GetByID(int) (Warehouse, error)
 	Delete(int) error
 }
 
 func NewRepository() Repository {
-	return &repository
+	return &repository{}
 }
 
-func (w *Warehouses) Create(new Warehouse) {
+func (r *repository) Create(new Warehouse) Warehouse {
 	new.ID = lastID + 1
-	new.WarehouseCode = calculateCode(new.Address, new.Telephone, strconv.Itoa(new.MinimunCapacity), strconv.Itoa(new.MinimunTemperature))
+	new.WarehouseCode = uuid.NewString()
 
-	w.Warehouse = append(w.Warehouse, models.Warehouse(new))
+	db = append(db, new)
 	lastID++
+
+	return new
 }
 
-func (w *Warehouses) Update(id int, patchedWarehouse Warehouse) error {
+func (r *repository) Update(id int, patchedWarehouse Warehouse) error {
 	if id < 0 || id > lastID {
 		return customerrors.ErrorInvalidID
 	}
 
-	for i, warehouse := range w.Warehouse {
+	for i, warehouse := range db {
 		if warehouse.ID == id {
-			warehouse = models.Warehouse(patchedWarehouse)
-			warehouse.WarehouseCode = calculateCode(warehouse.Address, warehouse.Telephone, strconv.Itoa(warehouse.MinimunCapacity), strconv.Itoa(warehouse.MinimunTemperature))
-			w.Warehouse[i] = warehouse
+			warehouse = patchedWarehouse
+			db[i] = warehouse
 			return nil
 		}
 	}
 	return customerrors.ErrorItemNotFound
 }
 
-func (w *Warehouses) GetAll() Warehouses {
-	return *w
+func (r *repository) GetAll() []Warehouse {
+	return db
 }
 
-func (w *Warehouses) GetByID(id int) (Warehouse, error) {
+func (r *repository) GetByID(id int) (Warehouse, error) {
 	if id < 0 || id > lastID {
 		return Warehouse{}, customerrors.ErrorInvalidID
 	}
 
-	for _, w := range repository.Warehouse {
+	for _, w := range db {
 		if w.ID == id {
-			return Warehouse(w), nil
+			return w, nil
 		}
 	}
 	return Warehouse{}, customerrors.ErrorInvalidID
 }
 
-func (w *Warehouses) Delete(id int) error {
+func (r *repository) Delete(id int) error {
 	if id < 0 || id > lastID {
 		return customerrors.ErrorInvalidID
 	}
 
-	for index, warehouse := range w.Warehouse {
+	for index, warehouse := range db {
 		if warehouse.ID == id {
-			w.Warehouse = append(w.Warehouse[:index], w.Warehouse[index+1:]...)
+			db = append(db[:index], db[index+1:]...)
 			return nil
 		}
 	}
 	return customerrors.ErrorInvalidID
-}
-
-func calculateCode(info ...string) string {
-	var builder strings.Builder
-	for _, s := range info {
-		builder.WriteString(s)
-	}
-	code := sha256.Sum256([]byte(builder.String()))
-
-	return base64.StdEncoding.EncodeToString(code[:])
 }
