@@ -1,9 +1,9 @@
 package user
 
 type User struct {
-	username string
-	password string
-	token    string
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Token    string `json:"token"`
 }
 
 var users []User
@@ -14,7 +14,7 @@ func (u *Users) NewUser(newUser User) {
 
 func (u *Users) GetUser(username string) (User, error) {
 	for _, user := range users {
-		if user.username == username {
+		if user.Username == username {
 			return user, nil
 		}
 	}
