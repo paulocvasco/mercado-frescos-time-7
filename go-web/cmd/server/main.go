@@ -7,14 +7,14 @@ import (
 )
 
 func main() {
+
 	r := gin.Default()
 
 	routes.InstanceEmployee(r)
-
-	r.Run()
+	routes.InstanceSeller(r)
 	routes.InstanceBuyer(r)
 	routes.InstanceProducts(r)
 	routes.InstanceWarehouse(r)
 
-	r.Run(":7070")
+	r.Run()
 }
