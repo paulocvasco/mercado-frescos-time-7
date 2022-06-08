@@ -117,7 +117,7 @@ func (c *EmployeeController) Delete() gin.HandlerFunc {
 			return
 		}
 
-		err = c.service.Delete(int(id))
+		err = c.service.Delete(id)
 		if err != nil {
 			ctx.JSON(404, gin.H{"error": err.Error()})
 			return
