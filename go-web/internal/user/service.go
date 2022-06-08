@@ -16,6 +16,7 @@ func NewService(r Repository) Service {
 }
 
 func (s *service) NewUser(newUser User) {
+	// create token before save NewUser
 	s.repository.NewUser(newUser)
 }
 
@@ -25,5 +26,6 @@ func (s *service) GetToken(user User) (string, error) {
 		return "", err
 	}
 
+	// validate password and return token
 	return user.username, nil
 }

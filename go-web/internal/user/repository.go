@@ -3,6 +3,7 @@ package user
 type User struct {
 	username string
 	password string
+	token    string
 }
 
 var users []User
