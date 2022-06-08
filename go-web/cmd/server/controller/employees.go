@@ -74,7 +74,7 @@ func (c *EmployeeController) Update() gin.HandlerFunc {
 			ctx.JSON(404, gin.H{"error": err.Error()})
 		}
 
-		e, err := c.service.Update(employees.RequestPatch(req), int(id))
+		e, err := c.service.Update(employees.RequestPatch(req), id)
 
 		if err != nil {
 			ctx.JSON(404, gin.H{"error": err.Error()})
