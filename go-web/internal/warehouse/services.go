@@ -9,9 +9,9 @@ import (
 )
 
 type Service interface {
-	GetAll() (Warehouses, error)
-	GetByID(string) (*Warehouse, error)
-	Create([]byte) error
+	GetAll() []Warehouse
+	GetByID(string) (Warehouse, error)
+	Create([]byte) (Warehouse, error)
 	Update(string, []byte) error
 	Delete(string) error
 }
@@ -27,48 +27,48 @@ func NewService(r Repository) Service {
 	return newService
 }
 
-func (s *service) GetAll() (Warehouses, error) {
+func (s *service) GetAll() []Warehouse {
 	data := s.repository.GetAll()
-	return data, nil
+	return data
 }
 
-func (s *service) GetByID(id string) (*Warehouse, error) {
+func (s *service) GetByID(id string) (Warehouse, error) {
 	index, err := strconv.Atoi(id)
 	if err != nil {
-		return nil, customerrors.ErrorInvalidIDParameter
+		return Warehouse{}, customerrors.ErrorInvalidIDParameter
 	}
 	data, err := s.repository.GetByID(index)
 	if err != nil {
-		return nil, err
+		return Warehouse{}, err
 	}
 
-	return &data, nil
+	return data, nil
 }
 
-func (s *service) Create(data []byte) error {
+func (s *service) Create(data []byte) (Warehouse, error) {
 	var newWarehouse Warehouse
 	err := json.Unmarshal(data, &newWarehouse)
 	if err != nil {
-		return err
+		return Warehouse{}, nil
 	}
 
 	// validate request fields
 	if newWarehouse.Address == "" {
-		return customerrors.ErrorMissingAddres
+		return Warehouse{}, customerrors.ErrorMissingAddres
 	}
 	if newWarehouse.Telephone == "" {
-		return customerrors.ErrorMissingTelephone
+		return Warehouse{}, customerrors.ErrorMissingTelephone
 	}
 	if newWarehouse.MinimunCapacity == 0 {
-		return customerrors.ErrorMissingCapacity
+		return Warehouse{}, customerrors.ErrorMissingCapacity
 	}
 	if newWarehouse.MinimunTemperature == 0 {
-		return customerrors.ErrorMissingTemperature
+		return Warehouse{}, customerrors.ErrorMissingTemperature
 	}
 
-	s.repository.Create(newWarehouse)
+	newWarehouse = s.repository.Create(newWarehouse)
 
-	return nil
+	return newWarehouse, nil
 }
 
 func (s *service) Update(id string, data []byte) error {
