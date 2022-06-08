@@ -2,8 +2,8 @@ package controller
 
 import (
 	"io/ioutil"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/internal/warehouse"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -29,11 +29,7 @@ func NewControllerWarehouse(s warehouse.Service) WarehousesController {
 }
 
 func (control *warehousesController) GetAllWarehouse(c *gin.Context) {
-	response, err := control.service.GetAll()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
-		return
-	}
+	response := control.service.GetAll()
 	c.JSON(http.StatusOK, response)
 }
 
@@ -64,7 +60,7 @@ func (control *warehousesController) CreateWarehouse(c *gin.Context) {
 		return
 	}
 
-	err = control.service.Create(data)
+	resposne, err := control.service.Create(data)
 	if err != nil {
 		switch err {
 		case customerrors.ErrorMissingAddres:
@@ -80,7 +76,7 @@ func (control *warehousesController) CreateWarehouse(c *gin.Context) {
 		}
 		return
 	}
-	c.JSON(http.StatusOK, nil)
+	c.JSON(http.StatusOK, resposne)
 }
 
 func (control *warehousesController) UpdateWarehouse(c *gin.Context) {
