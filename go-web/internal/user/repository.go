@@ -1,5 +1,7 @@
 package user
 
+import "errors"
+
 type User struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -18,7 +20,7 @@ func (u *Users) GetUser(username string) (User, error) {
 			return user, nil
 		}
 	}
-	return User{}, nil
+	return User{}, errors.New("user not found")
 }
 
 type Users struct{}
