@@ -28,3 +28,9 @@ type Warehouse struct {
 	MinimunCapacity    int    `json:"minimun_capacity"`
 	MinimunTemperature int    `json:"minimun_temperature"`
 }
+
+type User struct {
+	Id       int    `json:"id"`
+	User     string `json:"user"`
+	Password string `json:"password"`
+}
