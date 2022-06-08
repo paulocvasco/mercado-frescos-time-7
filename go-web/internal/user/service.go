@@ -21,11 +21,11 @@ func (s *service) NewUser(newUser User) {
 }
 
 func (s *service) GetToken(user User) (string, error) {
-	user, err := s.repository.GetUser(user.username)
+	user, err := s.repository.GetUser(user.Username)
 	if err != nil {
 		return "", err
 	}
 
 	// validate password and return token
-	return user.username, nil
+	return user.Username, nil
 }
