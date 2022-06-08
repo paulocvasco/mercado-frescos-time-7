@@ -1,7 +1,7 @@
 package user
 
 type Service interface {
-	NewUser(User)
+	NewUser(User) error
 	GetToken(User) (string, error)
 }
 
@@ -15,9 +15,11 @@ func NewService(r Repository) Service {
 	}
 }
 
-func (s *service) NewUser(newUser User) {
+func (s *service) NewUser(newUser User) error {
 	// create token before save NewUser
 	s.repository.NewUser(newUser)
+
+	return nil
 }
 
 func (s *service) GetToken(user User) (string, error) {
