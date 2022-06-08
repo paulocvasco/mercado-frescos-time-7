@@ -47,7 +47,7 @@ func (c *EmployeeController) GetByID() gin.HandlerFunc {
 			return
 		}
 
-		e, err := c.service.GetByID(int(id))
+		e, err := c.service.GetByID(id)
 		if err != nil {
 			ctx.JSON(404, gin.H{"error": err.Error()})
 			return
