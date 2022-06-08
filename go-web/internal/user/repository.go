@@ -5,8 +5,6 @@ type User struct {
 	password string
 }
 
-type Users struct{}
-
 var users []User
 
 func (u *Users) NewUser(newUser User) {
@@ -20,4 +18,15 @@ func (u *Users) GetUser(username string) (User, error) {
 		}
 	}
 	return User{}, nil
+}
+
+type Users struct{}
+
+type Repository interface {
+	NewUser(User)
+	GetUser(string) (User, error)
+}
+
+func NewRpository() Repository {
+	return &Users{}
 }
