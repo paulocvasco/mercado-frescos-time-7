@@ -13,16 +13,14 @@ const path = "./warehouses.db"
 
 type repository struct{}
 
-type Warehouse models.Warehouse
-
-var database []Warehouse
+var database []models.Warehouse
 
 var cache models.WarehouseMetaData
 
 var lastID int
 
 type Repository interface {
-	Create(models.Warehouse) models.Warehouse
+	Create(models.Warehouse) (models.Warehouse, error)
 	Update(int, models.Warehouse) error
 	GetAll() []models.Warehouse
 	GetByID(int) (models.Warehouse, error)
@@ -33,36 +31,68 @@ func NewRepository() Repository {
 	return &repository{}
 }
 
-func (r *repository) Create(new models.Warehouse) models.Warehouse {
-	tmpCache := cache
-	tmpCache.LastID++
-	new.ID = tmpCache.LastID
+func (r *repository) Create(new models.Warehouse) (models.Warehouse, error) {
+	dataBD, err := db.Load(path)
+	if err != nil {
+		return models.Warehouse{}, err
+	}
+
+	var warehouses models.WarehouseMetaData
+	err = json.Unmarshal(dataBD, &warehouses)
+	if err != nil {
+		return models.Warehouse{}, err
+	}
+
+	new.ID = warehouses.LastID
 	new.WarehouseCode = uuid.NewString()
 
-	tmpCache.Warehouses = append(tmpCache.Warehouses, models.Warehouse(new))
+	warehouses.Warehouses = append(warehouses.Warehouses, new)
 
-	rawWarehouses, err := json.Marshal(tmpCache)
+	rawWarehouses, err := json.Marshal(warehouses)
 	if err != nil {
-		return Warehouse{}, err
+		return models.Warehouse{}, err
 	}
 	err = db.Save(path, rawWarehouses)
 	if err != nil {
-		return Warehouse{}, err
+		return models.Warehouse{}, err
 	}
 
-	cache = tmpCache
+	cache = warehouses
 	return new, nil
 }
 
 func (r *repository) Update(id int, patchedWarehouse models.Warehouse) error {
-	if id < 0 || id > lastID {
+	if id < 0 || id > cache.LastID {
 		return customerrors.ErrorInvalidID
 	}
 
-	for i, warehouse := range database {
+	for i, warehouse := range cache.Warehouses {
 		if warehouse.ID == id {
-			warehouse = patchedWarehouse
-			database[i] = warehouse
+			warehouse = models.Warehouse(patchedWarehouse)
+
+			dataBD, err := db.Load(path)
+			if err != nil {
+				return err
+			}
+
+			var warehouses models.WarehouseMetaData
+			err = json.Unmarshal(dataBD, &warehouses)
+			if err != nil {
+				return err
+			}
+
+			warehouses.Warehouses[i] = warehouse
+
+			rawWarehouses, err := json.Marshal(warehouses)
+			if err != nil {
+				return err
+			}
+			err = db.Save(path, rawWarehouses)
+			if err != nil {
+				return err
+			}
+
+			cache = warehouses
 			return nil
 		}
 	}
@@ -70,15 +100,15 @@ func (r *repository) Update(id int, patchedWarehouse models.Warehouse) error {
 }
 
 func (r *repository) GetAll() []models.Warehouse {
-	return database
+	return cache.Warehouses
 }
 
 func (r *repository) GetByID(id int) (models.Warehouse, error) {
-	if id < 0 || id > lastID {
+	if id < 0 || id > cache.LastID {
 		return models.Warehouse{}, customerrors.ErrorInvalidID
 	}
 
-	for _, w := range database {
+	for _, w := range cache.Warehouses {
 		if w.ID == id {
 			return w, nil
 		}
@@ -87,13 +117,34 @@ func (r *repository) GetByID(id int) (models.Warehouse, error) {
 }
 
 func (r *repository) Delete(id int) error {
-	if id < 0 || id > lastID {
+	if id < 0 || id > cache.LastID {
 		return customerrors.ErrorInvalidID
 	}
 
-	for index, warehouse := range database {
+	for index, warehouse := range cache.Warehouses {
 		if warehouse.ID == id {
-			database = append(database[:index], database[index+1:]...)
+			dataBD, err := db.Load(path)
+			if err != nil {
+				return err
+			}
+
+			var warehouses models.WarehouseMetaData
+			err = json.Unmarshal(dataBD, &warehouses)
+			if err != nil {
+				return err
+			}
+
+			warehouses.Warehouses = append(warehouses.Warehouses[:index], warehouses.Warehouses[index+1:]...)
+
+			rawWarehouses, err := json.Marshal(warehouses)
+			if err != nil {
+				return err
+			}
+			err = db.Save(path, rawWarehouses)
+			if err != nil {
+				return err
+			}
+
 			return nil
 		}
 	}
