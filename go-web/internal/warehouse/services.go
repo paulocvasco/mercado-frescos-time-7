@@ -28,9 +28,12 @@ func NewService(r Repository) Service {
 	return newService
 }
 
-func (s *service) GetAll() []models.Warehouse {
-	data := s.repository.GetAll()
-	return data
+func (s *service) GetAll() ([]models.Warehouse, error) {
+	data, err := s.repository.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }
 
 func (s *service) GetByID(id int) (models.Warehouse, error) {
@@ -59,7 +62,7 @@ func (s *service) Create(newWarehouse models.Warehouse) (models.Warehouse, error
 
 	newWarehouse, err = s.repository.Create(newWarehouse)
 	if err != nil {
-		return Warehouse{}, err
+		return models.Warehouse{}, err
 	}
 
 	return newWarehouse, nil
