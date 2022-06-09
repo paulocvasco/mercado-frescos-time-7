@@ -150,7 +150,7 @@ type saveProduct struct {
 	Description                      string  `json:"description" binding:"required"`
 	Width                            float64 `json:"width" binding:"required"`
 	Height                           float64 `json:"height" binding:"required"`
-	Length                           float64 `json:"lenght" binding:"required"`
+	Length                           float64 `json:"length" binding:"required"`
 	Net_weight                       float64 `json:"netweight" binding:"required"`
 	Expiration_rate                  int     `json:"expiration_rate" binding:"required"`
 	Recommended_freezing_temperature float64 `json:"recommended_freezing_temperature" binding:"required"`
@@ -164,7 +164,7 @@ type updateProduct struct {
 	Description                      *string  `json:"description,omitempty"`
 	Width                            *float64 `json:"width,omitempty"`
 	Height                           *float64 `json:"height,omitempty"`
-	Length                           *float64 `json:"lenght,omitempty"`
+	Length                           *float64 `json:"length,omitempty"`
 	Net_weight                       *float64 `json:"netweight,omitempty"`
 	Expiration_rate                  *int     `json:"expiration_rate,omitempty"`
 	Recommended_freezing_temperature *float64 `json:"recommended_freezing_temperature,omitempty"`

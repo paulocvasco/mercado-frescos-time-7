@@ -10,7 +10,7 @@ import (
 type Service interface {
 	GetAll() []model.Buyer
 	GetId(id int) (model.Buyer, error)
-	Create(card_number_id int, first_name, last_name string) (model.Buyer, error)
+	Create(card_number_id string, first_name, last_name string) (model.Buyer, error)
 	Update(id int, body RequestPatch) (model.Buyer, error)
 	Delete(id int) error
 }
@@ -37,7 +37,7 @@ func (s *service) GetId(id int) (model.Buyer, error) {
 	return response, nil
 }
 
-func (s *service) Create(cardNumberID int, firstName, lastName string) (model.Buyer, error) {
+func (s *service) Create(cardNumberID string, firstName, lastName string) (model.Buyer, error) {
 
 	response, err := s.repository.Create(cardNumberID, firstName, lastName)
 	if err != nil {
