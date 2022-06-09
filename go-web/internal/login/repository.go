@@ -9,6 +9,7 @@ type Repository interface {
 	GetUser(user string, password string) (models.User, error)
 	CreateUser(user string, password string) (data models.User)
 	GenerateID() int
+	GetUserById(id int) (models.User, error)
 }
 
 var db []models.User = []models.User{}
@@ -47,4 +48,14 @@ func (r *repository) CreateUser(user string, password string) models.User {
 	newUser := models.User{Id: id, User: user, Password: password}
 	db = append(db, newUser)
 	return newUser
+}
+
+func (r *repository) GetUserById(id int) (models.User, error) {
+
+	for i, value := range db {
+		if value.Id == id {
+			return db[i], nil
+		}
+	}
+	return models.User{}, errors.New("Id não existente")
 }
