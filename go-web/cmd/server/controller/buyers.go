@@ -103,6 +103,6 @@ func (b *BuyerController) BuyerDelete() gin.HandlerFunc {
 			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
-		context.JSON(http.StatusOK, gin.H{})
+		context.JSON(http.StatusNoContent, gin.H{})
 	}
 }
