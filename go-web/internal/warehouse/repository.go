@@ -22,7 +22,7 @@ var lastID int
 type Repository interface {
 	Create(models.Warehouse) (models.Warehouse, error)
 	Update(int, models.Warehouse) error
-	GetAll() []models.Warehouse
+	GetAll() ([]models.Warehouse, error)
 	GetByID(int) (models.Warehouse, error)
 	Delete(int) error
 }
@@ -80,11 +80,24 @@ func (r *repository) Update(id int, patchedWarehouse models.Warehouse) error {
 	return customerrors.ErrorItemNotFound
 }
 
-func (r *repository) GetAll() []models.Warehouse {
-	return cache.Warehouses
+func (r *repository) GetAll() ([]models.Warehouse, error) {
+	if cache.LastID == 0 {
+		err := readDB(&cache)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return cache.Warehouses, nil
 }
 
 func (r *repository) GetByID(id int) (models.Warehouse, error) {
+	if cache.LastID == 0 {
+		err := readDB(&cache)
+		if err != nil {
+			return models.Warehouse{}, err
+		}
+	}
+
 	if id < 0 || id > cache.LastID {
 		return models.Warehouse{}, customerrors.ErrorInvalidID
 	}
