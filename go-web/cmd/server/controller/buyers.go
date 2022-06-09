@@ -75,6 +75,7 @@ func (b *BuyerController) BuyerUpdate() gin.HandlerFunc {
 		var newInput buyer.RequestPatch
 		if err := context.ShouldBindJSON(&newInput); err != nil {
 			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+			return
 		}
 
 		buyer, err := b.service.Update(intId, newInput)
