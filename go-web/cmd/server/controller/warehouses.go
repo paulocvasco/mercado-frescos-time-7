@@ -2,9 +2,10 @@ package controller
 
 import (
 	"io/ioutil"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/internal/warehouse"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,11 +30,7 @@ func NewControllerWarehouse(s warehouse.Service) WarehousesController {
 }
 
 func (control *warehousesController) GetAllWarehouse(c *gin.Context) {
-	response, err := control.service.GetAll()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
-		return
-	}
+	response := control.service.GetAll()
 	c.JSON(http.StatusOK, response)
 }
 
@@ -64,7 +61,7 @@ func (control *warehousesController) CreateWarehouse(c *gin.Context) {
 		return
 	}
 
-	err = control.service.Create(data)
+	response, err := control.service.Create(data)
 	if err != nil {
 		switch err {
 		case customerrors.ErrorMissingAddres:
@@ -80,11 +77,16 @@ func (control *warehousesController) CreateWarehouse(c *gin.Context) {
 		}
 		return
 	}
-	c.JSON(http.StatusOK, nil)
+	c.JSON(http.StatusOK, response)
 }
 
 func (control *warehousesController) UpdateWarehouse(c *gin.Context) {
 	id := c.Param("id")
+	index, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+	}
+
 	body := c.Request.Body
 	defer body.Close()
 
@@ -94,7 +96,7 @@ func (control *warehousesController) UpdateWarehouse(c *gin.Context) {
 		return
 	}
 
-	err = control.service.Update(id, data)
+	err = control.service.Update(index, data)
 	if err != nil {
 		switch err {
 		case customerrors.ErrorInvalidIDParameter:

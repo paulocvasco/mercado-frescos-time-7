@@ -30,9 +30,6 @@ type Buyer struct {
 	FirstName    string `json:"first_name" binding:"required"`
 	LastName     string `json:"last_name" binding:"required"`
 }
-type Warehouses struct {
-	Warehouse []Warehouse `json:"warehouses"`
-}
 
 type Warehouse struct {
 	ID                 int    `json:"id"`

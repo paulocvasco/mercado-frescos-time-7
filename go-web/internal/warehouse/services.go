@@ -9,10 +9,10 @@ import (
 )
 
 type Service interface {
-	GetAll() (Warehouses, error)
-	GetByID(string) (*Warehouse, error)
-	Create([]byte) error
-	Update(string, []byte) error
+	GetAll() []Warehouse
+	GetByID(string) (Warehouse, error)
+	Create([]byte) (Warehouse, error)
+	Update(int, []byte) error
 	Delete(string) error
 }
 
@@ -27,57 +27,52 @@ func NewService(r Repository) Service {
 	return newService
 }
 
-func (s *service) GetAll() (Warehouses, error) {
+func (s *service) GetAll() []Warehouse {
 	data := s.repository.GetAll()
-	return data, nil
+	return data
 }
 
-func (s *service) GetByID(id string) (*Warehouse, error) {
+func (s *service) GetByID(id string) (Warehouse, error) {
 	index, err := strconv.Atoi(id)
 	if err != nil {
-		return nil, customerrors.ErrorInvalidIDParameter
+		return Warehouse{}, customerrors.ErrorInvalidIDParameter
 	}
 	data, err := s.repository.GetByID(index)
 	if err != nil {
-		return nil, err
+		return Warehouse{}, err
 	}
 
-	return &data, nil
+	return data, nil
 }
 
-func (s *service) Create(data []byte) error {
+func (s *service) Create(data []byte) (Warehouse, error) {
 	var newWarehouse Warehouse
 	err := json.Unmarshal(data, &newWarehouse)
 	if err != nil {
-		return err
+		return Warehouse{}, nil
 	}
 
 	// validate request fields
 	if newWarehouse.Address == "" {
-		return customerrors.ErrorMissingAddres
+		return Warehouse{}, customerrors.ErrorMissingAddres
 	}
 	if newWarehouse.Telephone == "" {
-		return customerrors.ErrorMissingTelephone
+		return Warehouse{}, customerrors.ErrorMissingTelephone
 	}
 	if newWarehouse.MinimunCapacity == 0 {
-		return customerrors.ErrorMissingCapacity
+		return Warehouse{}, customerrors.ErrorMissingCapacity
 	}
 	if newWarehouse.MinimunTemperature == 0 {
-		return customerrors.ErrorMissingTemperature
+		return Warehouse{}, customerrors.ErrorMissingTemperature
 	}
 
-	s.repository.Create(newWarehouse)
+	newWarehouse = s.repository.Create(newWarehouse)
 
-	return nil
+	return newWarehouse, nil
 }
 
-func (s *service) Update(id string, data []byte) error {
-	index, err := strconv.Atoi(id)
-	if err != nil {
-		return customerrors.ErrorInvalidIDParameter
-	}
-
-	warehouse, err := s.repository.GetByID(index)
+func (s *service) Update(id int, data []byte) error {
+	warehouse, err := s.repository.GetByID(id)
 	if err != nil {
 		return err
 	}
@@ -95,7 +90,7 @@ func (s *service) Update(id string, data []byte) error {
 		return err
 	}
 
-	err = s.repository.Update(index, warehouse)
+	err = s.repository.Update(id, warehouse)
 	if err != nil {
 		return err
 	}
