@@ -60,7 +60,7 @@ func (control *warehousesController) CreateWarehouse(c *gin.Context) {
 		return
 	}
 
-	resposne, err := control.service.Create(data)
+	response, err := control.service.Create(data)
 	if err != nil {
 		switch err {
 		case customerrors.ErrorMissingAddres:
