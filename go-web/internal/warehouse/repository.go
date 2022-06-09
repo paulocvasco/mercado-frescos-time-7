@@ -38,6 +38,7 @@ func (r *repository) Create(new models.Warehouse) (models.Warehouse, error) {
 		return models.Warehouse{}, err
 	}
 
+	warehouses.LastID++
 	new.ID = warehouses.LastID
 	new.WarehouseCode = uuid.NewString()
 
@@ -137,13 +138,12 @@ func (r *repository) Delete(id int) error {
 	return customerrors.ErrorInvalidID
 }
 
-func readDB(warehoures *models.WarehouseMetaData) error {
+func readDB(warehouses *models.WarehouseMetaData) error {
 	dataBD, err := db.Load(path)
 	if err != nil {
 		return err
 	}
 
-	var warehouses models.WarehouseMetaData
 	err = json.Unmarshal(dataBD, &warehouses)
 	if err != nil {
 		return err
