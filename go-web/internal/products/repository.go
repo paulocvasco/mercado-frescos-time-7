@@ -5,6 +5,8 @@ import (
 	"mercado-frescos-time-7/go-web/internal/models"
 )
 
+var lastProductID int = 1
+
 type Repository interface {
 	Insert(product models.Product) (models.Product, error)
 	GetAll() ([]models.Product, error)
@@ -63,12 +65,6 @@ func (r *repository) Delete(id int) error {
 }
 
 func (r *repository) LastId() (int, error) {
-	pp := models.Products
-	maxId := pp[0].Id
-	for i := 1; i <= len(pp)-1; i++ {
-		if pp[i].Id > maxId {
-			maxId = pp[i].Id
-		}
-	}
-	return maxId + 1, nil
+	lastProductID++
+	return lastProductID, nil
 }
