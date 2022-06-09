@@ -12,7 +12,7 @@ func InstanceProducts(r *gin.Engine) {
 	serv := products.NewService(repo)
 	pr := controller.NewProductHandler(serv)
 
-	group := r.Group("/products")
+	group := r.Group("/api/v1/products")
 	{
 		group.GET("/", pr.GetAllProducts())
 		group.GET("/:id", pr.GetProduct())
