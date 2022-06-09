@@ -76,7 +76,7 @@ func (control *warehousesController) CreateWarehouse(c *gin.Context) {
 		}
 		return
 	}
-	c.JSON(http.StatusOK, resposne)
+	c.JSON(http.StatusOK, response)
 }
 
 func (control *warehousesController) UpdateWarehouse(c *gin.Context) {
