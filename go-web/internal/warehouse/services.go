@@ -57,7 +57,10 @@ func (s *service) Create(newWarehouse models.Warehouse) (models.Warehouse, error
 		return models.Warehouse{}, customerrors.ErrorMissingTemperature
 	}
 
-	newWarehouse = s.repository.Create(newWarehouse)
+	newWarehouse, err = s.repository.Create(newWarehouse)
+	if err != nil {
+		return Warehouse{}, err
+	}
 
 	return newWarehouse, nil
 }
