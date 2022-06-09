@@ -40,7 +40,7 @@ func (ph *ProductHandler) GetProduct() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
+			c.JSON(http.StatusBadRequest, gin.H{
 				"message": "id inválido",
 			})
 			return
@@ -48,7 +48,7 @@ func (ph *ProductHandler) GetProduct() gin.HandlerFunc {
 		obj, err := ph.service.GetById(id)
 		if err != nil {
 			if errors.Is(err, customerrors.ErrorInvalidID) {
-				c.JSON(http.StatusBadRequest, gin.H{
+				c.JSON(http.StatusNotFound, gin.H{
 					"message": "id nao encontrado",
 				})
 				return
@@ -73,7 +73,7 @@ func (ph *ProductHandler) SaveProducts() gin.HandlerFunc {
 		if err != nil {
 			if errors.As(err, &ve) {
 				for _, v := range ve {
-					c.JSON(http.StatusBadRequest, gin.H{
+					c.JSON(http.StatusUnprocessableEntity, gin.H{
 						"message": fmt.Sprintf("erro no campo: %v", v.Field()),
 					})
 					return
@@ -109,7 +109,7 @@ func (ph *ProductHandler) SaveProducts() gin.HandlerFunc {
 			})
 			return
 		}
-		c.JSON(http.StatusOK, p)
+		c.JSON(http.StatusCreated, p)
 	}
 }
 
@@ -123,7 +123,7 @@ func (ph *ProductHandler) UpdateProducts() gin.HandlerFunc {
 		if err != nil {
 			if errors.As(err, &ve) {
 				for _, v := range ve {
-					c.JSON(http.StatusBadRequest, gin.H{
+					c.JSON(http.StatusUnprocessableEntity, gin.H{
 						"message": fmt.Sprintf("erro no campo: %v", v.Field()),
 					})
 					return
@@ -162,7 +162,7 @@ func (ph *ProductHandler) UpdateProducts() gin.HandlerFunc {
 		product, err := ph.service.Update(id, p)
 		if err != nil {
 			if errors.Is(err, customerrors.ErrorInvalidID) {
-				c.JSON(http.StatusBadRequest, gin.H{
+				c.JSON(http.StatusNotFound, gin.H{
 					"message": "id nao encontrado",
 				})
 				return
@@ -189,7 +189,7 @@ func (ph *ProductHandler) DeleteProducts() gin.HandlerFunc {
 		err = ph.service.Delete(id)
 		if err != nil {
 			if errors.Is(err, customerrors.ErrorInvalidID) {
-				c.JSON(http.StatusBadRequest, gin.H{
+				c.JSON(http.StatusNotFound, gin.H{
 					"message": "id nao encontrado",
 				})
 				return
