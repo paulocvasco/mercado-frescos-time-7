@@ -86,7 +86,7 @@ func (ph *ProductHandler) SaveProducts() gin.HandlerFunc {
 			c.JSON(status, res)
 			return
 		}
-		c.JSON(http.StatusOK, web.NewResponse(http.StatusOK, p, ""))
+		c.JSON(http.StatusCreated, web.NewResponse(http.StatusOK, p, ""))
 	}
 }
 
