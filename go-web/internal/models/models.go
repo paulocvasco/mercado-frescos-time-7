@@ -26,7 +26,7 @@ type Buyers struct {
 }
 type Buyer struct {
 	ID           int    `json:"id"`
-	CardNumberID int    `json:"card_number_id" binding:"required"`
+	CardNumberID string `json:"card_number_id" binding:"required"`
 	FirstName    string `json:"first_name" binding:"required"`
 	LastName     string `json:"last_name" binding:"required"`
 }
@@ -78,7 +78,7 @@ var Products []Product = []Product{
 		Height:                         6.4,
 		Length:                         4.5,
 		NetWeight:                      3.4,
-		ProductCode:                   "ssd",
+		ProductCode:                    "ssd",
 		RecommendedFreezingTemperature: 1.3,
 		Width:                          1.2,
 		ProductTypeId:                  2,
@@ -87,10 +87,11 @@ var Products []Product = []Product{
 }
 
 var LastId int
+
 type Seller struct {
-	ID    int  `json:"id"`
-	Cid  string  `json:"cid"`
-	Company_name string  `json:"company_name"`
-	Address string  `json:"address"`
-	Telephone  string `json:"telephone"`
+	ID           int    `json:"id"`
+	Cid          string `json:"cid"`
+	Company_name string `json:"company_name"`
+	Address      string `json:"address"`
+	Telephone    string `json:"telephone"`
 }
