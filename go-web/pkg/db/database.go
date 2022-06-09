@@ -15,7 +15,7 @@ func Save(path string, data []byte) error {
 			return err
 		}
 	} else {
-		file, err = os.OpenFile(path, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+		file, err = os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 		if err != nil {
 			return err
 		}
