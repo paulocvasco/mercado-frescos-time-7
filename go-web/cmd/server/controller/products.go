@@ -3,14 +3,13 @@ package controller
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/internal/products"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type ProductHandler struct {
@@ -27,12 +26,12 @@ func (ph *ProductHandler) GetAllProducts() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		pp, err := ph.service.GetAll()
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "erro interno, tente mais tarde",
-			})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"data": pp})
+		c.JSON(http.StatusOK, web.NewResponse(http.StatusOK, pp, ""))
 	}
 }
 
@@ -40,26 +39,26 @@ func (ph *ProductHandler) GetProduct() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "id inválido",
-			})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
 			return
 		}
 		obj, err := ph.service.GetById(id)
 		if err != nil {
 			if errors.Is(err, customerrors.ErrorInvalidID) {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"message": "id nao encontrado",
-				})
+				status, msg := customerrors.ErrorHandleResponse(err)
+				res := web.NewResponse(status, nil, msg)
+				c.JSON(status, res)
 				return
 			} else {
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"message": "erro interno, tente mais tarde",
-				})
+				status, msg := customerrors.ErrorHandleResponse(err)
+				res := web.NewResponse(status, nil, msg)
+				c.JSON(status, res)
 				return
 			}
 		}
-		c.JSON(http.StatusOK, obj)
+		c.JSON(http.StatusOK, web.NewResponse(http.StatusOK, obj, ""))
 	}
 }
 
@@ -67,49 +66,27 @@ func (ph *ProductHandler) SaveProducts() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		newProduct := saveProduct{}
 		err := c.ShouldBindJSON(&newProduct)
-		var ve validator.ValidationErrors
-		var js *json.SyntaxError
-		var jt *json.UnmarshalTypeError
 		if err != nil {
-			if errors.As(err, &ve) {
-				for _, v := range ve {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"message": fmt.Sprintf("erro no campo: %v", v.Field()),
-					})
-					return
-				}
-			} else if errors.As(err, &js) {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"message": "confira a estrutura do JSON",
-				})
-				return
-			} else if errors.As(err, &jt) {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"message": fmt.Sprintf("confira o tipo do campo %v", jt.Field),
-				})
-				return
-			} else {
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"message": "erro interno, tente mais tarde",
-				})
-				return
-			}
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
+			return
 		}
 		pJSON, err := json.Marshal(newProduct)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "erro interno, tente mais tarde",
-			})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
 			return
 		}
 		p, err := ph.service.Insert(pJSON)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "erro interno, tente mais tarde",
-			})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
 			return
 		}
-		c.JSON(http.StatusOK, p)
+		c.JSON(http.StatusOK, web.NewResponse(http.StatusOK, p, ""))
 	}
 }
 
@@ -117,63 +94,34 @@ func (ph *ProductHandler) UpdateProducts() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		updateProduct := updateProduct{}
 		err := c.ShouldBindJSON(&updateProduct)
-		var ve validator.ValidationErrors
-		var js *json.SyntaxError
-		var jt *json.UnmarshalTypeError
 		if err != nil {
-			if errors.As(err, &ve) {
-				for _, v := range ve {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"message": fmt.Sprintf("erro no campo: %v", v.Field()),
-					})
-					return
-				}
-			} else if errors.As(err, &js) {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"message": "confira a estrutura do JSON",
-				})
-				return
-			} else if errors.As(err, &jt) {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"message": fmt.Sprintf("confira o tipo do campo %v", jt.Field),
-				})
-				return
-			} else {
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"message": "erro interno",
-				})
-				return
-			}
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
+			return
 		}
 		p, err := json.Marshal(updateProduct)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "erro interno tente novamente",
-			})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
 			return
 		}
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": "id inválido",
-			})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
 			return
 		}
 		product, err := ph.service.Update(id, p)
 		if err != nil {
-			if errors.Is(err, customerrors.ErrorInvalidID) {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"message": "id nao encontrado",
-				})
-				return
-			} else {
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"message": "erro interno, tente mais tarde",
-				})
-				return
-			}
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
+			return
 		}
-		c.JSON(http.StatusOK, product)
+		c.JSON(http.StatusOK, web.NewResponse(http.StatusOK, product, ""))
 	}
 }
 
@@ -181,28 +129,19 @@ func (ph *ProductHandler) DeleteProducts() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": "id inválido",
-			})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
 			return
 		}
 		err = ph.service.Delete(id)
 		if err != nil {
-			if errors.Is(err, customerrors.ErrorInvalidID) {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"message": "id nao encontrado",
-				})
-				return
-			} else {
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"message": "erro interno, tente mais tarde",
-				})
-				return
-			}
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
+			return
 		}
-		c.JSON(http.StatusNoContent, gin.H{
-			"status": 204,
-		})
+		c.JSON(http.StatusNoContent, web.NewResponse(http.StatusNoContent, nil, "asdasdasdasdasd"))
 	}
 }
 
