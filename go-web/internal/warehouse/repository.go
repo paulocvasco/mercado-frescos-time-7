@@ -32,13 +32,8 @@ func NewRepository() Repository {
 }
 
 func (r *repository) Create(new models.Warehouse) (models.Warehouse, error) {
-	dataBD, err := db.Load(path)
-	if err != nil {
-		return models.Warehouse{}, err
-	}
-
 	var warehouses models.WarehouseMetaData
-	err = json.Unmarshal(dataBD, &warehouses)
+	err := readDB(&warehouses)
 	if err != nil {
 		return models.Warehouse{}, err
 	}
@@ -47,12 +42,7 @@ func (r *repository) Create(new models.Warehouse) (models.Warehouse, error) {
 	new.WarehouseCode = uuid.NewString()
 
 	warehouses.Warehouses = append(warehouses.Warehouses, new)
-
-	rawWarehouses, err := json.Marshal(warehouses)
-	if err != nil {
-		return models.Warehouse{}, err
-	}
-	err = db.Save(path, rawWarehouses)
+	err = writeDB(warehouses)
 	if err != nil {
 		return models.Warehouse{}, err
 	}
@@ -70,24 +60,15 @@ func (r *repository) Update(id int, patchedWarehouse models.Warehouse) error {
 		if warehouse.ID == id {
 			warehouse = models.Warehouse(patchedWarehouse)
 
-			dataBD, err := db.Load(path)
-			if err != nil {
-				return err
-			}
-
 			var warehouses models.WarehouseMetaData
-			err = json.Unmarshal(dataBD, &warehouses)
+			err := readDB(&warehouses)
 			if err != nil {
 				return err
 			}
 
 			warehouses.Warehouses[i] = warehouse
 
-			rawWarehouses, err := json.Marshal(warehouses)
-			if err != nil {
-				return err
-			}
-			err = db.Save(path, rawWarehouses)
+			err = writeDB(warehouses)
 			if err != nil {
 				return err
 			}
@@ -123,28 +104,20 @@ func (r *repository) Delete(id int) error {
 
 	for index, warehouse := range cache.Warehouses {
 		if warehouse.ID == id {
-			dataBD, err := db.Load(path)
-			if err != nil {
-				return err
-			}
 
 			var warehouses models.WarehouseMetaData
-			err = json.Unmarshal(dataBD, &warehouses)
+			err := readDB(&warehouses)
 			if err != nil {
 				return err
 			}
 
 			warehouses.Warehouses = append(warehouses.Warehouses[:index], warehouses.Warehouses[index+1:]...)
 
-			rawWarehouses, err := json.Marshal(warehouses)
+			err = writeDB(warehouses)
 			if err != nil {
 				return err
 			}
-			err = db.Save(path, rawWarehouses)
-			if err != nil {
-				return err
-			}
-
+			cache = warehouses
 			return nil
 		}
 	}
