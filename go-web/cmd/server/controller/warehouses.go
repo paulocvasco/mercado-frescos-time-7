@@ -5,6 +5,7 @@ import (
 	"mercado-frescos-time-7/go-web/internal/warehouse"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -81,6 +82,11 @@ func (control *warehousesController) CreateWarehouse(c *gin.Context) {
 
 func (control *warehousesController) UpdateWarehouse(c *gin.Context) {
 	id := c.Param("id")
+	index, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+	}
+
 	body := c.Request.Body
 	defer body.Close()
 
@@ -90,7 +96,7 @@ func (control *warehousesController) UpdateWarehouse(c *gin.Context) {
 		return
 	}
 
-	err = control.service.Update(id, data)
+	err = control.service.Update(index, data)
 	if err != nil {
 		switch err {
 		case customerrors.ErrorInvalidIDParameter:

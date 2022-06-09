@@ -12,7 +12,7 @@ type Service interface {
 	GetAll() []Warehouse
 	GetByID(string) (Warehouse, error)
 	Create([]byte) (Warehouse, error)
-	Update(string, []byte) error
+	Update(int, []byte) error
 	Delete(string) error
 }
 
@@ -71,13 +71,8 @@ func (s *service) Create(data []byte) (Warehouse, error) {
 	return newWarehouse, nil
 }
 
-func (s *service) Update(id string, data []byte) error {
-	index, err := strconv.Atoi(id)
-	if err != nil {
-		return customerrors.ErrorInvalidIDParameter
-	}
-
-	warehouse, err := s.repository.GetByID(index)
+func (s *service) Update(id int, data []byte) error {
+	warehouse, err := s.repository.GetByID(id)
 	if err != nil {
 		return err
 	}
@@ -95,7 +90,7 @@ func (s *service) Update(id string, data []byte) error {
 		return err
 	}
 
-	err = s.repository.Update(index, warehouse)
+	err = s.repository.Update(id, warehouse)
 	if err != nil {
 		return err
 	}
