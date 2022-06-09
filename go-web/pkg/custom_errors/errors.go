@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -31,72 +33,74 @@ var (
 func ErrorHandleResponse(err error) (int, string) {
 	{ // custom errors
 		if errors.Is(err, ErrorInvalidID) {
-			return 404, err.Error()
+			return http.StatusNotFound, err.Error()
 		}
 		if errors.Is(err, ErrorInvalidIDParameter) {
-			return 404, err.Error()
+			return http.StatusNotFound, err.Error()
 		}
 		if errors.Is(err, ErrorMissingAddres) {
-			return 422, err.Error()
+			return http.StatusUnprocessableEntity, err.Error()
 		}
 		if errors.Is(err, ErrorMissingTelephone) {
-			return 422, err.Error()
+			return http.StatusUnprocessableEntity, err.Error()
 		}
 		if errors.Is(err, ErrorMissingTemperature) {
-			return 422, err.Error()
+			return http.StatusUnprocessableEntity, err.Error()
 		}
 		if errors.Is(err, ErrorItemNotFound) {
-			return 404, err.Error()
+			return http.StatusNotFound, err.Error()
 		}
 		if errors.Is(err, ErrorMinimumCapacity) {
-			return 422, err.Error()
+			return http.StatusUnprocessableEntity, err.Error()
 		}
 		if errors.Is(err, ErrorSectionNotFound) {
-			return 404, err.Error()
+			return http.StatusNotFound, err.Error()
 		}
 		if errors.Is(err, ErrorStoreFailed) {
-			return 500, err.Error()
+			return http.StatusInternalServerError, err.Error()
 		}
 		if errors.Is(err, ErrorEmptySection) {
-			return 404, err.Error()
+			return http.StatusNotFound, err.Error()
 		}
 		if errors.Is(err, ErrorSectionNumber) {
-			return 422, err.Error()
+			return http.StatusUnprocessableEntity, err.Error()
 		}
 		if errors.Is(err, ErrorCurrentCapacity) {
-			return 422, err.Error()
+			return http.StatusUnprocessableEntity, err.Error()
 		}
 		if errors.Is(err, ErrorMinimumCapacity) {
-			return 422, err.Error()
+			return http.StatusUnprocessableEntity, err.Error()
 		}
 		if errors.Is(err, ErrorMaximumCapacity) {
-			return 422, err.Error()
+			return http.StatusUnprocessableEntity, err.Error()
 		}
 		if errors.Is(err, ErrorWarehouseID) {
-			return 422, err.Error()
+			return http.StatusUnprocessableEntity, err.Error()
 		}
 		if errors.Is(err, ErrorProductTypeID) {
-			return 422, err.Error()
+			return http.StatusUnprocessableEntity, err.Error()
 		}
 		if errors.Is(err, ErrorConflict) {
-			return 409, err.Error()
+			return http.StatusConflict, err.Error()
 		}
 	}
 	{ // validate errors
 		var ve validator.ValidationErrors
 		if errors.As(err, &ve) {
+			fields := []string{}
 			for _, v := range ve {
-				return 422, fmt.Sprintf("%v field validation failed", v.Field())
+				fields = append(fields, v.Field())
 			}
+			return http.StatusUnprocessableEntity, fmt.Sprintf("validation error in the field(s): %v", strings.ToLower(strings.Join(fields, ", ")))
 		}
 		var js *json.SyntaxError
 		if errors.As(err, &js) {
-			return 400, "bad JSON"
+			return http.StatusBadRequest, "bad JSON"
 		}
 		var jt *json.UnmarshalTypeError
 		if errors.As(err, &jt) {
-			return 400, fmt.Sprintf("type error in %v", jt.Field)
+			return http.StatusBadRequest, fmt.Sprintf("type error in %v", jt.Field)
 		}
 	}
-	return 500, "internal error"
+	return http.StatusInternalServerError, "internal error"
 }
