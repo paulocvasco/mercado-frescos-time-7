@@ -1,15 +1,23 @@
 package warehouse
 
 import (
+	"encoding/json"
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/db"
 
 	"github.com/google/uuid"
 )
 
+const path = "./warehouses.db"
+
 type repository struct{}
 
-var db []models.Warehouse
+type Warehouse models.Warehouse
+
+var database []Warehouse
+
+var cache models.WarehouseMetaData
 
 var lastID int
 
@@ -26,13 +34,24 @@ func NewRepository() Repository {
 }
 
 func (r *repository) Create(new models.Warehouse) models.Warehouse {
-	new.ID = lastID + 1
+	tmpCache := cache
+	tmpCache.LastID++
+	new.ID = tmpCache.LastID
 	new.WarehouseCode = uuid.NewString()
 
-	db = append(db, new)
-	lastID++
+	tmpCache.Warehouses = append(tmpCache.Warehouses, models.Warehouse(new))
 
-	return new
+	rawWarehouses, err := json.Marshal(tmpCache)
+	if err != nil {
+		return Warehouse{}, err
+	}
+	err = db.Save(path, rawWarehouses)
+	if err != nil {
+		return Warehouse{}, err
+	}
+
+	cache = tmpCache
+	return new, nil
 }
 
 func (r *repository) Update(id int, patchedWarehouse models.Warehouse) error {
@@ -40,10 +59,10 @@ func (r *repository) Update(id int, patchedWarehouse models.Warehouse) error {
 		return customerrors.ErrorInvalidID
 	}
 
-	for i, warehouse := range db {
+	for i, warehouse := range database {
 		if warehouse.ID == id {
 			warehouse = patchedWarehouse
-			db[i] = warehouse
+			database[i] = warehouse
 			return nil
 		}
 	}
@@ -51,7 +70,7 @@ func (r *repository) Update(id int, patchedWarehouse models.Warehouse) error {
 }
 
 func (r *repository) GetAll() []models.Warehouse {
-	return db
+	return database
 }
 
 func (r *repository) GetByID(id int) (models.Warehouse, error) {
@@ -59,7 +78,7 @@ func (r *repository) GetByID(id int) (models.Warehouse, error) {
 		return models.Warehouse{}, customerrors.ErrorInvalidID
 	}
 
-	for _, w := range db {
+	for _, w := range database {
 		if w.ID == id {
 			return w, nil
 		}
@@ -72,9 +91,9 @@ func (r *repository) Delete(id int) error {
 		return customerrors.ErrorInvalidID
 	}
 
-	for index, warehouse := range db {
+	for index, warehouse := range database {
 		if warehouse.ID == id {
-			db = append(db[:index], db[index+1:]...)
+			database = append(database[:index], database[index+1:]...)
 			return nil
 		}
 	}
