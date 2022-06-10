@@ -2,7 +2,6 @@ package sections
 
 import (
 	"encoding/json"
-	"mercado-frescos-time-7/go-web/internal/models"
 	customErrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"strconv"
 
@@ -10,10 +9,10 @@ import (
 )
 
 type Service interface {
-	GetAll() (Sections, error)
-	GetById(string) (models.Section, error)
-	Store(models.Section) (models.Section, error)
-	Update(string, []byte) (models.Section, error)
+	GetAll() ([]Section, error)
+	GetById(string) (Section, error)
+	Store([]byte) (Section, error)
+	Update(string, []byte) (Section, error)
 	Delete(string) error
 }
 
@@ -28,94 +27,100 @@ func NewService(r Repository) Service {
 	return newService
 }
 
-func (s *service) GetAll() (Sections, error) {
+func (s *service) GetAll() ([]Section, error) {
 	data := s.repository.GetAll()
 	return data, nil
 }
 
-func (s *service) GetById(id string) (models.Section, error) {
+func (s *service) GetById(id string) (Section, error) {
 	index, err := strconv.Atoi(id)
 	if err != nil {
-		return models.Section{}, customErrors.ErrorInvalidID
+		return Section{}, customErrors.ErrorInvalidID
 	}
 	data, err := s.repository.GetById(index)
 
-	if err != nil || (data == models.Section{}) {
-		return models.Section{}, customErrors.ErrorInvalidID
+	if err != nil || (data == Section{}) {
+		return Section{}, customErrors.ErrorInvalidID
 	}
 
 	return data, nil
 }
 
-func (s *service) Store(section models.Section) (models.Section, error) {
+func (s *service) Store(section []byte) (Section, error) {
+	var newSection Section
+	err := json.Unmarshal(section, &newSection)
 
-	if section.SectionNumber < 0 {
-		return models.Section{}, customErrors.ErrorSectionNumber
-	}
-	if section.CurrentCapacity < 0 {
-		return models.Section{}, customErrors.ErrorCurrentCapacity
-	}
-	if section.MinimumCapacity < 0 {
-		return models.Section{}, customErrors.ErrorMinimumCapacity
-	}
-	if section.MaximumCapacity < 0 {
-		return models.Section{}, customErrors.ErrorMaximumCapacity
-	}
-	if section.WarehouseId < 0 {
-		return models.Section{}, customErrors.ErrorWarehouseID
-	}
-	if section.ProductTypeId < 0 {
-		return models.Section{}, customErrors.ErrorProductTypeID
-	}
-
-	newSection, err := s.repository.Store(section)
 	if err != nil {
-		return models.Section{}, customErrors.ErrorStoreFailed
+		return Section{}, nil
+	}
+
+	if newSection.SectionNumber < 0 {
+		return Section{}, customErrors.ErrorSectionNumber
+	}
+	if newSection.CurrentCapacity < 0 {
+		return Section{}, customErrors.ErrorCurrentCapacity
+	}
+	if newSection.MinimumCapacity < 0 {
+		return Section{}, customErrors.ErrorMinimumCapacity
+	}
+	if newSection.MaximumCapacity < 0 {
+		return Section{}, customErrors.ErrorMaximumCapacity
+	}
+	if newSection.WarehouseId < 0 {
+		return Section{}, customErrors.ErrorWarehouseID
+	}
+	if newSection.ProductTypeId < 0 {
+		return Section{}, customErrors.ErrorProductTypeID
+	}
+
+	newSection, err = s.repository.Store(newSection)
+	if err != nil {
+		return Section{}, customErrors.ErrorStoreFailed
 	}
 	return newSection, nil
 }
 
-func (s *service) Update(id string, data []byte) (models.Section, error) {
+func (s *service) Update(id string, data []byte) (Section, error) {
 	index, err := strconv.Atoi(id)
 	if err != nil {
-		return models.Section{}, customErrors.ErrorInvalidID
+		return Section{}, customErrors.ErrorInvalidID
 	}
 
-	sectionFound, err := repository.GetById(index)
+	sectionFound, err := s.repository.GetById(index)
 	if err != nil {
-		return models.Section{}, customErrors.ErrorInvalidID
+		return Section{}, customErrors.ErrorInvalidID
 	}
 	sectionFoundJSON, _ := json.Marshal(sectionFound)
 	patch, err := jsonpatch.MergePatch(sectionFoundJSON, data)
 
 	if err != nil {
-		return models.Section{}, err
+		return Section{}, err
 	}
-	var newSection models.Section
+	var newSection Section
 	json.Unmarshal(patch, &newSection)
 
 	if newSection.SectionNumber < 0 {
-		return models.Section{}, customErrors.ErrorSectionNumber
+		return Section{}, customErrors.ErrorSectionNumber
 	}
 	if newSection.CurrentCapacity < 0 {
-		return models.Section{}, customErrors.ErrorCurrentCapacity
+		return Section{}, customErrors.ErrorCurrentCapacity
 	}
 	if newSection.MinimumCapacity < 0 {
-		return models.Section{}, customErrors.ErrorMinimumCapacity
+		return Section{}, customErrors.ErrorMinimumCapacity
 	}
 	if newSection.MaximumCapacity < 0 {
-		return models.Section{}, customErrors.ErrorMaximumCapacity
+		return Section{}, customErrors.ErrorMaximumCapacity
 	}
 	if newSection.WarehouseId < 0 {
-		return models.Section{}, customErrors.ErrorWarehouseID
+		return Section{}, customErrors.ErrorWarehouseID
 	}
 	if newSection.ProductTypeId < 0 {
-		return models.Section{}, customErrors.ErrorProductTypeID
+		return Section{}, customErrors.ErrorProductTypeID
 	}
 
 	err = s.repository.Update(index, newSection)
 	if err != nil {
-		return models.Section{}, err
+		return Section{}, err
 	}
 
 	return newSection, nil
@@ -126,7 +131,7 @@ func (s *service) Delete(id string) error {
 	if err != nil {
 		return err
 	}
-	_, err = repository.GetById(index)
+	_, err = s.repository.GetById(index)
 
 	if err != nil {
 		return customErrors.ErrorInvalidID

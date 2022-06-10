@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"mercado-frescos-time-7/go-web/internal/models"
 	"mercado-frescos-time-7/go-web/internal/sections"
 	"mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
@@ -55,20 +54,12 @@ func (controller *sectionsController) Store(ctx *gin.Context) {
 		ctx.JSON(422, web.NewResponse(422, nil, "Não contém os campos necessários"))
 		return
 	}
-
-	section := models.Section{
-		SectionNumber:      newSection.SectionNumber,
-		CurrentTemperature: newSection.CurrentTemperature,
-		MinimumTemperature: newSection.MinimumTemperature,
-		CurrentCapacity:    newSection.CurrentCapacity,
-		MinimumCapacity:    newSection.MinimumCapacity,
-		MaximumCapacity:    newSection.MaximumCapacity,
-		WarehouseId:        newSection.WarehouseId,
-		ProductTypeId:      newSection.ProductTypeId,
+	sectionToJson, err := json.Marshal(newSection)
+	if err != nil {
+		ctx.JSON(422, web.NewResponse(422, nil, "Não contém os campos necessários"))
+		return
 	}
-
-	section, err = controller.service.Store(section)
-
+	section, err := controller.service.Store(sectionToJson)
 	if err != nil {
 		ctx.JSON(411, web.NewResponse(411, nil, err.Error()))
 		return

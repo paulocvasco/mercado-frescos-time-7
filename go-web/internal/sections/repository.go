@@ -6,10 +6,9 @@ import (
 )
 
 type Section models.Section
-type Sections models.Sections
+type repository struct{}
 
-var repository Sections
-
+var db []Section
 var lastID int
 
 func LastID() int {
@@ -24,57 +23,60 @@ func ValidateID(id int) bool {
 }
 
 type Repository interface {
-	GetAll() Sections
-	GetById(int) (models.Section, error)
-	Store(models.Section) (models.Section, error)
-	Update(int, models.Section) error
+	GetAll() []Section
+	GetById(int) (Section, error)
+	Store(Section) (Section, error)
+	Update(int, Section) error
 	Delete(int) error
 }
 
 func NewRepository() Repository {
-	return &repository
+	return &repository{}
 }
 
-func (s *Sections) GetAll() Sections {
-	return *s
+func (s *repository) GetAll() []Section {
+	return db
 }
 
-func (s *Sections) GetById(id int) (models.Section, error) {
+func (s *repository) GetById(id int) (Section, error) {
 	if !ValidateID(id) {
-		return models.Section{}, customErrors.ErrorInvalidID
+		return Section{}, customErrors.ErrorInvalidID
 	}
 
-	for _, sec := range s.Section {
-		if sec.ID == id {
-			return sec, nil
+	for _, section := range db {
+		if section.ID == id {
+			return section, nil
 		}
 	}
-	return models.Section{}, nil
+	return Section{}, nil
 }
 
-func (s *Sections) Store(newSection models.Section) (models.Section, error) {
+func (s *repository) Store(newSection Section) (Section, error) {
 	newSection.ID = lastID
-	s.Section = append(s.Section, models.Section(newSection))
+	db = append(db, newSection)
 	lastID++
 
 	return newSection, nil
 }
 
-func (s *Sections) Update(id int, newSection models.Section) error {
-	sectionVec := s.Section
-	for i, section := range sectionVec {
+func (s *repository) Update(id int, newSection Section) error {
+	if !ValidateID(id) {
+		return customErrors.ErrorInvalidID
+	}
+
+	for i, section := range db {
 		if section.ID == newSection.ID {
-			s.Section[i] = newSection
+			db[i] = newSection
 			return nil
 		}
 	}
 	return customErrors.ErrorEmptySection
 }
 
-func (s *Sections) Delete(id int) error {
-	for i, section := range s.Section {
+func (s *repository) Delete(id int) error {
+	for i, section := range db {
 		if section.ID == id {
-			s.Section = append(s.Section[:i], s.Section[i+1:]...)
+			db = append(db[:i], db[i+1:]...)
 			return nil
 		}
 	}
