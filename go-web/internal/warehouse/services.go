@@ -10,7 +10,7 @@ import (
 )
 
 type Service interface {
-	GetAll() []models.Warehouse
+	GetAll() ([]models.Warehouse, error)
 	GetByID(int) (models.Warehouse, error)
 	Create(models.Warehouse) (models.Warehouse, error)
 	Update(int, []byte) (models.Warehouse, error)
@@ -60,7 +60,7 @@ func (s *service) Create(newWarehouse models.Warehouse) (models.Warehouse, error
 		return models.Warehouse{}, customerrors.ErrorMissingTemperature
 	}
 
-	newWarehouse, err = s.repository.Create(newWarehouse)
+	newWarehouse, err := s.repository.Create(newWarehouse)
 	if err != nil {
 		return models.Warehouse{}, err
 	}
