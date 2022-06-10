@@ -40,8 +40,8 @@ func (c *Sellers) SellersStore() gin.HandlerFunc  {
 			return
 		}
 		ctx.JSON(201, p)
-		}
 	}
+}
 
 
 
