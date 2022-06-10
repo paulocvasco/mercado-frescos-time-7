@@ -1,8 +1,22 @@
 package db
 
-import "os"
+import (
+	"encoding/json"
+	"os"
+)
 
-func Save(path string, data []byte) error {
+type DB interface {
+	Save(string, interface{}) error
+	Load(string, interface{}) error
+}
+
+type database struct{}
+
+func NewDatabase() DB {
+	return &database{}
+}
+
+func (db *database) Save(path string, model interface{}) error {
 	var err error
 	var file *os.File
 
@@ -20,6 +34,11 @@ func Save(path string, data []byte) error {
 			return err
 		}
 	}
+
+	data, err := json.Marshal(model)
+	if err != nil {
+		return err
+	}
 	// save data
 	_, err = file.Write(data)
 	if err != nil {
@@ -29,17 +48,22 @@ func Save(path string, data []byte) error {
 	return nil
 }
 
-func Load(path string) (data []byte, err error) {
+func (db *database) Load(path string, model interface{}) error {
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	defer file.Close()
-	data, err = os.ReadFile(path)
+	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return data, nil
+	err = json.Unmarshal(data, &model)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
