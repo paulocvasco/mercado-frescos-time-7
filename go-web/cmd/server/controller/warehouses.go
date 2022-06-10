@@ -1,9 +1,11 @@
 package controller
 
 import (
+	"errors"
 	"io/ioutil"
 	"mercado-frescos-time-7/go-web/internal/warehouse"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 	"strconv"
 
@@ -35,18 +37,26 @@ func (control *warehousesController) GetAllWarehouse(c *gin.Context) {
 }
 
 func (control *warehousesController) GetByIDWarehouse(c *gin.Context) {
-	param := c.Param("id")
-	response, err := control.service.GetByID(param)
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		switch err {
-		case customerrors.ErrorInvalidIDParameter:
-			c.JSON(http.StatusBadRequest, err)
-		case customerrors.ErrorInvalidID:
-			c.JSON(http.StatusNotFound, err)
-		default:
-			c.JSON(http.StatusInternalServerError, err)
-		}
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
 		return
+	}
+	response, err := control.service.GetByID(id)
+	if err != nil {
+		if errors.Is(err, customerrors.ErrorInvalidID) {
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
+			return
+		} else {
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
+			return
+		}
 	}
 	c.JSON(http.StatusOK, response)
 }
