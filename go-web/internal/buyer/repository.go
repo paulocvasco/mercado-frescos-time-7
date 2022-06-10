@@ -4,16 +4,18 @@ import (
 	"fmt"
 
 	model "mercado-frescos-time-7/go-web/internal/models"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 )
 
 type RequestPatch struct {
-	CardNumberID *string `json:"card_number_id,omitempty" `
-	FirstName    string  `json:"first_name,omitempty"`
-	LastName     string  `json:"last_name,omitempty"`
+	CardNumberID string `json:"card_number_id,omitempty" `
+	FirstName    string `json:"first_name,omitempty"`
+	LastName     string `json:"last_name,omitempty"`
 }
 type Repository interface {
 	GetAll() []model.Buyer
 	GetId(id int) (model.Buyer, error)
+	GetCardNumberId(id string) error
 	Create(CardNumberID string, FirstName, LastName string) (model.Buyer, error)
 	Update(id int, body model.Buyer) (model.Buyer, error)
 	Delete(id int) error
@@ -87,4 +89,13 @@ func (r *repository) GenerateID() int {
 	lastId = append(lastId, result)
 
 	return result
+}
+
+func (r *repository) GetCardNumberId(cardId string) error {
+	for _, value := range db {
+		if value.CardNumberID == cardId {
+			return customerrors.ErrorCardIdAlreadyExists
+		}
+	}
+	return nil
 }
