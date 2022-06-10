@@ -90,9 +90,14 @@ var LastId int
 
 type Seller struct {
 	ID           int    `json:"id"`
-	Cid          int `json:"cid"`
+	Cid          int    `json:"cid"`
 	Company_name string `json:"company_name"`
 	Address      string `json:"address"`
 	Telephone    string `json:"telephone"`
 }
 
+type User struct {
+	Id       int    `json:"id"`
+	User     string `json:"user"`
+	Password string `json:"password"`
+}
