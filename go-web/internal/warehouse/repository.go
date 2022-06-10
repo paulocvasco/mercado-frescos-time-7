@@ -9,17 +9,15 @@ import (
 
 type repository struct{}
 
-type Warehouse models.Warehouse
-
-var db []Warehouse
+var db []models.Warehouse
 
 var lastID int
 
 type Repository interface {
-	Create(Warehouse) Warehouse
-	Update(int, Warehouse) error
-	GetAll() []Warehouse
-	GetByID(int) (Warehouse, error)
+	Create(models.Warehouse) models.Warehouse
+	Update(int, models.Warehouse) error
+	GetAll() []models.Warehouse
+	GetByID(int) (models.Warehouse, error)
 	Delete(int) error
 }
 
@@ -27,7 +25,7 @@ func NewRepository() Repository {
 	return &repository{}
 }
 
-func (r *repository) Create(new Warehouse) Warehouse {
+func (r *repository) Create(new models.Warehouse) models.Warehouse {
 	new.ID = lastID + 1
 	new.WarehouseCode = uuid.NewString()
 
@@ -37,7 +35,7 @@ func (r *repository) Create(new Warehouse) Warehouse {
 	return new
 }
 
-func (r *repository) Update(id int, patchedWarehouse Warehouse) error {
+func (r *repository) Update(id int, patchedWarehouse models.Warehouse) error {
 	if id < 0 || id > lastID {
 		return customerrors.ErrorInvalidID
 	}
@@ -52,13 +50,13 @@ func (r *repository) Update(id int, patchedWarehouse Warehouse) error {
 	return customerrors.ErrorItemNotFound
 }
 
-func (r *repository) GetAll() []Warehouse {
+func (r *repository) GetAll() []models.Warehouse {
 	return db
 }
 
-func (r *repository) GetByID(id int) (Warehouse, error) {
+func (r *repository) GetByID(id int) (models.Warehouse, error) {
 	if id < 0 || id > lastID {
-		return Warehouse{}, customerrors.ErrorInvalidID
+		return models.Warehouse{}, customerrors.ErrorInvalidID
 	}
 
 	for _, w := range db {
@@ -66,7 +64,7 @@ func (r *repository) GetByID(id int) (Warehouse, error) {
 			return w, nil
 		}
 	}
-	return Warehouse{}, customerrors.ErrorInvalidID
+	return models.Warehouse{}, customerrors.ErrorInvalidID
 }
 
 func (r *repository) Delete(id int) error {

@@ -33,11 +33,11 @@ type Buyer struct {
 
 type Warehouse struct {
 	ID                 int    `json:"id"`
-	Address            string `json:"address"`
-	Telephone          string `json:"telephone"`
+	Address            string `json:"address" binding:"required"`
+	Telephone          string `json:"telephone" binding:"required"`
 	WarehouseCode      string `json:"warehouse_code"`
-	MinimunCapacity    int    `json:"minimun_capacity"`
-	MinimunTemperature int    `json:"minimun_temperature"`
+	MinimunCapacity    int    `json:"minimun_capacity" binding:"required"`
+	MinimunTemperature int    `json:"minimun_temperature" binding:"required"`
 }
 
 type Product struct {
