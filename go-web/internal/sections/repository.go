@@ -1,8 +1,8 @@
 package sections
 
 import (
-	customErrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/internal/models"
+	customErrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 )
 
 type Section models.Section
@@ -25,9 +25,9 @@ func ValidateID(id int) bool {
 
 type Repository interface {
 	GetAll() Sections
-	GetById(int) (Section, error)
+	GetById(int) (models.Section, error)
 	Store(models.Section) (models.Section, error)
-	Update(int, Section) error
+	Update(int, models.Section) error
 	Delete(int) error
 }
 
@@ -39,17 +39,17 @@ func (s *Sections) GetAll() Sections {
 	return *s
 }
 
-func (s *Sections) GetById(id int) (Section, error) {
+func (s *Sections) GetById(id int) (models.Section, error) {
 	if !ValidateID(id) {
-		return Section{}, customErrors.ErrorInvalidID
+		return models.Section{}, customErrors.ErrorInvalidID
 	}
 
 	for _, sec := range s.Section {
 		if sec.ID == id {
-			return Section(sec), nil
+			return sec, nil
 		}
 	}
-	return Section{}, nil
+	return models.Section{}, nil
 }
 
 func (s *Sections) Store(newSection models.Section) (models.Section, error) {
@@ -60,29 +60,15 @@ func (s *Sections) Store(newSection models.Section) (models.Section, error) {
 	return newSection, nil
 }
 
-func (s *Sections) Update(id int, newSection Section) error {
-	st, err := s.GetById(id)
-
-	if err != nil {
-		return err
+func (s *Sections) Update(id int, newSection models.Section) error {
+	sectionVec := s.Section
+	for i, section := range sectionVec {
+		if section.ID == newSection.ID {
+			s.Section[i] = newSection
+			return nil
+		}
 	}
-
-	if (st == Section{}) {
-		return customErrors.ErrorEmptySection
-	}
-
-	st.CurrentTemperature = newSection.CurrentTemperature
-	st.MinimumTemperature = newSection.MinimumTemperature
-	st.SectionNumber = newSection.SectionNumber
-	st.CurrentCapacity = newSection.CurrentCapacity
-	st.MinimumCapacity = newSection.MinimumCapacity
-	st.MaximumCapacity = newSection.MaximumCapacity
-	st.WarehouseId = newSection.WarehouseId
-	st.ProductTypeId = newSection.ProductTypeId
-
-	s.Section[id] = models.Section(st)
-
-	return nil
+	return customErrors.ErrorEmptySection
 }
 
 func (s *Sections) Delete(id int) error {
