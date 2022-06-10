@@ -2,6 +2,7 @@ package warehouse
 
 import (
 	"encoding/json"
+	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"strconv"
 
@@ -9,9 +10,9 @@ import (
 )
 
 type Service interface {
-	GetAll() []Warehouse
-	GetByID(string) (Warehouse, error)
-	Create([]byte) (Warehouse, error)
+	GetAll() []models.Warehouse
+	GetByID(string) (models.Warehouse, error)
+	Create([]byte) (models.Warehouse, error)
 	Update(int, []byte) error
 	Delete(string) error
 }
@@ -27,43 +28,43 @@ func NewService(r Repository) Service {
 	return newService
 }
 
-func (s *service) GetAll() []Warehouse {
+func (s *service) GetAll() []models.Warehouse {
 	data := s.repository.GetAll()
 	return data
 }
 
-func (s *service) GetByID(id string) (Warehouse, error) {
+func (s *service) GetByID(id string) (models.Warehouse, error) {
 	index, err := strconv.Atoi(id)
 	if err != nil {
-		return Warehouse{}, customerrors.ErrorInvalidIDParameter
+		return models.Warehouse{}, customerrors.ErrorInvalidIDParameter
 	}
 	data, err := s.repository.GetByID(index)
 	if err != nil {
-		return Warehouse{}, err
+		return models.Warehouse{}, err
 	}
 
 	return data, nil
 }
 
-func (s *service) Create(data []byte) (Warehouse, error) {
-	var newWarehouse Warehouse
+func (s *service) Create(data []byte) (models.Warehouse, error) {
+	var newWarehouse models.Warehouse
 	err := json.Unmarshal(data, &newWarehouse)
 	if err != nil {
-		return Warehouse{}, nil
+		return models.Warehouse{}, nil
 	}
 
 	// validate request fields
 	if newWarehouse.Address == "" {
-		return Warehouse{}, customerrors.ErrorMissingAddres
+		return models.Warehouse{}, customerrors.ErrorMissingAddres
 	}
 	if newWarehouse.Telephone == "" {
-		return Warehouse{}, customerrors.ErrorMissingTelephone
+		return models.Warehouse{}, customerrors.ErrorMissingTelephone
 	}
 	if newWarehouse.MinimunCapacity == 0 {
-		return Warehouse{}, customerrors.ErrorMissingCapacity
+		return models.Warehouse{}, customerrors.ErrorMissingCapacity
 	}
 	if newWarehouse.MinimunTemperature == 0 {
-		return Warehouse{}, customerrors.ErrorMissingTemperature
+		return models.Warehouse{}, customerrors.ErrorMissingTemperature
 	}
 
 	newWarehouse = s.repository.Create(newWarehouse)
