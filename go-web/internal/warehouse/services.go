@@ -12,8 +12,8 @@ import (
 type Service interface {
 	GetAll() []models.Warehouse
 	GetByID(int) (models.Warehouse, error)
-	Create([]byte) (models.Warehouse, error)
-	Update(int, []byte) error
+	Create(models.Warehouse) (models.Warehouse, error)
+	Update(int, []byte) (models.Warehouse, error)
 	Delete(string) error
 }
 
@@ -42,13 +42,7 @@ func (s *service) GetByID(id int) (models.Warehouse, error) {
 	return data, nil
 }
 
-func (s *service) Create(data []byte) (models.Warehouse, error) {
-	var newWarehouse models.Warehouse
-	err := json.Unmarshal(data, &newWarehouse)
-	if err != nil {
-		return models.Warehouse{}, nil
-	}
-
+func (s *service) Create(newWarehouse models.Warehouse) (models.Warehouse, error) {
 	// validate request fields
 	if newWarehouse.Address == "" {
 		return models.Warehouse{}, customerrors.ErrorMissingAddres
@@ -56,7 +50,7 @@ func (s *service) Create(data []byte) (models.Warehouse, error) {
 	if newWarehouse.Telephone == "" {
 		return models.Warehouse{}, customerrors.ErrorMissingTelephone
 	}
-	if newWarehouse.MinimunCapacity == 0 {
+	if newWarehouse.MinimunCapacity < 0 {
 		return models.Warehouse{}, customerrors.ErrorMissingCapacity
 	}
 	if newWarehouse.MinimunTemperature == 0 {
@@ -68,31 +62,31 @@ func (s *service) Create(data []byte) (models.Warehouse, error) {
 	return newWarehouse, nil
 }
 
-func (s *service) Update(id int, data []byte) error {
+func (s *service) Update(id int, data []byte) (models.Warehouse, error) {
 	warehouse, err := s.repository.GetByID(id)
 	if err != nil {
-		return err
+		return models.Warehouse{}, err
 	}
 
 	warehouseBytes, err := json.Marshal(warehouse)
 	if err != nil {
-		return err
+		return models.Warehouse{}, err
 	}
 	patchedWarehouse, err := jsonpatch.MergePatch(warehouseBytes, data)
 	if err != nil {
-		return err
+		return models.Warehouse{}, err
 	}
 	err = json.Unmarshal(patchedWarehouse, &warehouse)
 	if err != nil {
-		return err
+		return models.Warehouse{}, err
 	}
 
 	err = s.repository.Update(id, warehouse)
 	if err != nil {
-		return err
+		return models.Warehouse{}, nil
 	}
 
-	return nil
+	return warehouse, nil
 }
 
 func (s *service) Delete(id string) error {
