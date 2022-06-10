@@ -14,6 +14,7 @@ func InstanceLogin(r *gin.Engine) {
 
 	routes := r.Group("/login")
 
-	routes.POST("/", c.CreateUser())
+	routes.POST("/", c.GetUser())
+	routes.POST("/create", c.CreateUser())
 
 }

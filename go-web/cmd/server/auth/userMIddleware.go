@@ -8,31 +8,36 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type userMiddeleware struct {
+type UserMiddeleware struct {
 	service login.Service
 }
 
-func (s *userMiddeleware) ValidateToken() gin.HandlerFunc {
+func Middeleware(l login.Service) *UserMiddeleware {
+	return &UserMiddeleware{
+		service: l,
+	}
+}
+
+func (s *UserMiddeleware) ValidateToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.Request.Header.Get("token")
 		id := c.Request.Header.Get("id")
 		intId, err := strconv.Atoi(id)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Type Id invalid"})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Type Id Invalid"})
 			return
 		}
 
 		getTokenById, err := s.service.GetUserById(intId)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Id there isn`t."})
 			return
 		}
 		if getTokenById != token {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "token"})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "successed"})
-
+		c.Next()
 	}
 }

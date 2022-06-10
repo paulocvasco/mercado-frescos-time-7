@@ -13,7 +13,6 @@ func InstanceBuyer(r *gin.Engine) {
 	c := controller.BuyerNewController(service)
 
 	routes := r.Group("/api/v1/buyers")
-
 	routes.GET("/", c.BuyerGetAll())
 	routes.GET("/:id", c.BuyerGetId())
 	routes.POST("/", c.BuyerCreate())

@@ -32,6 +32,18 @@ func (l *LoginController) CreateUser() gin.HandlerFunc {
 
 func (l *LoginController) GetUser() gin.HandlerFunc {
 	return func(context *gin.Context) {
+		var input createUser
+		if err := context.ShouldBindJSON(&input); err != nil {
+			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+			return
+		}
+		user, err := l.service.GetUser(input.User, input.Password)
+		if err != nil {
+			context.JSON(http.StatusBadRequest, gin.H{"error": "User e Password invalidos"})
+			return
+		}
+
+		context.JSON(http.StatusCreated, user)
 
 	}
 }
