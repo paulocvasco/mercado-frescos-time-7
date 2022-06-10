@@ -61,10 +61,7 @@ func (r *repository) CheckCid(cid int) (Seller, error) {
 }
 
 func (r *repository) Update(newValues Seller, id int) (Seller, error) {
-	_, err := r.CheckCid(newValues.Cid)
-	if err != nil {
-		return Seller{}, err
-	}
+
 	for k, v := range ps {
 		if v.ID == id {
 			if newValues.Address != "" {
