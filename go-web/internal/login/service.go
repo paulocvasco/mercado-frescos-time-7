@@ -10,7 +10,7 @@ import (
 
 type Service interface {
 	GetUser(user string, password string) (string, error)
-	CreateUser(user string, password string) (data models.User)
+	CreateUser(user string, password string) IdAndToken
 	GetUserById(id int) (string, error)
 }
 
@@ -44,11 +44,13 @@ func (s *service) GetUser(user, password string) (string, error) {
 	return token, nil
 
 }
-func (s *service) CreateUser(user, password string) models.User {
+func (s *service) CreateUser(user, password string) IdAndToken {
 
 	encodedPassword := codePassword(password)
 	newUser := s.repository.CreateUser(user, encodedPassword)
-	return newUser
+	token := GenerateToken(newUser)
+	data := IdAndToken{newUser.Id, token}
+	return data
 
 }
 
@@ -64,4 +66,9 @@ func GenerateToken(dataUser models.User) string {
 	str := []byte(concatPartsToken)
 	encodedStr := hex.EncodeToString(str)
 	return encodedStr
+}
+
+type IdAndToken struct {
+	Id    int    `json:"id" binding:"required"`
+	Token string `json:"token" binding:"required"`
 }

@@ -15,6 +15,7 @@ func main() {
 	routes.InstanceBuyer(r)
 	routes.InstanceProducts(r)
 	routes.InstanceWarehouse(r)
+	routes.InstanceLogin(r)
 
 	r.Run()
 }
