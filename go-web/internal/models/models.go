@@ -87,10 +87,11 @@ var Products []Product = []Product{
 }
 
 var LastId int
-type Seller struct {
+type Seller struct { 
 	ID    int  `json:"id"`
-	Cid  string  `json:"cid"`
+	Cid  int  `json:"cid"`
 	Company_name string  `json:"company_name"`
 	Address string  `json:"address"`
 	Telephone  string `json:"telephone"`
 }
+

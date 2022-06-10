@@ -9,16 +9,16 @@ import (
 
 type Seller models.Seller
 
-var ps []Seller
+var ps []Seller 
 var lastID int
 
 type Repository interface {
 	GetAll() ([]Seller, error)
 	GetId(indice int) (Seller, error)
-	CheckCid(cid string) (Seller, error)
+	CheckCid(cid int) (Seller, error)
 	Update(s Seller, id int) (Seller, error)
 	Delete(id int) error
-	Store(id int, cid string, company_name string, address string, telephone string) (Seller, error)
+	Store(id int, cid int, company_name string, address string, telephone string) (Seller, error)
 	LastID() (int, error)
 }
 
@@ -51,7 +51,7 @@ func (r *repository) GetId(indice int) (Seller, error) {
 	return Seller{}, errors.New("id não encontrado")
 }
 
-func (r *repository) CheckCid(cid string) (Seller, error) {
+func (r *repository) CheckCid(cid int) (Seller, error) {
 	for _, v := range ps {
 		if v.Cid == cid {
 			return Seller{}, errors.New("cid já existente")
@@ -61,12 +61,16 @@ func (r *repository) CheckCid(cid string) (Seller, error) {
 }
 
 func (r *repository) Update(newValues Seller, id int) (Seller, error) {
+	_, err := r.CheckCid(newValues.Cid)
+	if err != nil {
+		return Seller{}, err
+	}
 	for k, v := range ps {
 		if v.ID == id {
 			if newValues.Address != "" {
 				v.Address = newValues.Address
 			}
-			if newValues.Cid != "" {
+			if newValues.Cid != 0 {
 				v.Cid = newValues.Cid
 			}
 			if newValues.Company_name != "" {
@@ -86,7 +90,7 @@ func (r *repository) LastID() (int, error) {
 	return lastID, nil
 }
 
-func (r *repository) Store(id int, cid string, company_name string, address string, telephone string) (Seller, error) {
+func (r *repository) Store(id int, cid int, company_name string, address string, telephone string) (Seller, error) {
 	_, err := r.CheckCid(cid)
 	if err != nil {
 		return Seller{}, err
