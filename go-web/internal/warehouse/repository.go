@@ -1,7 +1,6 @@
 package warehouse
 
 import (
-	"encoding/json"
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/pkg/db"
@@ -11,13 +10,11 @@ import (
 
 const path = "./warehouses.db"
 
-type repository struct{}
-
-var database []models.Warehouse
+type repository struct {
+	database db.DB
+}
 
 var cache models.WarehouseMetaData
-
-var lastID int
 
 type Repository interface {
 	Create(models.Warehouse) (models.Warehouse, error)
@@ -27,13 +24,15 @@ type Repository interface {
 	Delete(int) error
 }
 
-func NewRepository() Repository {
-	return &repository{}
+func NewRepository(database db.DB) Repository {
+	return &repository{
+		database: database,
+	}
 }
 
 func (r *repository) Create(new models.Warehouse) (models.Warehouse, error) {
 	var warehouses models.WarehouseMetaData
-	err := readDB(&warehouses)
+	err := r.database.Load(path, &warehouses)
 	if err != nil {
 		return models.Warehouse{}, err
 	}
@@ -43,7 +42,7 @@ func (r *repository) Create(new models.Warehouse) (models.Warehouse, error) {
 	new.WarehouseCode = uuid.NewString()
 
 	warehouses.Warehouses = append(warehouses.Warehouses, new)
-	err = writeDB(warehouses)
+	err = r.database.Save(path, warehouses)
 	if err != nil {
 		return models.Warehouse{}, err
 	}
@@ -59,22 +58,11 @@ func (r *repository) Update(id int, patchedWarehouse models.Warehouse) error {
 
 	for i, warehouse := range cache.Warehouses {
 		if warehouse.ID == id {
-			warehouse = models.Warehouse(patchedWarehouse)
-
-			var warehouses models.WarehouseMetaData
-			err := readDB(&warehouses)
+			cache.Warehouses[i] = patchedWarehouse
+			err := r.database.Save(path, cache)
 			if err != nil {
 				return err
 			}
-
-			warehouses.Warehouses[i] = warehouse
-
-			err = writeDB(warehouses)
-			if err != nil {
-				return err
-			}
-
-			cache = warehouses
 			return nil
 		}
 	}
@@ -83,7 +71,7 @@ func (r *repository) Update(id int, patchedWarehouse models.Warehouse) error {
 
 func (r *repository) GetAll() ([]models.Warehouse, error) {
 	if cache.LastID == 0 {
-		err := readDB(&cache)
+		err := r.database.Load(path, &cache)
 		if err != nil {
 			return nil, err
 		}
@@ -93,7 +81,7 @@ func (r *repository) GetAll() ([]models.Warehouse, error) {
 
 func (r *repository) GetByID(id int) (models.Warehouse, error) {
 	if cache.LastID == 0 {
-		err := readDB(&cache)
+		err := r.database.Load(path, &cache)
 		if err != nil {
 			return models.Warehouse{}, err
 		}
@@ -120,14 +108,14 @@ func (r *repository) Delete(id int) error {
 		if warehouse.ID == id {
 
 			var warehouses models.WarehouseMetaData
-			err := readDB(&warehouses)
+			err := r.database.Load(path, &warehouses)
 			if err != nil {
 				return err
 			}
 
 			warehouses.Warehouses = append(warehouses.Warehouses[:index], warehouses.Warehouses[index+1:]...)
 
-			err = writeDB(warehouses)
+			err = r.database.Save(path, warehouses)
 			if err != nil {
 				return err
 			}
