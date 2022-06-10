@@ -2,6 +2,7 @@ package Seller
 
 import (
 	"encoding/json"
+	"errors"
 
 	jsonpatch "github.com/evanphx/json-patch/v5"
 )
@@ -39,12 +40,22 @@ func (s *service) Update(sel []byte, id int) (Seller, error) {
 	if err != nil {
 		return Seller{}, err
 	}
+
+	var sc Seller
+	err = json.Unmarshal(sel, &sc)
+	if err != nil {
+		return Seller{}, errors.New("Falha em converter, verifique a estrutura da requisicao")
+	}
+	_, err = s.repository.CheckCid(sc.Cid)
+	if err != nil {
+		return Seller{}, errors.New("cid já existente")
+	}
+
 	oldSellerJSON, _ := json.Marshal(oldSeller)
 	patch, err := jsonpatch.MergePatch(oldSellerJSON, sel)
 	if err != nil {
 		return Seller{}, err
 	}
-
 	var updatedSeller Seller
 	err = json.Unmarshal(patch, &updatedSeller)
 	if err != nil {
