@@ -11,7 +11,7 @@ import (
 
 type Service interface {
 	GetAll() []models.Warehouse
-	GetByID(string) (models.Warehouse, error)
+	GetByID(int) (models.Warehouse, error)
 	Create([]byte) (models.Warehouse, error)
 	Update(int, []byte) error
 	Delete(string) error
@@ -33,12 +33,8 @@ func (s *service) GetAll() []models.Warehouse {
 	return data
 }
 
-func (s *service) GetByID(id string) (models.Warehouse, error) {
-	index, err := strconv.Atoi(id)
-	if err != nil {
-		return models.Warehouse{}, customerrors.ErrorInvalidIDParameter
-	}
-	data, err := s.repository.GetByID(index)
+func (s *service) GetByID(id int) (models.Warehouse, error) {
+	data, err := s.repository.GetByID(id)
 	if err != nil {
 		return models.Warehouse{}, err
 	}
