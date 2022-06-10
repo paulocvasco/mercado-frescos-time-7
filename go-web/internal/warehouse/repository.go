@@ -137,29 +137,3 @@ func (r *repository) Delete(id int) error {
 	}
 	return customerrors.ErrorInvalidID
 }
-
-func readDB(warehouses *models.WarehouseMetaData) error {
-	dataBD, err := db.Load(path)
-	if err != nil {
-		return err
-	}
-
-	err = json.Unmarshal(dataBD, &warehouses)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func writeDB(warehouses models.WarehouseMetaData) error {
-	rawWarehouses, err := json.Marshal(warehouses)
-	if err != nil {
-		return err
-	}
-	err = db.Save(path, rawWarehouses)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
