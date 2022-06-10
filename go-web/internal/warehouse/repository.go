@@ -3,95 +3,63 @@ package warehouse
 import (
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/db"
 
 	"github.com/google/uuid"
 )
 
-const path = "./warehouses.db"
+type repository struct{}
 
-type repository struct {
-	database db.DB
-}
+var db []models.Warehouse
 
-var cache models.WarehouseMetaData
+var lastID int
 
 type Repository interface {
-	Create(models.Warehouse) (models.Warehouse, error)
+	Create(models.Warehouse) models.Warehouse
 	Update(int, models.Warehouse) error
-	GetAll() ([]models.Warehouse, error)
+	GetAll() []models.Warehouse
 	GetByID(int) (models.Warehouse, error)
 	Delete(int) error
 }
 
-func NewRepository(database db.DB) Repository {
-	return &repository{
-		database: database,
-	}
+func NewRepository() Repository {
+	return &repository{}
 }
 
-func (r *repository) Create(new models.Warehouse) (models.Warehouse, error) {
-	var warehouses models.WarehouseMetaData
-	err := r.database.Load(path, &warehouses)
-	if err != nil {
-		return models.Warehouse{}, err
-	}
-
-	warehouses.LastID++
-	new.ID = warehouses.LastID
+func (r *repository) Create(new models.Warehouse) models.Warehouse {
+	new.ID = lastID + 1
 	new.WarehouseCode = uuid.NewString()
 
-	warehouses.Warehouses = append(warehouses.Warehouses, new)
-	err = r.database.Save(path, warehouses)
-	if err != nil {
-		return models.Warehouse{}, err
-	}
+	db = append(db, new)
+	lastID++
 
-	cache = warehouses
-	return new, nil
+	return new
 }
 
 func (r *repository) Update(id int, patchedWarehouse models.Warehouse) error {
-	if id < 0 || id > cache.LastID {
+	if id < 0 || id > lastID {
 		return customerrors.ErrorInvalidID
 	}
 
-	for i, warehouse := range cache.Warehouses {
+	for i, warehouse := range db {
 		if warehouse.ID == id {
-			cache.Warehouses[i] = patchedWarehouse
-			err := r.database.Save(path, cache)
-			if err != nil {
-				return err
-			}
+			warehouse = patchedWarehouse
+			db[i] = warehouse
 			return nil
 		}
 	}
 	return customerrors.ErrorItemNotFound
 }
 
-func (r *repository) GetAll() ([]models.Warehouse, error) {
-	if cache.LastID == 0 {
-		err := r.database.Load(path, &cache)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return cache.Warehouses, nil
+func (r *repository) GetAll() []models.Warehouse {
+	return db
 }
 
 func (r *repository) GetByID(id int) (models.Warehouse, error) {
-	if cache.LastID == 0 {
-		err := r.database.Load(path, &cache)
-		if err != nil {
-			return models.Warehouse{}, err
-		}
-	}
-
-	if id < 0 || id > cache.LastID {
+	if id < 0 || id > lastID {
 		return models.Warehouse{}, customerrors.ErrorInvalidID
 	}
 
-	for _, w := range cache.Warehouses {
+	for _, w := range db {
 		if w.ID == id {
 			return w, nil
 		}
@@ -100,26 +68,13 @@ func (r *repository) GetByID(id int) (models.Warehouse, error) {
 }
 
 func (r *repository) Delete(id int) error {
-	if id < 0 || id > cache.LastID {
+	if id < 0 || id > lastID {
 		return customerrors.ErrorInvalidID
 	}
 
-	for index, warehouse := range cache.Warehouses {
+	for index, warehouse := range db {
 		if warehouse.ID == id {
-
-			var warehouses models.WarehouseMetaData
-			err := r.database.Load(path, &warehouses)
-			if err != nil {
-				return err
-			}
-
-			warehouses.Warehouses = append(warehouses.Warehouses[:index], warehouses.Warehouses[index+1:]...)
-
-			err = r.database.Save(path, warehouses)
-			if err != nil {
-				return err
-			}
-			cache = warehouses
+			db = append(db[:index], db[index+1:]...)
 			return nil
 		}
 	}
