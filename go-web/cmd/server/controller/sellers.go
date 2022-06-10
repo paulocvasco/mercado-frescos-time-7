@@ -28,7 +28,7 @@ var gar getAllResponse
 func (c *Sellers) SellersStore() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 		var req request
-		if err := ctx.Bind(&req); err != nil {
+		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.JSON(422, gin.H{
 				"error": err.Error(),
 			})
