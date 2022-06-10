@@ -90,12 +90,12 @@ func (controller *sectionsController) Update(ctx *gin.Context) {
 		return
 	}
 	id := ctx.Param("id")
-	err = controller.service.Update(id, section)
+	data, err := controller.service.Update(id, section)
 	if err != nil {
 		ctx.JSON(404, web.NewResponse(404, nil, "Section não encontrada!"))
 		return
 	}
-	ctx.JSON(200, web.NewResponse(200, section, "Section atualizada com sucesso!"))
+	ctx.JSON(200, web.NewResponse(200, data, "Section atualizada com sucesso!"))
 }
 
 func (controller *sectionsController) Delete(ctx *gin.Context) {
