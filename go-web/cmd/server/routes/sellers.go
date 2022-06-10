@@ -8,11 +8,12 @@ import (
 )
 
 
-func InstanceSeller(r *gin.Engine) {
+func InstanceSeller(e *gin.Engine) {
 	repo := seller.NewRepository()
 	service := seller.NewService(repo)
 	p := controller.NewSellers(service)
 
+	r := e.Group("api/v1") 
 	r.GET("/sellers", p.SellersGetAll())
 	r.GET("/sellers/:id", p.SellersGetId())
 	r.POST("/sellers", p.SellersStore())
