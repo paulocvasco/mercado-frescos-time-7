@@ -2,17 +2,18 @@ package warehouse
 
 import (
 	"encoding/json"
-	customerrors "mercado-frescos-time-7/go-web/internal/custom_errors"
+	"mercado-frescos-time-7/go-web/internal/models"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"strconv"
 
 	jsonpatch "github.com/evanphx/json-patch"
 )
 
 type Service interface {
-	GetAll() (Warehouses, error)
-	GetByID(string) (*Warehouse, error)
-	Create([]byte) error
-	Update(string, []byte) error
+	GetAll() []models.Warehouse
+	GetByID(int) (models.Warehouse, error)
+	Create(models.Warehouse) (models.Warehouse, error)
+	Update(int, []byte) (models.Warehouse, error)
 	Delete(string) error
 }
 
@@ -27,80 +28,65 @@ func NewService(r Repository) Service {
 	return newService
 }
 
-func (s *service) GetAll() (Warehouses, error) {
+func (s *service) GetAll() []models.Warehouse {
 	data := s.repository.GetAll()
+	return data
+}
+
+func (s *service) GetByID(id int) (models.Warehouse, error) {
+	data, err := s.repository.GetByID(id)
+	if err != nil {
+		return models.Warehouse{}, err
+	}
+
 	return data, nil
 }
 
-func (s *service) GetByID(id string) (*Warehouse, error) {
-	index, err := strconv.Atoi(id)
-	if err != nil {
-		return nil, customerrors.ErrorInvalidIDParameter
-	}
-	data, err := s.repository.GetByID(index)
-	if err != nil {
-		return nil, err
-	}
-
-	return &data, nil
-}
-
-func (s *service) Create(data []byte) error {
-	var newWarehouse Warehouse
-	err := json.Unmarshal(data, &newWarehouse)
-	if err != nil {
-		return err
-	}
-
+func (s *service) Create(newWarehouse models.Warehouse) (models.Warehouse, error) {
 	// validate request fields
 	if newWarehouse.Address == "" {
-		return customerrors.ErrorMissingAddres
+		return models.Warehouse{}, customerrors.ErrorMissingAddres
 	}
 	if newWarehouse.Telephone == "" {
-		return customerrors.ErrorMissingTelephone
+		return models.Warehouse{}, customerrors.ErrorMissingTelephone
 	}
-	if newWarehouse.MinimunCapacity == 0 {
-		return customerrors.ErrorMissingCapacity
+	if newWarehouse.MinimunCapacity < 0 {
+		return models.Warehouse{}, customerrors.ErrorMissingCapacity
 	}
 	if newWarehouse.MinimunTemperature == 0 {
-		return customerrors.ErrorMissingTemperature
+		return models.Warehouse{}, customerrors.ErrorMissingTemperature
 	}
 
-	s.repository.Create(newWarehouse)
+	newWarehouse = s.repository.Create(newWarehouse)
 
-	return nil
+	return newWarehouse, nil
 }
 
-func (s *service) Update(id string, data []byte) error {
-	index, err := strconv.Atoi(id)
+func (s *service) Update(id int, data []byte) (models.Warehouse, error) {
+	warehouse, err := s.repository.GetByID(id)
 	if err != nil {
-		return customerrors.ErrorInvalidIDParameter
-	}
-
-	warehouse, err := s.repository.GetByID(index)
-	if err != nil {
-		return err
+		return models.Warehouse{}, err
 	}
 
 	warehouseBytes, err := json.Marshal(warehouse)
 	if err != nil {
-		return err
+		return models.Warehouse{}, err
 	}
 	patchedWarehouse, err := jsonpatch.MergePatch(warehouseBytes, data)
 	if err != nil {
-		return err
+		return models.Warehouse{}, err
 	}
 	err = json.Unmarshal(patchedWarehouse, &warehouse)
 	if err != nil {
-		return err
+		return models.Warehouse{}, err
 	}
 
-	err = s.repository.Update(index, warehouse)
+	err = s.repository.Update(id, warehouse)
 	if err != nil {
-		return err
+		return models.Warehouse{}, nil
 	}
 
-	return nil
+	return warehouse, nil
 }
 
 func (s *service) Delete(id string) error {

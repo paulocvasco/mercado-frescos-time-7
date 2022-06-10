@@ -9,20 +9,26 @@ import (
 )
 
 type Sellers struct {
-	service seller.Service
+	service seller.Service 
 }
 
 type request struct {
-	Cid  string  `json:"cid" binding:"required"`
+	Cid  int  `json:"cid" binding:"required"`
 	CompanyName string  `json:"company_name" binding:"required"`
 	Address string  `json:"address" binding:"required"`
 	Telephone  string `json:"telephone" binding:"required"`
 }
 
+type getAllResponse struct {
+	Seller []seller.Seller `json:"data"`
+}
+
+var gar getAllResponse
+
 func (c *Sellers) SellersStore() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 		var req request
-		if err := ctx.Bind(&req); err != nil {
+		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.JSON(422, gin.H{
 				"error": err.Error(),
 			})
@@ -38,14 +44,16 @@ func (c *Sellers) SellersStore() gin.HandlerFunc  {
 }
 
 
+
 func (c *Sellers) SellersGetAll() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 	p, err := c.service.GetAll()
 	if err != nil {
 		ctx.JSON(400, gin.H{"error": "Sem resultados",})
 			return
-	}	
-	ctx.JSON(200, p)
+	}
+	gar.Seller = p
+	ctx.JSON(200, gar)
 	}
 }
 

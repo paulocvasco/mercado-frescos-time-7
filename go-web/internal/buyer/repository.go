@@ -2,19 +2,19 @@ package buyer
 
 import (
 	"fmt"
-  
+
 	model "mercado-frescos-time-7/go-web/internal/models"
 )
 
 type RequestPatch struct {
-	CardNumberID *int   `json:"card_number_id,omitempty" `
-	FirstName    string `json:"first_name,omitempty"`
-	LastName     string `json:"last_name,omitempty"`
+	CardNumberID *string `json:"card_number_id,omitempty" `
+	FirstName    string  `json:"first_name,omitempty"`
+	LastName     string  `json:"last_name,omitempty"`
 }
 type Repository interface {
 	GetAll() []model.Buyer
 	GetId(id int) (model.Buyer, error)
-	Create(CardNumberID int, FirstName, LastName string) (model.Buyer, error)
+	Create(CardNumberID string, FirstName, LastName string) (model.Buyer, error)
 	Update(id int, body model.Buyer) (model.Buyer, error)
 	Delete(id int) error
 	GenerateID() int
@@ -43,7 +43,7 @@ func (r *repository) GetId(id int) (model.Buyer, error) {
 	return getById, fmt.Errorf("Error")
 }
 
-func (r *repository) Create(cardNumberID int, firstName, lastName string) (model.Buyer, error) {
+func (r *repository) Create(cardNumberID string, firstName, lastName string) (model.Buyer, error) {
 	newId := r.GenerateID()
 	newBuyer := model.Buyer{ID: newId, CardNumberID: cardNumberID, FirstName: firstName, LastName: lastName}
 	db = append(db, newBuyer)

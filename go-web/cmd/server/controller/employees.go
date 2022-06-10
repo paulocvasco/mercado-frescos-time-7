@@ -90,7 +90,7 @@ func (c *EmployeeController) Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req requestEmployee
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			ctx.AbortWithStatusJSON(422, gin.H{
 				"error": err.Error(),
 			})
 			return
@@ -99,7 +99,7 @@ func (c *EmployeeController) Create() gin.HandlerFunc {
 		e, err := c.service.Create(req.CardNumberId, req.FirstName, req.LastName, req.WareHouseId)
 
 		if err != nil {
-			ctx.JSON(422, gin.H{"error": err.Error()})
+			ctx.JSON(400, gin.H{"error": err.Error()})
 			return
 		}
 

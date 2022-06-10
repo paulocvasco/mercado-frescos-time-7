@@ -3,13 +3,13 @@ package controller
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"mercado-frescos-time-7/go-web/internal/products"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type ProductHandler struct {
@@ -26,12 +26,12 @@ func (ph *ProductHandler) GetAllProducts() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		pp, err := ph.service.GetAll()
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "erro interno, tente mais tarde",
-			})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"data": pp})
+		c.JSON(http.StatusOK, web.NewResponse(http.StatusOK, pp, ""))
 	}
 }
 
@@ -39,19 +39,26 @@ func (ph *ProductHandler) GetProduct() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "id inválido",
-			})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
 			return
 		}
 		obj, err := ph.service.GetById(id)
 		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{
-				"message": "id não encontrado",
-			})
-			return
+			if errors.Is(err, customerrors.ErrorInvalidID) {
+				status, msg := customerrors.ErrorHandleResponse(err)
+				res := web.NewResponse(status, nil, msg)
+				c.JSON(status, res)
+				return
+			} else {
+				status, msg := customerrors.ErrorHandleResponse(err)
+				res := web.NewResponse(status, nil, msg)
+				c.JSON(status, res)
+				return
+			}
 		}
-		c.JSON(http.StatusOK, obj)
+		c.JSON(http.StatusOK, web.NewResponse(http.StatusOK, obj, ""))
 	}
 }
 
@@ -59,49 +66,27 @@ func (ph *ProductHandler) SaveProducts() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		newProduct := saveProduct{}
 		err := c.ShouldBindJSON(&newProduct)
-		var ve validator.ValidationErrors
-		var js *json.SyntaxError
 		if err != nil {
-			if errors.As(err, &ve) {
-				for _, v := range ve {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"message": fmt.Sprintf("erro no campo: %v", v.Field()),
-					})
-					return
-				}
-			} else if errors.As(err, &js) {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"message": "confira a estrutura do JSON",
-				})
-				return
-			} else {
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"message": "erro interno",
-				})
-				return
-			}
-		}
-		p := products.Product{
-			Product_code:                     newProduct.Product_code,
-			Description:                      newProduct.Description,
-			Width:                            newProduct.Width,
-			Height:                           newProduct.Height,
-			Length:                           newProduct.Length,
-			Net_weight:                       newProduct.Net_weight,
-			Expiration_rate:                  newProduct.Expiration_rate,
-			Recommended_freezing_temperature: newProduct.Recommended_freezing_temperature,
-			Freezing_rate:                    newProduct.Freezing_rate,
-			Product_type_id:                  newProduct.Product_type_id,
-			Seller_id:                        newProduct.Seller_id,
-		}
-		p, err = ph.service.Insert(p)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "erro interno, tente mais tarde",
-			})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
 			return
 		}
-		c.JSON(http.StatusOK, p)
+		pJSON, err := json.Marshal(newProduct)
+		if err != nil {
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
+			return
+		}
+		p, err := ph.service.Insert(pJSON)
+		if err != nil {
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
+			return
+		}
+		c.JSON(http.StatusCreated, web.NewResponse(http.StatusOK, p, ""))
 	}
 }
 
@@ -109,50 +94,34 @@ func (ph *ProductHandler) UpdateProducts() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		updateProduct := updateProduct{}
 		err := c.ShouldBindJSON(&updateProduct)
-		var ve validator.ValidationErrors
-		var js *json.SyntaxError
 		if err != nil {
-			if errors.As(err, &ve) {
-				for _, v := range ve {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"message": fmt.Sprintf("erro no campo: %v", v.Field()),
-					})
-					return
-				}
-			} else if errors.As(err, &js) {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"message": "confira a estrutura do JSON",
-				})
-				return
-			} else {
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"message": "erro interno",
-				})
-				return
-			}
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
+			return
 		}
 		p, err := json.Marshal(updateProduct)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "erro interno tente novamente",
-			})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
 			return
 		}
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{
-				"message": "id inválido",
-			})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
 			return
 		}
 		product, err := ph.service.Update(id, p)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "erro interno, tente mais tarde",
-			})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
 			return
 		}
-		c.JSON(http.StatusOK, product)
+		c.JSON(http.StatusOK, web.NewResponse(http.StatusOK, product, ""))
 	}
 }
 
@@ -160,21 +129,19 @@ func (ph *ProductHandler) DeleteProducts() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "id inválido",
-			})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
 			return
 		}
 		err = ph.service.Delete(id)
 		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{
-				"message": "id não encontrado",
-			})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
 			return
 		}
-		c.JSON(http.StatusNoContent, gin.H{
-			"status": 204,
-		})
+		c.JSON(http.StatusNoContent, web.NewResponse(http.StatusNoContent, nil, "asdasdasdasdasd"))
 	}
 }
 
@@ -183,7 +150,7 @@ type saveProduct struct {
 	Description                      string  `json:"description" binding:"required"`
 	Width                            float64 `json:"width" binding:"required"`
 	Height                           float64 `json:"height" binding:"required"`
-	Length                           float64 `json:"lenght" binding:"required"`
+	Length                           float64 `json:"length" binding:"required"`
 	Net_weight                       float64 `json:"netweight" binding:"required"`
 	Expiration_rate                  int     `json:"expiration_rate" binding:"required"`
 	Recommended_freezing_temperature float64 `json:"recommended_freezing_temperature" binding:"required"`
@@ -197,7 +164,7 @@ type updateProduct struct {
 	Description                      *string  `json:"description,omitempty"`
 	Width                            *float64 `json:"width,omitempty"`
 	Height                           *float64 `json:"height,omitempty"`
-	Length                           *float64 `json:"lenght,omitempty"`
+	Length                           *float64 `json:"length,omitempty"`
 	Net_weight                       *float64 `json:"netweight,omitempty"`
 	Expiration_rate                  *int     `json:"expiration_rate,omitempty"`
 	Recommended_freezing_temperature *float64 `json:"recommended_freezing_temperature,omitempty"`

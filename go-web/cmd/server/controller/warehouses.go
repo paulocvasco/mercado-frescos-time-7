@@ -1,15 +1,19 @@
 package controller
 
 import (
+	"errors"
 	"io/ioutil"
-	customerrors "mercado-frescos-time-7/go-web/internal/custom_errors"
+	"mercado-frescos-time-7/go-web/internal/models"
 	"mercado-frescos-time-7/go-web/internal/warehouse"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-type Controller interface {
+type WarehousesController interface {
 	GetAllWarehouse(*gin.Context)
 	GetByIDWarehouse(*gin.Context)
 	CreateWarehouse(*gin.Context)
@@ -17,44 +21,76 @@ type Controller interface {
 	DeleteWarehouse(*gin.Context)
 }
 
-type controller struct {
+type warehousesController struct {
 	service warehouse.Service
 }
 
-func NewControllerWarehouse(s warehouse.Service) Controller {
-	newController := &controller{
+func NewControllerWarehouse(s warehouse.Service) WarehousesController {
+	newController := &warehousesController{
 		service: s,
 	}
 	return newController
 }
 
-func (control *controller) GetAllWarehouse(c *gin.Context) {
-	response, err := control.service.GetAll()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
-		return
-	}
+func (control *warehousesController) GetAllWarehouse(c *gin.Context) {
+	response := control.service.GetAll()
 	c.JSON(http.StatusOK, response)
 }
 
-func (control *controller) GetByIDWarehouse(c *gin.Context) {
-	param := c.Param("id")
-	response, err := control.service.GetByID(param)
+func (control *warehousesController) GetByIDWarehouse(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		switch err {
-		case customerrors.ErrorInvalidIDParameter:
-			c.JSON(http.StatusBadRequest, err)
-		case customerrors.ErrorInvalidID:
-			c.JSON(http.StatusNotFound, err)
-		default:
-			c.JSON(http.StatusInternalServerError, err)
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
+		return
+	}
+	response, err := control.service.GetByID(id)
+	if err != nil {
+		if errors.Is(err, customerrors.ErrorInvalidID) {
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
+			return
+		} else {
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
+			return
 		}
-		return
 	}
 	c.JSON(http.StatusOK, response)
 }
 
-func (control *controller) CreateWarehouse(c *gin.Context) {
+func (control *warehousesController) CreateWarehouse(c *gin.Context) {
+	var newWarehouse models.Warehouse
+	err := c.ShouldBindJSON(&newWarehouse)
+	if err != nil {
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
+		return
+	}
+
+	response, err := control.service.Create(newWarehouse)
+	if err != nil {
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
+		return
+	}
+	c.JSON(http.StatusCreated, response)
+}
+
+func (control *warehousesController) UpdateWarehouse(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
+		return
+	}
+
 	body := c.Request.Body
 	defer body.Close()
 
@@ -64,52 +100,17 @@ func (control *controller) CreateWarehouse(c *gin.Context) {
 		return
 	}
 
-	err = control.service.Create(data)
+	response, err := control.service.Update(id, data)
 	if err != nil {
-		switch err {
-		case customerrors.ErrorMissingAddres:
-			c.JSON(http.StatusUnprocessableEntity, err)
-		case customerrors.ErrorMissingTelephone:
-			c.JSON(http.StatusUnprocessableEntity, err)
-		case customerrors.ErrorMissingCapacity:
-			c.JSON(http.StatusUnprocessableEntity, err)
-		case customerrors.ErrorMissingTemperature:
-			c.JSON(http.StatusUnprocessableEntity, err)
-		default:
-			c.JSON(http.StatusInternalServerError, err)
-		}
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
 		return
 	}
-	c.JSON(http.StatusOK, nil)
+	c.JSON(http.StatusOK, response)
 }
 
-func (control *controller) UpdateWarehouse(c *gin.Context) {
-	id := c.Param("id")
-	body := c.Request.Body
-	defer body.Close()
-
-	data, err := ioutil.ReadAll(body)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
-		return
-	}
-
-	err = control.service.Update(id, data)
-	if err != nil {
-		switch err {
-		case customerrors.ErrorInvalidIDParameter:
-			c.JSON(http.StatusNotFound, err)
-		case customerrors.ErrorInvalidID:
-			c.JSON(http.StatusNotFound, err)
-		default:
-			c.JSON(http.StatusInternalServerError, err)
-		}
-		return
-	}
-	c.JSON(http.StatusOK, nil)
-}
-
-func (control *controller) DeleteWarehouse(c *gin.Context) {
+func (control *warehousesController) DeleteWarehouse(c *gin.Context) {
 	id := c.Param("id")
 
 	err := control.service.Delete(id)
@@ -117,5 +118,5 @@ func (control *controller) DeleteWarehouse(c *gin.Context) {
 		c.JSON(http.StatusNotFound, err)
 		return
 	}
-	c.JSON(http.StatusNoContent, err)
+	c.JSON(http.StatusNoContent, nil)
 }

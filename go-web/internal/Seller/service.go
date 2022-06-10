@@ -1,4 +1,4 @@
-package seller
+package Seller
 
 import (
 	"encoding/json"
@@ -11,11 +11,11 @@ type Service interface {
 	GetId(indice int) (Seller, error)
 	Update(s []byte, id int) (Seller, error)
 	Delete(id int) error
-	Store(cid string, company_name string, address string, telephone string) (Seller, error)
+	Store(cid int, company_name string, address string, telephone string) (Seller, error)
 }
 
 type service struct {
-	repository Repository
+	repository Repository 
 }
 
 func (s *service) GetAll() ([]Seller, error) {
@@ -65,7 +65,7 @@ func (s *service) Delete(id int) error {
 	return nil
 }
 
-func (s *service) Store(cid string, company_name string, address string, telephone string) (Seller, error) {
+func (s *service) Store(cid int, company_name string, address string, telephone string) (Seller, error) {
 	lastID, err := s.repository.LastID()
 	if err != nil {
 		return Seller{}, err
