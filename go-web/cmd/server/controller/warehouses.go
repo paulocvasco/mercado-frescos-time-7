@@ -3,6 +3,7 @@ package controller
 import (
 	"errors"
 	"io/ioutil"
+	"mercado-frescos-time-7/go-web/internal/models"
 	"mercado-frescos-time-7/go-web/internal/warehouse"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/pkg/web"
@@ -62,39 +63,32 @@ func (control *warehousesController) GetByIDWarehouse(c *gin.Context) {
 }
 
 func (control *warehousesController) CreateWarehouse(c *gin.Context) {
-	body := c.Request.Body
-	defer body.Close()
-
-	data, err := ioutil.ReadAll(body)
+	var newWarehouse models.Warehouse
+	err := c.ShouldBindJSON(&newWarehouse)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
 		return
 	}
 
-	response, err := control.service.Create(data)
+	response, err := control.service.Create(newWarehouse)
 	if err != nil {
-		switch err {
-		case customerrors.ErrorMissingAddres:
-			c.JSON(http.StatusUnprocessableEntity, err)
-		case customerrors.ErrorMissingTelephone:
-			c.JSON(http.StatusUnprocessableEntity, err)
-		case customerrors.ErrorMissingCapacity:
-			c.JSON(http.StatusUnprocessableEntity, err)
-		case customerrors.ErrorMissingTemperature:
-			c.JSON(http.StatusUnprocessableEntity, err)
-		default:
-			c.JSON(http.StatusInternalServerError, err)
-		}
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
 		return
 	}
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusCreated, response)
 }
 
 func (control *warehousesController) UpdateWarehouse(c *gin.Context) {
-	id := c.Param("id")
-	index, err := strconv.Atoi(id)
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
+		return
 	}
 
 	body := c.Request.Body
@@ -106,19 +100,14 @@ func (control *warehousesController) UpdateWarehouse(c *gin.Context) {
 		return
 	}
 
-	err = control.service.Update(index, data)
+	response, err := control.service.Update(id, data)
 	if err != nil {
-		switch err {
-		case customerrors.ErrorInvalidIDParameter:
-			c.JSON(http.StatusNotFound, err)
-		case customerrors.ErrorInvalidID:
-			c.JSON(http.StatusNotFound, err)
-		default:
-			c.JSON(http.StatusInternalServerError, err)
-		}
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
 		return
 	}
-	c.JSON(http.StatusOK, nil)
+	c.JSON(http.StatusOK, response)
 }
 
 func (control *warehousesController) DeleteWarehouse(c *gin.Context) {
@@ -129,5 +118,5 @@ func (control *warehousesController) DeleteWarehouse(c *gin.Context) {
 		c.JSON(http.StatusNotFound, err)
 		return
 	}
-	c.JSON(http.StatusNoContent, err)
+	c.JSON(http.StatusNoContent, nil)
 }
