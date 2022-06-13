@@ -1,8 +1,9 @@
 package products
 
 import (
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/internal/models"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/db"
 )
 
 var lastProductID int = 1
@@ -16,10 +17,14 @@ type Repository interface {
 	LastId() (int, error)
 }
 
-type repository struct{}
+type repository struct{
+	db db.DB
+}
 
-func NewRepository() Repository {
-	return &repository{}
+func NewRepository(db db.DB) Repository {
+	return &repository{
+		db: db,
+	}
 }
 
 func (r *repository) Insert(product models.Product) (models.Product, error) {
