@@ -8,8 +8,6 @@ import (
 	"github.com/google/uuid"
 )
 
-const path = "./warehouses.db"
-
 type repository struct {
 	database db.DB
 }
