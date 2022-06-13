@@ -3,7 +3,6 @@ package db
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"mercado-frescos-time-7/go-web/internal/models"
 	"os"
 )
@@ -20,9 +19,6 @@ func NewDatabase() DB {
 }
 
 func (db *database) Save(model interface{}) error {
-
-	fmt.Printf("%+v\n", "kalsdjkasldjkasldjkasdjasjl") // output for debug
-
 	var err error
 	var file *os.File
 
