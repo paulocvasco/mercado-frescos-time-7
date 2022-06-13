@@ -35,6 +35,10 @@ func (db *database) Save(model interface{}) error {
 		if err != nil {
 			return err
 		}
+		_, err = file.Write([]byte("{}"))
+		if err != nil {
+			return err
+		}
 	} else {
 		file, err = os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 		if err != nil {
@@ -56,13 +60,26 @@ func (db *database) Save(model interface{}) error {
 }
 
 func (db *database) Load(model interface{}) error {
+	var file *os.File
 	path, err := getPath(model)
 	if err != nil {
 		return err
 	}
-	file, err := os.Open(path)
+	_, err = os.Stat(path)
 	if err != nil {
-		return err
+		file, err = os.Create(path)
+		if err != nil {
+			return err
+		}
+		_, err = file.Write([]byte("{}"))
+		if err != nil {
+			return err
+		}
+	} else {
+		file, err = os.Open(path)
+		if err != nil {
+			return err
+		}
 	}
 
 	defer file.Close()
