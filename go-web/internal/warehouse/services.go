@@ -10,7 +10,7 @@ import (
 )
 
 type Service interface {
-	GetAll() ([]models.Warehouse, error)
+	GetAll() (models.Warehouses, error)
 	GetByID(int) (models.Warehouse, error)
 	Create(models.Warehouse) (models.Warehouse, error)
 	Update(int, []byte) (models.Warehouse, error)
@@ -28,10 +28,10 @@ func NewService(r Repository) Service {
 	return newService
 }
 
-func (s *service) GetAll() ([]models.Warehouse, error) {
+func (s *service) GetAll() (models.Warehouses, error) {
 	data, err := s.repository.GetAll()
 	if err != nil {
-		return []models.Warehouse{}, err
+		return models.Warehouses{}, err
 	}
 	return data, nil
 }

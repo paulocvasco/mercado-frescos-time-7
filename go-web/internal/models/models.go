@@ -40,9 +40,13 @@ type Warehouse struct {
 	MinimunTemperature int    `json:"minimun_temperature" binding:"required"`
 }
 
-type WarehouseMetaData struct {
-	LastID     int         `json:"last_id"`
+type Warehouses struct {
 	Warehouses []Warehouse `json:"warehouses"`
+}
+
+type WarehouseMetaData struct {
+	LastID  int `json:"last_id"`
+	Content Warehouses
 }
 
 type Product struct {
