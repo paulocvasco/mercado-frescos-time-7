@@ -33,7 +33,13 @@ func NewControllerWarehouse(s warehouse.Service) WarehousesController {
 }
 
 func (control *warehousesController) GetAllWarehouse(c *gin.Context) {
-	response := control.service.GetAll()
+	response, err := control.service.GetAll()
+	if err != nil {
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
+		return
+	}
 	c.JSON(http.StatusOK, response)
 }
 
