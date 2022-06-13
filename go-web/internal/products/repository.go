@@ -28,7 +28,16 @@ func NewRepository(db db.DB) Repository {
 }
 
 func (r *repository) Insert(product models.Product) (models.Product, error) {
-	models.Products = append(models.Products, product)
+	products := []models.Product{}
+	err := r.db.Load(&products)
+	if err != nil {
+		return models.Product{}, err
+	}
+	products = append(products, product)
+	err = r.db.Save(products)
+	if err != nil {
+		return models.Product{}, err
+	}
 	return product, nil
 }
 
