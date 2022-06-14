@@ -4,22 +4,21 @@ import (
 	"mercado-frescos-time-7/go-web/internal/models"
 	"mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/pkg/db"
-
 	"golang.org/x/exp/slices"
 )
 
 type Seller models.Seller
+type Sellers models.Sellers
 
-var ps []Seller 
-var lastID int
+var storage models.Sellers
 
 type Repository interface {
-	GetAll() ([]Seller, error)
-	GetId(indice int) (Seller, error)
-	CheckCid(cid int) (Seller, error)
-	Update(s Seller, id int) (Seller, error)
+	GetAll() ([]models.Seller, error)
+	GetId(indice int) (models.Seller, error)
+	CheckCid(cid int) (models.Seller, error)
+	Update(s Seller, id int) (models.Seller, error)
 	Delete(id int) error
-	Store(id int, cid int, company_name string, address string, telephone string) (Seller, error)
+	Store(id int, cid int, company_name string, address string, telephone string) (models.Seller, error)
 	LastID() (int, error)
 }
 
@@ -33,41 +32,65 @@ func NewRepository(database db.DB) Repository {
 	}
 }
 
-func (r *repository) GetAll() ([]Seller, error) {
-	return ps, nil
+func (r *repository) GetAll() ([]models.Seller, error) {
+	err := r.database.Load(&storage)
+	if err != nil {
+		return []models.Seller{}, err
+	}
+	return storage.Seller, nil
+
 }
 
 func (r *repository) Delete(id int) error {
-	for k, v := range ps {
+	err := r.database.Load(&storage)
+	if err != nil {
+		return err
+	}
+	for k, v := range storage.Seller {
 		if v.ID == id {
-			ps = slices.Delete(ps, k, k+1)
+			storage.Seller = slices.Delete(storage.Seller, k, k+1)
+			err = r.database.Save(&storage)
+			if err != nil {
+				return err
+			}
 			return nil
 		}
 	}
 	return customerrors.ErrorInvalidID
 }
 
-func (r *repository) GetId(indice int) (Seller, error) {
-	for _, v := range ps {
+func (r *repository) GetId(indice int) (models.Seller, error) {
+	err := r.database.Load(&storage)
+	if err != nil {
+		return models.Seller{}, err
+	}
+	for _, v := range storage.Seller {
 		if v.ID == indice {
 			return v, nil
 		}
 	}
-	return Seller{}, customerrors.ErrorInvalidID
+	return models.Seller{}, customerrors.ErrorInvalidID
 }
 
-func (r *repository) CheckCid(cid int) (Seller, error) {
-	for _, v := range ps {
+func (r *repository) CheckCid(cid int) (models.Seller, error) {
+	err := r.database.Load(&storage)
+	if err != nil {
+		return models.Seller{}, err
+	}
+	for _, v := range storage.Seller {
 		if v.Cid == cid {
-			return Seller{}, customerrors.ErrorConflict
+			return models.Seller{}, customerrors.ErrorConflict
 		}
 	}
-	return Seller{}, nil
+	return models.Seller{}, nil
 }
 
-func (r *repository) Update(newValues Seller, id int) (Seller, error) {
-
-	for k, v := range ps {
+func (r *repository) Update(newValues Seller, id int) (models.Seller, error) {
+	err := r.database.Load(&storage)
+	if err != nil {
+		return models.Seller{}, err
+	}
+	for k, v := range storage.Seller {
 		if v.ID == id {
 			if newValues.Address != "" {
 				v.Address = newValues.Address
@@ -81,28 +104,43 @@ func (r *repository) Update(newValues Seller, id int) (Seller, error) {
 			if newValues.Telephone != "" {
 				v.Telephone = newValues.Telephone
 			}
-			ps[k] = v
+			storage.Seller[k] = v
+			err = r.database.Save(&storage)
+			if err != nil {
+			return models.Seller{}, err
+			}
 			return v, nil
-		}
+		}	
 	}
-	return Seller{}, customerrors.ErrorInvalidID
+	return models.Seller{}, customerrors.ErrorInvalidID
 }
 
 func (r *repository) LastID() (int, error) {
+	err := r.database.Load(&storage)
+	if err != nil {
+		return 0, err
+	}
+	var lastID = 0
+	for _, v := range storage.Seller {
+		lastID = v.ID
+	}
 	return lastID, nil
 }
 
-func (r *repository) Store(id int, cid int, company_name string, address string, telephone string) (Seller, error) {
-	err := r.database.Load(&ps)
+func (r *repository) Store(id int, cid int, company_name string, address string, telephone string) (models.Seller, error) {
+	err := r.database.Load(&storage)
 	if err != nil {
-		return Seller{}, err
+		return models.Seller{}, err
 	}
 	_, err = r.CheckCid(cid)
 	if err != nil {
-		return Seller{}, err
+		return models.Seller{}, err
 	}
-	p := Seller{id, cid, company_name, address, telephone}
-	ps = append(ps, p)
-	lastID = p.ID
+	p := models.Seller{ID:id,Cid:cid,Company_name:company_name,Address:address,Telephone:telephone}
+	storage.Seller = append(storage.Seller, p)
+	err = r.database.Save(&storage)
+	if err != nil {
+		return models.Seller{}, err
+	}
 	return p, nil
 }

@@ -3,7 +3,6 @@ package db
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"mercado-frescos-time-7/go-web/internal/models"
 	"os"
 )
@@ -107,12 +106,12 @@ func getPath(model interface{}) (string, error) {
 		return "./produt.db", nil
 	case models.Section:
 		return "./section.db", nil
-	case models.Seller:
+	case models.Seller, *models.Sellers:
 		return "./seller.db", nil
 	case models.WarehouseMetaData, *models.WarehouseMetaData:
 		return "./warehouse.db", nil
 	default:
-		//return "", errors.New("invalid data")
-		return "", errors.New(fmt.Sprintf("%T", model))
+		return "", errors.New("invalid data")
+	
 	}
 }

@@ -2,25 +2,24 @@ package Seller
 
 import (
 	"encoding/json"
-	"errors"
+	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-
 	jsonpatch "github.com/evanphx/json-patch/v5"
 )
 
 type Service interface {
-	GetAll() ([]Seller, error)
-	GetId(indice int) (Seller, error)
-	Update(s []byte, id int) (Seller, error)
+	GetAll() ([]models.Seller, error)
+	GetId(indice int) (models.Seller, error)
+	Update(s []byte, id int) (models.Seller, error)
 	Delete(id int) error
-	Store(cid int, company_name string, address string, telephone string) (Seller, error)
+	Store(cid int, company_name string, address string, telephone string) (models.Seller, error)
 }
 
 type service struct {
 	repository Repository 
 }
 
-func (s *service) GetAll() ([]Seller, error) {
+func (s *service) GetAll() ([]models.Seller, error) {
 	ps, err := s.repository.GetAll()
 	if err != nil {
 		return nil, err
@@ -28,43 +27,43 @@ func (s *service) GetAll() ([]Seller, error) {
 	return ps, nil
 }
 
-func (s *service) GetId(indice int) (Seller, error) {
+func (s *service) GetId(indice int) (models.Seller, error) {
 	ps, err := s.repository.GetId(indice)
 	if err != nil {
-		return Seller{}, err
+		return models.Seller{}, err
 	}
 	return ps, nil
 }
 
-func (s *service) Update(sel []byte, id int) (Seller, error) {
+func (s *service) Update(sel []byte, id int) (models.Seller, error) {
 	oldSeller, err := s.repository.GetId(id)
 	if err != nil {
-		return Seller{}, err
+		return models.Seller{}, err
 	}
 
 	var sc Seller
 	err = json.Unmarshal(sel, &sc)
 	if err != nil {
-		return Seller{}, errors.New("Falha em converter, verifique a estrutura da requisicao")
+		return models.Seller{}, err
 	}
 	_, err = s.repository.CheckCid(sc.Cid)
 	if err != nil {
-		return Seller{}, customerrors.ErrorConflict
+		return models.Seller{}, customerrors.ErrorConflict
 	}
 
 	oldSellerJSON, _ := json.Marshal(oldSeller)
 	patch, err := jsonpatch.MergePatch(oldSellerJSON, sel)
 	if err != nil {
-		return Seller{}, err
+		return models.Seller{}, err
 	}
 	var updatedSeller Seller
 	err = json.Unmarshal(patch, &updatedSeller)
 	if err != nil {
-		return Seller{}, err
+		return models.Seller{}, err
 	}
 	ps, err := s.repository.Update(updatedSeller, id)
 	if err != nil {
-		return Seller{}, err
+		return models.Seller{}, err
 	}
 	return ps, nil
 }
@@ -77,15 +76,15 @@ func (s *service) Delete(id int) error {
 	return nil
 }
 
-func (s *service) Store(cid int, company_name string, address string, telephone string) (Seller, error) {
+func (s *service) Store(cid int, company_name string, address string, telephone string) (models.Seller, error) {
 	lastID, err := s.repository.LastID()
 	if err != nil {
-		return Seller{}, err
+		return models.Seller{}, err
 	}
 	lastID++
 	product, err := s.repository.Store(lastID, cid, company_name, address, telephone)
 	if err != nil {
-		return Seller{}, err
+		return models.Seller{}, err
 	}
 	return product, nil
 }
