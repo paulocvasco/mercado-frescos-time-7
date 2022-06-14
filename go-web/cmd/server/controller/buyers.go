@@ -3,6 +3,8 @@ package controller
 import (
 	"mercado-frescos-time-7/go-web/internal/buyer"
 	"mercado-frescos-time-7/go-web/internal/models"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 	"strconv"
 
@@ -22,7 +24,7 @@ func BuyerNewController(b buyer.Service) *BuyerController {
 func (b *BuyerController) BuyerGetAll() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		all := b.service.GetAll()
-		context.JSON(http.StatusOK, all)
+		context.JSON(http.StatusOK, web.NewResponse(http.StatusOK, all, ""))
 	}
 }
 
@@ -33,15 +35,19 @@ func (b *BuyerController) BuyerGetId() gin.HandlerFunc {
 		intId, err := strconv.Atoi(id)
 
 		if err != nil {
-			context.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			context.JSON(status, res)
 			return
 		}
 		buyerId, err := b.service.GetId(intId)
 		if err != nil {
-			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			context.JSON(status, res)
 			return
 		}
-		context.JSON(http.StatusOK, buyerId)
+		context.JSON(http.StatusOK, web.NewResponse(http.StatusOK, buyerId, ""))
 	}
 }
 
@@ -49,17 +55,21 @@ func (b *BuyerController) BuyerCreate() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		var input models.Buyer
 		if err := context.ShouldBindJSON(&input); err != nil {
-			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			context.JSON(status, res)
 			return
 		}
 
 		buyer, err := b.service.Create(input.CardNumberID, input.FirstName, input.LastName)
 
 		if err != nil {
-			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			context.JSON(status, res)
 			return
 		}
-		context.JSON(http.StatusCreated, buyer)
+		context.JSON(http.StatusCreated, web.NewResponse(http.StatusCreated, buyer, ""))
 	}
 }
 
@@ -69,22 +79,28 @@ func (b *BuyerController) BuyerUpdate() gin.HandlerFunc {
 		intId, err := strconv.Atoi(id)
 
 		if err != nil {
-			context.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			context.JSON(status, res)
 			return
 		}
 		var newInput buyer.RequestPatch
 		if err := context.ShouldBindJSON(&newInput); err != nil {
-			context.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			context.JSON(status, res)
 			return
 		}
 
 		buyer, err := b.service.Update(intId, newInput)
 
 		if err != nil {
-			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			context.JSON(status, res)
 			return
 		}
-		context.JSON(http.StatusOK, buyer)
+		context.JSON(http.StatusOK, web.NewResponse(http.StatusOK, buyer, ""))
 	}
 }
 
@@ -94,15 +110,19 @@ func (b *BuyerController) BuyerDelete() gin.HandlerFunc {
 		intId, err := strconv.Atoi(id)
 
 		if err != nil {
-			context.JSON(http.StatusNotFound, gin.H{"error": "invalid ID"})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			context.JSON(status, res)
 			return
 		}
 		err = b.service.Delete(intId)
 
 		if err != nil {
-			context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			context.JSON(status, res)
 			return
 		}
-		context.JSON(http.StatusNoContent, gin.H{})
+		context.JSON(http.StatusNoContent, web.NewResponse(http.StatusNoContent, nil, ""))
 	}
 }
