@@ -28,6 +28,7 @@ var (
 	ErrorMissingTemperature = errors.New("temperature parameter is required")
 	ErrorItemNotFound       = errors.New("item not found")
 	ErrorConflict           = errors.New("conflict error detected")
+	ErrorInvalidDB          = errors.New("invalid database")
 )
 
 func ErrorHandleResponse(err error) (int, string) {
@@ -81,6 +82,9 @@ func ErrorHandleResponse(err error) (int, string) {
 			return http.StatusUnprocessableEntity, err.Error()
 		}
 		if errors.Is(err, ErrorConflict) {
+			return http.StatusConflict, err.Error()
+		}
+		if errors.Is(err, ErrorInvalidDB) {
 			return http.StatusConflict, err.Error()
 		}
 	}
