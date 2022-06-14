@@ -3,6 +3,8 @@ package Seller
 import (
 	"mercado-frescos-time-7/go-web/internal/models"
 	"mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/db"
+
 	"golang.org/x/exp/slices"
 )
 
@@ -21,10 +23,14 @@ type Repository interface {
 	LastID() (int, error)
 }
 
-type repository struct{}
+type repository struct{
+	database db.DB
+}
 
-func NewRepository() Repository {
-	return &repository{}
+func NewRepository(database db.DB) Repository {
+	return &repository{
+		database: database,
+	}
 }
 
 func (r *repository) GetAll() ([]Seller, error) {
@@ -87,7 +93,11 @@ func (r *repository) LastID() (int, error) {
 }
 
 func (r *repository) Store(id int, cid int, company_name string, address string, telephone string) (Seller, error) {
-	_, err := r.CheckCid(cid)
+	err := r.database.Load(&ps)
+	if err != nil {
+		return Seller{}, err
+	}
+	_, err = r.CheckCid(cid)
 	if err != nil {
 		return Seller{}, err
 	}
