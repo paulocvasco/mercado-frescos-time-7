@@ -98,7 +98,7 @@ func (db *database) Load(model interface{}) error {
 
 func getPath(model interface{}) (string, error) {
 	switch model.(type) {
-	case models.Buyer:
+	case models.BuyersMetaData, *models.BuyersMetaData:
 		return "./buyer.db", nil
 	case models.Employee:
 		return "./employee.db", nil
