@@ -6,7 +6,7 @@ import (
 	"mercado-frescos-time-7/go-web/internal/models"
 	"os"
 )
-
+//go:generate mockery --name=DB --output=./mock/mock_DB --outpkg=mock_DB
 type DB interface {
 	Save(interface{}) error
 	Load(interface{}) error
