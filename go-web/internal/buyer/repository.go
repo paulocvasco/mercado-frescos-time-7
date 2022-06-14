@@ -21,9 +21,6 @@ type Repository interface {
 	Update(id int, body model.Buyer) (model.Buyer, error)
 	Delete(id int) error
 }
-
-// var db []model.Buyer = []model.Buyer{}
-
 type repository struct {
 	data db.DB
 }
