@@ -3,6 +3,7 @@ package Seller
 import (
 	"encoding/json"
 	"errors"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 
 	jsonpatch "github.com/evanphx/json-patch/v5"
 )
@@ -48,7 +49,7 @@ func (s *service) Update(sel []byte, id int) (Seller, error) {
 	}
 	_, err = s.repository.CheckCid(sc.Cid)
 	if err != nil {
-		return Seller{}, errors.New("cid já existente")
+		return Seller{}, customerrors.ErrorConflict
 	}
 
 	oldSellerJSON, _ := json.Marshal(oldSeller)
