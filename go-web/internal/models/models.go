@@ -49,6 +49,15 @@ type WarehouseMetaData struct {
 	Content Warehouses
 }
 
+type Products struct {
+	Products []Product `json:"products"`
+}
+
+type ProductMetaData struct {
+	LastID  int `json:"last_id"`
+	Content Products
+}
+
 type Product struct {
 	Id                             int     `json:"id"`
 	ProductCode                    string  `json:"product_code"`
@@ -63,39 +72,6 @@ type Product struct {
 	ProductTypeId                  int     `json:"product_type_id" `
 	SellerId                       int     `json:"seller_id"`
 }
-
-var Products []Product = []Product{
-	{
-		Id:                             0,
-		Description:                    "test",
-		ExpirationRate:                 1,
-		FreezingRate:                   2,
-		Height:                         6.4,
-		Length:                         4.5,
-		NetWeight:                      3.4,
-		ProductCode:                    "ssd",
-		RecommendedFreezingTemperature: 1.3,
-		Width:                          1.2,
-		ProductTypeId:                  2,
-		SellerId:                       2,
-	},
-	{
-		Id:                             1,
-		Description:                    "test 2",
-		ExpirationRate:                 2,
-		FreezingRate:                   2,
-		Height:                         6.4,
-		Length:                         4.5,
-		NetWeight:                      3.4,
-		ProductCode:                    "ssd",
-		RecommendedFreezingTemperature: 1.3,
-		Width:                          1.2,
-		ProductTypeId:                  2,
-		SellerId:                       2,
-	},
-}
-
-var LastId int
 
 type Seller struct {
 	ID           int    `json:"id"`

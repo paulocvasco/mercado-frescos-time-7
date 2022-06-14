@@ -102,7 +102,7 @@ func getPath(model interface{}) (string, error) {
 		return "./buyer.db", nil
 	case models.Employee:
 		return "./employee.db", nil
-	case models.Product:
+	case *models.ProductMetaData, models.ProductMetaData:
 		return "./produt.db", nil
 	case models.Section:
 		return "./section.db", nil

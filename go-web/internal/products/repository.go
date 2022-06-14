@@ -28,12 +28,12 @@ func NewRepository(db db.DB) Repository {
 }
 
 func (r *repository) Insert(product models.Product) (models.Product, error) {
-	products := []models.Product{}
+	var products models.ProductMetaData
 	err := r.db.Load(&products)
 	if err != nil {
 		return models.Product{}, err
 	}
-	products = append(products, product)
+	products.Content.Products = append(products.Content.Products, product)
 	err = r.db.Save(products)
 	if err != nil {
 		return models.Product{}, err
@@ -42,11 +42,11 @@ func (r *repository) Insert(product models.Product) (models.Product, error) {
 }
 
 func (r *repository) GetAll() ([]models.Product, error) {
-	return models.Products, nil
+	return []models.Product{}, nil
 }
 
 func (r *repository) GetById(id int) (models.Product, error) {
-	p := models.Products
+	p := []models.Product{}
 	for _, v := range p {
 		if v.Id == id {
 			return v, nil
@@ -56,7 +56,7 @@ func (r *repository) GetById(id int) (models.Product, error) {
 }
 
 func (r *repository) Update(product models.Product) error {
-	p := models.Products
+	p := []models.Product{}
 	for i, v := range p {
 		if v.Id == product.Id {
 			p[i] = product
@@ -68,13 +68,13 @@ func (r *repository) Update(product models.Product) error {
 }
 
 func (r *repository) Delete(id int) error {
-	p := models.Products
-	for i, v := range p {
-		if v.Id == id {
-			models.Products = append(p[:i], p[i+1:]...)
-			return nil
-		}
-	}
+	//p := []models.Product{}
+	// for i, v := range p {
+	// 	if v.Id == id {
+	// 		models.Products = append(p[:i], p[i+1:]...)
+	// 		return nil
+	// 	}
+	//}
 	return customerrors.ErrorInvalidID
 }
 
