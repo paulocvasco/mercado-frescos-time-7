@@ -28,6 +28,7 @@ type Repository interface {
 	Store(Section) (Section, error)
 	Update(int, Section) error
 	Delete(int) error
+	VerifySectionNumber(int) error
 }
 
 func NewRepository() Repository {
@@ -49,6 +50,15 @@ func (s *repository) GetById(id int) (Section, error) {
 		}
 	}
 	return Section{}, nil
+}
+
+func (s *repository) VerifySectionNumber(sectionRequestedNumber int) error {
+	for _, section := range db {
+		if section.SectionNumber == sectionRequestedNumber {
+			return customErrors.ErrorConflict
+		}
+	}
+	return nil
 }
 
 func (s *repository) Store(newSection Section) (Section, error) {

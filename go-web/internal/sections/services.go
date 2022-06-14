@@ -54,6 +54,12 @@ func (s *service) Store(section []byte) (Section, error) {
 		return Section{}, nil
 	}
 
+	err = s.repository.VerifySectionNumber(newSection.SectionNumber)
+
+	if err != nil {
+		return Section{}, customErrors.ErrorConflict
+	}
+
 	if newSection.SectionNumber < 0 {
 		return Section{}, customErrors.ErrorSectionNumber
 	}

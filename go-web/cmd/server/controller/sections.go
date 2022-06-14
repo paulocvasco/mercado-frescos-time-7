@@ -61,7 +61,7 @@ func (controller *sectionsController) Store(ctx *gin.Context) {
 	}
 	section, err := controller.service.Store(sectionToJson)
 	if err != nil {
-		ctx.JSON(411, web.NewResponse(411, nil, err.Error()))
+		ctx.JSON(409, web.NewResponse(409, nil, "Este número de section já existe"))
 		return
 	}
 
