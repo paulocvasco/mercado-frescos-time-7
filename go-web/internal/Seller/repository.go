@@ -1,9 +1,8 @@
 package Seller
 
 import (
-	"errors"
 	"mercado-frescos-time-7/go-web/internal/models"
-
+	"mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"golang.org/x/exp/slices"
 )
 
@@ -39,7 +38,7 @@ func (r *repository) Delete(id int) error {
 			return nil
 		}
 	}
-	return errors.New("id não encontrado")
+	return customerrors.ErrorInvalidID
 }
 
 func (r *repository) GetId(indice int) (Seller, error) {
@@ -48,23 +47,20 @@ func (r *repository) GetId(indice int) (Seller, error) {
 			return v, nil
 		}
 	}
-	return Seller{}, errors.New("id não encontrado")
+	return Seller{}, customerrors.ErrorInvalidID
 }
 
 func (r *repository) CheckCid(cid int) (Seller, error) {
 	for _, v := range ps {
 		if v.Cid == cid {
-			return Seller{}, errors.New("cid já existente")
+			return Seller{}, customerrors.ErrorConflict
 		}
 	}
 	return Seller{}, nil
 }
 
 func (r *repository) Update(newValues Seller, id int) (Seller, error) {
-	_, err := r.CheckCid(newValues.Cid)
-	if err != nil {
-		return Seller{}, err
-	}
+
 	for k, v := range ps {
 		if v.ID == id {
 			if newValues.Address != "" {
@@ -83,7 +79,7 @@ func (r *repository) Update(newValues Seller, id int) (Seller, error) {
 			return v, nil
 		}
 	}
-	return Seller{}, errors.New("id não encontrado")
+	return Seller{}, customerrors.ErrorInvalidID
 }
 
 func (r *repository) LastID() (int, error) {

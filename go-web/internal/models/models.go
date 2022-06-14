@@ -29,11 +29,6 @@ type Buyer struct {
 	LastName     string `json:"last_name" binding:"required"`
 }
 
-type WarehouseMetaData struct {
-	LastID     int `json:"last_id"`
-	Warehouses []Warehouse
-}
-
 type Warehouse struct {
 	ID                 int    `json:"id"`
 	Address            string `json:"address" binding:"required"`
@@ -41,6 +36,15 @@ type Warehouse struct {
 	WarehouseCode      string `json:"warehouse_code"`
 	MinimunCapacity    int    `json:"minimun_capacity" binding:"required"`
 	MinimunTemperature int    `json:"minimun_temperature" binding:"required"`
+}
+
+type Warehouses struct {
+	Warehouses []Warehouse `json:"warehouses"`
+}
+
+type WarehouseMetaData struct {
+	LastID  int `json:"last_id"`
+	Content Warehouses
 }
 
 type Product struct {
@@ -93,9 +97,8 @@ var LastId int
 
 type Seller struct {
 	ID           int    `json:"id"`
-	Cid          int `json:"cid"`
+	Cid          int    `json:"cid"`
 	Company_name string `json:"company_name"`
 	Address      string `json:"address"`
 	Telephone    string `json:"telephone"`
 }
-

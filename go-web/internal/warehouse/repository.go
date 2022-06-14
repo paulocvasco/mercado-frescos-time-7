@@ -8,8 +8,6 @@ import (
 	"github.com/google/uuid"
 )
 
-const path = "./warehouses.db"
-
 type repository struct {
 	database db.DB
 }
@@ -19,7 +17,7 @@ var cache models.WarehouseMetaData
 type Repository interface {
 	Create(models.Warehouse) (models.Warehouse, error)
 	Update(int, models.Warehouse) error
-	GetAll() ([]models.Warehouse, error)
+	GetAll() (models.Warehouses, error)
 	GetByID(int) (models.Warehouse, error)
 	Delete(int) error
 }
@@ -32,7 +30,7 @@ func NewRepository(database db.DB) Repository {
 
 func (r *repository) Create(new models.Warehouse) (models.Warehouse, error) {
 	var warehouses models.WarehouseMetaData
-	err := r.database.Load(path, &warehouses)
+	err := r.database.Load(&warehouses)
 	if err != nil {
 		return models.Warehouse{}, err
 	}
@@ -41,8 +39,8 @@ func (r *repository) Create(new models.Warehouse) (models.Warehouse, error) {
 	new.ID = warehouses.LastID
 	new.WarehouseCode = uuid.NewString()
 
-	warehouses.Warehouses = append(warehouses.Warehouses, new)
-	err = r.database.Save(path, warehouses)
+	warehouses.Content.Warehouses = append(warehouses.Content.Warehouses, new)
+	err = r.database.Save(warehouses)
 	if err != nil {
 		return models.Warehouse{}, err
 	}
@@ -56,10 +54,10 @@ func (r *repository) Update(id int, patchedWarehouse models.Warehouse) error {
 		return customerrors.ErrorInvalidID
 	}
 
-	for i, warehouse := range cache.Warehouses {
+	for i, warehouse := range cache.Content.Warehouses {
 		if warehouse.ID == id {
-			cache.Warehouses[i] = patchedWarehouse
-			err := r.database.Save(path, cache)
+			cache.Content.Warehouses[i] = patchedWarehouse
+			err := r.database.Save(cache)
 			if err != nil {
 				return err
 			}
@@ -69,19 +67,19 @@ func (r *repository) Update(id int, patchedWarehouse models.Warehouse) error {
 	return customerrors.ErrorItemNotFound
 }
 
-func (r *repository) GetAll() ([]models.Warehouse, error) {
+func (r *repository) GetAll() (models.Warehouses, error) {
 	if cache.LastID == 0 {
-		err := r.database.Load(path, &cache)
+		err := r.database.Load(&cache)
 		if err != nil {
-			return nil, err
+			return models.Warehouses{}, err
 		}
 	}
-	return cache.Warehouses, nil
+	return cache.Content, nil
 }
 
 func (r *repository) GetByID(id int) (models.Warehouse, error) {
 	if cache.LastID == 0 {
-		err := r.database.Load(path, &cache)
+		err := r.database.Load(&cache)
 		if err != nil {
 			return models.Warehouse{}, err
 		}
@@ -91,7 +89,7 @@ func (r *repository) GetByID(id int) (models.Warehouse, error) {
 		return models.Warehouse{}, customerrors.ErrorInvalidID
 	}
 
-	for _, w := range cache.Warehouses {
+	for _, w := range cache.Content.Warehouses {
 		if w.ID == id {
 			return w, nil
 		}
@@ -104,18 +102,17 @@ func (r *repository) Delete(id int) error {
 		return customerrors.ErrorInvalidID
 	}
 
-	for index, warehouse := range cache.Warehouses {
+	for index, warehouse := range cache.Content.Warehouses {
 		if warehouse.ID == id {
-
 			var warehouses models.WarehouseMetaData
-			err := r.database.Load(path, &warehouses)
+			err := r.database.Load(&warehouses)
 			if err != nil {
 				return err
 			}
 
-			warehouses.Warehouses = append(warehouses.Warehouses[:index], warehouses.Warehouses[index+1:]...)
+			warehouses.Content.Warehouses = append(warehouses.Content.Warehouses[:index], warehouses.Content.Warehouses[index+1:]...)
 
-			err = r.database.Save(path, warehouses)
+			err = r.database.Save(warehouses)
 			if err != nil {
 				return err
 			}

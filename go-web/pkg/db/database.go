@@ -2,12 +2,14 @@ package db
 
 import (
 	"encoding/json"
+	"errors"
+	"mercado-frescos-time-7/go-web/internal/models"
 	"os"
 )
 
 type DB interface {
-	Save(string, interface{}) error
-	Load(string, interface{}) error
+	Save(interface{}) error
+	Load(interface{}) error
 }
 
 type database struct{}
@@ -16,15 +18,24 @@ func NewDatabase() DB {
 	return &database{}
 }
 
-func (db *database) Save(path string, model interface{}) error {
+func (db *database) Save(model interface{}) error {
 	var err error
 	var file *os.File
 
 	defer file.Close()
+
+	path, err := getPath(model)
+	if err != nil {
+		return err
+	}
 	// check if exists a file to save data
 	_, err = os.Stat(path)
 	if err != nil {
 		file, err = os.Create(path)
+		if err != nil {
+			return err
+		}
+		_, err = file.Write([]byte("{}"))
 		if err != nil {
 			return err
 		}
@@ -48,10 +59,27 @@ func (db *database) Save(path string, model interface{}) error {
 	return nil
 }
 
-func (db *database) Load(path string, model interface{}) error {
-	file, err := os.Open(path)
+func (db *database) Load(model interface{}) error {
+	var file *os.File
+	path, err := getPath(model)
 	if err != nil {
 		return err
+	}
+	_, err = os.Stat(path)
+	if err != nil {
+		file, err = os.Create(path)
+		if err != nil {
+			return err
+		}
+		_, err = file.Write([]byte("{}"))
+		if err != nil {
+			return err
+		}
+	} else {
+		file, err = os.Open(path)
+		if err != nil {
+			return err
+		}
 	}
 
 	defer file.Close()
@@ -66,4 +94,23 @@ func (db *database) Load(path string, model interface{}) error {
 	}
 
 	return nil
+}
+
+func getPath(model interface{}) (string, error) {
+	switch model.(type) {
+	case models.Buyer:
+		return "./buyer.db", nil
+	case models.Employee:
+		return "./employee.db", nil
+	case models.Product:
+		return "./produt.db", nil
+	case models.Section:
+		return "./section.db", nil
+	case models.Seller:
+		return "./seller.db", nil
+	case models.WarehouseMetaData, *models.WarehouseMetaData:
+		return "./warehouse.db", nil
+	default:
+		return "", errors.New("invalid data")
+	}
 }
