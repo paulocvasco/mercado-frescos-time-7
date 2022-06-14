@@ -48,7 +48,7 @@ func (s *service) GetAll() ([]Employee, error) {
 	employees, err := s.repository.GetAll()
 
 	if err != nil {
-		return nil, err
+		return []Employee{}, err
 	}
 
 	return employees, nil
