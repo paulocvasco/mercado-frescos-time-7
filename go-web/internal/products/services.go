@@ -26,13 +26,7 @@ func NewService(r Repository) Service {
 }
 
 func (s *service) Insert(newProduct []byte) (models.Product, error) {
-	id, err := s.repository.LastId()
-	if err != nil {
-		return models.Product{}, err
-	}
-
 	product := models.Product{}
-	product.Id = id
 
 	productJSON, err := json.Marshal(product)
 	if err != nil {

@@ -12,7 +12,6 @@ type Repository interface {
 	GetById(id int) (models.Product, error)
 	Update(product models.Product) error
 	Delete(id int) error
-	LastId() (int, error)
 }
 
 type repository struct {
@@ -28,6 +27,8 @@ func NewRepository(db db.DB) Repository {
 func (r *repository) Insert(product models.Product) (models.Product, error) {
 	var products models.ProductMetaData
 	err := r.db.Load(&products)
+	products.LastID++
+	product.Id = products.LastID
 	if err != nil {
 		return models.Product{}, err
 	}
@@ -98,20 +99,4 @@ func (r *repository) Delete(id int) error {
 		}
 	}
 	return customerrors.ErrorInvalidID
-}
-
-func (r *repository) LastId() (int, error) {
-	var products models.ProductMetaData
-	err := r.db.Load(&products)
-	if err != nil {
-		return 0, err
-	}
-	lastId := products.LastID
-	lastId++
-	products.LastID = lastId
-	err = r.db.Save(products)
-	if err != nil {
-		return 0, err
-	}
-	return lastId, nil
 }
