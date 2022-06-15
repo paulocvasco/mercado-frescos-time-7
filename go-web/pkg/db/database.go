@@ -2,8 +2,8 @@ package db
 
 import (
 	"encoding/json"
-	"errors"
 	"mercado-frescos-time-7/go-web/internal/models"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"os"
 )
 //go:generate mockery --name=DB --output=./mock/mock_DB --outpkg=mock_DB
@@ -106,11 +106,11 @@ func getPath(model interface{}) (string, error) {
 		return "./produt.db", nil
 	case models.Section:
 		return "./section.db", nil
-	case models.Seller:
+	case models.Seller, *models.Sellers:
 		return "./seller.db", nil
 	case models.WarehouseMetaData, *models.WarehouseMetaData:
 		return "./warehouse.db", nil
 	default:
-		return "", errors.New("invalid data")
+		return "", customerrors.ErrorInvalidID
 	}
 }

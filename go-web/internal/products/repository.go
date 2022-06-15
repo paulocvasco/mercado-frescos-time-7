@@ -14,7 +14,7 @@ type Repository interface {
 	Delete(id int) error
 }
 
-type repository struct{
+type repository struct {
 	db db.DB
 }
 
