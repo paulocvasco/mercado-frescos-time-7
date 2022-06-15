@@ -121,9 +121,7 @@ func (r *repository) LastID() (int, error) {
 		return 0, err
 	}
 	var lastID = 0
-	for _, v := range storage.Seller {
-		lastID = v.ID
-	}
+	lastID = storage.LastID
 	return lastID, nil
 }
 
@@ -138,6 +136,7 @@ func (r *repository) Store(id int, cid int, company_name string, address string,
 	}
 	p := models.Seller{ID:id,Cid:cid,Company_name:company_name,Address:address,Telephone:telephone}
 	storage.Seller = append(storage.Seller, p)
+	storage.LastID = storage.LastID + 1
 	err = r.database.Save(&storage)
 	if err != nil {
 		return models.Seller{}, err

@@ -107,4 +107,5 @@ type Seller struct {
 
 type Sellers struct {
 	Seller []Seller `json:"sellers"`
+	LastID int `json:"lastid"`
 }
