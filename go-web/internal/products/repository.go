@@ -8,7 +8,7 @@ import (
 
 type Repository interface {
 	Insert(product models.Product) (models.Product, error)
-	GetAll() ([]models.Product, error)
+	GetAll() (models.Products, error)
 	GetById(id int) (models.Product, error)
 	Update(product models.Product) error
 	Delete(id int) error
@@ -39,13 +39,13 @@ func (r *repository) Insert(product models.Product) (models.Product, error) {
 	return product, nil
 }
 
-func (r *repository) GetAll() ([]models.Product, error) {
+func (r *repository) GetAll() (models.Products, error) {
 	var products models.ProductMetaData
 	err := r.db.Load(&products)
 	if err != nil {
-		return []models.Product{}, err
+		return models.Products{}, err
 	}
-	return products.Content.Products, nil
+	return products.Content, nil
 }
 
 func (r *repository) GetById(id int) (models.Product, error) {
