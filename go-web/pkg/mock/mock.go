@@ -13,13 +13,13 @@ type DatabaseResponse struct {
 
 var databaseResponse DatabaseResponse
 
-type mockedDatabase struct{}
+type MockedDatabase struct{}
 
-func (db *mockedDatabase) Save(model interface{}) error {
+func (db *MockedDatabase) Save(model interface{}) error {
 	return databaseResponse.SaveError
 }
 
-func (db *mockedDatabase) Load(model interface{}) error {
+func (db *MockedDatabase) Load(model interface{}) error {
 	err := json.Unmarshal([]byte(databaseResponse.LoadData), &model)
 	if err != nil {
 		log.Fatal(err)
@@ -27,15 +27,10 @@ func (db *mockedDatabase) Load(model interface{}) error {
 	return databaseResponse.LoadError
 }
 
-type MockedDatabase interface {
-	Save(interface{}) error
-	Load(interface{}) error
-}
-
-func CreateMockedDatabase(response DatabaseResponse) MockedDatabase {
+func CreateMockedDatabase(response DatabaseResponse) *MockedDatabase {
 	databaseResponse.LoadData = response.LoadData
 	databaseResponse.LoadError = response.LoadError
 	databaseResponse.SaveError = response.SaveError
 
-	return &mockedDatabase{}
+	return &MockedDatabase{}
 }
