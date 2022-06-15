@@ -20,6 +20,7 @@ type Repository interface {
 	GetAll() (models.Warehouses, error)
 	GetByID(int) (models.Warehouse, error)
 	Delete(int) error
+	CleanCache()
 }
 
 func NewRepository(database db.DB) Repository {
@@ -121,4 +122,8 @@ func (r *repository) Delete(id int) error {
 		}
 	}
 	return customerrors.ErrorInvalidID
+}
+
+func (r *repository) CleanCache() {
+	cache = models.WarehouseMetaData{}
 }
