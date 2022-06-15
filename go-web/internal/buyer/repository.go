@@ -116,11 +116,6 @@ func (r *repository) Delete(id int) error {
 	}
 	for i, value := range buyers.Content.Buyer {
 		if value.ID == id {
-			err := r.data.Load(&buyers)
-			if err != nil {
-				return err
-			}
-
 			buyers.Content.Buyer = append(buyers.Content.Buyer[:i], buyers.Content.Buyer[i+1:]...)
 
 			err = r.data.Save(buyers)
