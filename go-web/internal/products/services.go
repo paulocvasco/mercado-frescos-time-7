@@ -9,7 +9,7 @@ import (
 
 type Service interface {
 	Insert(newProduct []byte) (models.Product, error)
-	GetAll() ([]models.Product, error)
+	GetAll() (models.Products, error)
 	GetById(id int) (models.Product, error)
 	Update(id int, product []byte) (models.Product, error)
 	Delete(id int) error
@@ -53,10 +53,10 @@ func (s *service) Insert(newProduct []byte) (models.Product, error) {
 	return p, nil
 }
 
-func (s *service) GetAll() ([]models.Product, error) {
+func (s *service) GetAll() (models.Products, error) {
 	pp, err := s.repository.GetAll()
 	if err != nil {
-		return nil, err
+		return models.Products{}, err
 	}
 	return pp, nil
 }

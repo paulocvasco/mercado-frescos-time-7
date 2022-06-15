@@ -2,8 +2,8 @@ package db
 
 import (
 	"encoding/json"
-	"errors"
 	"mercado-frescos-time-7/go-web/internal/models"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"os"
 )
 
@@ -102,7 +102,7 @@ func getPath(model interface{}) (string, error) {
 		return "./buyer.db", nil
 	case models.Employee:
 		return "./employee.db", nil
-	case models.Product:
+	case *models.ProductMetaData, models.ProductMetaData:
 		return "./produt.db", nil
 	case models.Section:
 		return "./section.db", nil
@@ -111,7 +111,6 @@ func getPath(model interface{}) (string, error) {
 	case models.WarehouseMetaData, *models.WarehouseMetaData:
 		return "./warehouse.db", nil
 	default:
-		return "", errors.New("invalid data")
-	
+		return "", customerrors.ErrorInvalidDB
 	}
 }
