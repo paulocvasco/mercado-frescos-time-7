@@ -1,8 +1,8 @@
 package employees
 
 import (
-	"errors"
 	"mercado-frescos-time-7/go-web/internal/models"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 )
 
 type Employee models.Employee
@@ -48,7 +48,7 @@ func (r *repository) Delete(id int) error {
 	}
 
 	if !deleted {
-		return errors.New("O ID digitado não foi encontrado")
+		return customerrors.ErrorInvalidID
 	}
 
 	return nil
@@ -67,7 +67,7 @@ func (*repository) GetByID(id int) (Employee, error) {
 		}
 	}
 
-	return Employee{}, errors.New("O ID digitado não foi encontrado")
+	return Employee{}, customerrors.ErrorInvalidID
 }
 
 // LastID implements Repository
@@ -87,7 +87,7 @@ func (r *repository) Update(e Employee, id int) (Employee, error) {
 	}
 
 	if !updated {
-		return Employee{}, errors.New("O ID digitado não foi encontrado")
+		return Employee{}, customerrors.ErrorItemNotFound
 	}
 
 	return e, nil
