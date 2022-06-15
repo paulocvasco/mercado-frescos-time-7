@@ -68,9 +68,9 @@ func TestGetAllSuccess(t *testing.T) {
 	insert2, _ := repo.Insert(model2)
 	res, err := repo.GetAll()
 	assert.Nil(t, err)
-	assert.Equal(t, insert1, res[0])
-	assert.Equal(t, insert2, res[1])
-	assert.Equal(t, 2, len(res))
+	assert.Equal(t, insert1, res.Products[0])
+	assert.Equal(t, insert2, res.Products[1])
+	assert.Equal(t, 2, len(res.Products))
 }
 
 func TestGetAllDbFailed(t *testing.T) {
@@ -79,7 +79,7 @@ func TestGetAllDbFailed(t *testing.T) {
 	repo := products.NewRepository(dbMock)
 	res, err := repo.GetAll()
 	assert.Equal(t, customerrors.ErrorStoreFailed.Error(), err.Error())
-	assert.Equal(t, []models.Product{}, res)
+	assert.Equal(t, models.Products{}, res)
 }
 
 func TestGetByIdShouldReturnProduct(t *testing.T) {
@@ -116,8 +116,8 @@ func TestGetByIdShouldReturnProduct(t *testing.T) {
 	}
 	insert1, _ := repo.Insert(model1)
 	insert2, _ := repo.Insert(model2)
-	resGet1, _ := repo.GetById(0)
-	resGet2, err := repo.GetById(1)
+	resGet1, _ := repo.GetById(insert1.Id)
+	resGet2, err := repo.GetById(insert2.Id)
 	assert.Nil(t, err)
 	assert.Equal(t, insert1, resGet1)
 	assert.Equal(t, insert2, resGet2)
@@ -142,7 +142,7 @@ func TestGetByInvalidIdShouldReturnErrorId(t *testing.T) {
 		SellerId:                       2,
 	}
 	repo.Insert(model1)
-	_, err := repo.GetById(1)
+	_, err := repo.GetById(10)
 	assert.Equal(t, customerrors.ErrorInvalidID, err)
 }
 
@@ -160,7 +160,6 @@ func TestUpdateSuccess(t *testing.T) {
 	dbMock := mock_DB.NewDatabaseMock(myDb, false, false)
 	repo := products.NewRepository(dbMock)
 	model1 := models.Product{
-		Id:                             0,
 		Description:                    "test",
 		ExpirationRate:                 1,
 		FreezingRate:                   2,
@@ -174,7 +173,7 @@ func TestUpdateSuccess(t *testing.T) {
 		SellerId:                       2,
 	}
 	modelEdit := models.Product{
-		Id:                             0,
+		Id:                             1,
 		Description:                    "Editado",
 		ExpirationRate:                 10,
 		FreezingRate:                   20,
@@ -187,9 +186,9 @@ func TestUpdateSuccess(t *testing.T) {
 		ProductTypeId:                  2,
 		SellerId:                       2,
 	}
-	repo.Insert(model1)
+	insert, _ := repo.Insert(model1)
 	repo.Update(modelEdit)
-	resEdit, err := repo.GetById(0)
+	resEdit, err := repo.GetById(insert.Id)
 	assert.Equal(t, nil, err)
 	assert.Equal(t, modelEdit, resEdit)
 }
@@ -249,9 +248,9 @@ func TestUpdateDbWriteFailed(t *testing.T) {
 		ProductTypeId:                  2,
 		SellerId:                       2,
 	}
-	repo.Insert(model1)
+	insert, _ := repo.Insert(model1)
 	dbMock.WriteError = true
-	err := repo.Update(model1)
+	err := repo.Update(insert)
 	assert.Equal(t, customerrors.ErrorStoreFailed.Error(), err.Error())
 }
 
@@ -297,10 +296,10 @@ func TestDeleteSuccess(t *testing.T) {
 		SellerId:                       2,
 	}
 
-	repo.Insert(model1)
-	_, errIDBefore := repo.GetById(0)
-	errDelete := repo.Delete(0)
-	_, errIDAfter := repo.GetById(0)
+	insert, _ := repo.Insert(model1)
+	_, errIDBefore := repo.GetById(insert.Id)
+	errDelete := repo.Delete(insert.Id)
+	_, errIDAfter := repo.GetById(insert.Id)
 	assert.Equal(t, nil, errDelete)
 	assert.Equal(t, nil, errIDBefore)
 	assert.Equal(t, customerrors.ErrorInvalidID.Error(), errIDAfter.Error())
@@ -333,9 +332,9 @@ func TestDeleteDbWriteFailed(t *testing.T) {
 		SellerId:                       2,
 	}
 
-	repo.Insert(model1)
+	insert, _ := repo.Insert(model1)
 	dbMock.WriteError = true
-	err := repo.Delete(0)
+	err := repo.Delete(insert.Id)
 	assert.Equal(t, customerrors.ErrorStoreFailed.Error(), err.Error())
 }
 
@@ -345,33 +344,4 @@ func TestDeleteDbReadFailed(t *testing.T) {
 	repo := products.NewRepository(dbMock)
 	err := repo.Delete(0)
 	assert.Equal(t, customerrors.ErrorStoreFailed.Error(), err.Error())
-}
-
-func TestLastId(t *testing.T) {
-	myDb := models.ProductMetaData{}
-	dbMock := mock_DB.NewDatabaseMock(myDb, false, false)
-	repo := products.NewRepository(dbMock)
-	repo.LastId()
-	repo.LastId()
-	id, err := repo.LastId()
-	assert.Nil(t, err)
-	assert.Equal(t, 3, id)
-}
-
-func TestLastIdDbWriteFailed(t *testing.T) {
-	myDb := models.ProductMetaData{}
-	dbMock := mock_DB.NewDatabaseMock(myDb, true, false)
-	repo := products.NewRepository(dbMock)
-	res, err := repo.LastId()
-	assert.Equal(t, customerrors.ErrorStoreFailed.Error(), err.Error())
-	assert.Equal(t, 0, res)
-}
-
-func TestLastIdDbReadFailed(t *testing.T) {
-	myDb := models.ProductMetaData{}
-	dbMock := mock_DB.NewDatabaseMock(myDb, false, true)
-	repo := products.NewRepository(dbMock)
-	res, err := repo.LastId()
-	assert.Equal(t, customerrors.ErrorStoreFailed.Error(), err.Error())
-	assert.Equal(t, 0, res)
 }
