@@ -92,7 +92,7 @@ func (r *repository) Update(id int, newData model.Buyer) (model.Buyer, error) {
 
 	for i, value := range cache.Content.Buyer {
 		if value.ID == id {
-			cache.Content.Buyer[i] = model.Buyer(newData)
+			cache.Content.Buyer[i] = newData
 			returnDB = model.Buyer(newData)
 
 		}
