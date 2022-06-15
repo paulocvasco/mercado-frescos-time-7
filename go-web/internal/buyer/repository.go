@@ -136,12 +136,11 @@ func (r *repository) Delete(id int) error {
 }
 
 func (r *repository) GetCardNumberId(cardId string) error {
-	var buyers model.BuyersMetaData
-	err := r.data.Load(&buyers)
+	err := r.data.Load(&cache)
 	if err != nil {
 		return err
 	}
-	for _, value := range buyers.Content.Buyer {
+	for _, value := range cache.Content.Buyer {
 		if value.CardNumberID == cardId {
 			return customerrors.ErrorCardIdAlreadyExists
 		}
