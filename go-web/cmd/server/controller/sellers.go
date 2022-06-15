@@ -1,8 +1,12 @@
 package controller
 
 import (
+	"errors"
 	"io/ioutil"
 	seller "mercado-frescos-time-7/go-web/internal/Seller"
+	"mercado-frescos-time-7/go-web/internal/models"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/web"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -20,7 +24,7 @@ type request struct {
 }
 
 type getAllResponse struct {
-	Seller []seller.Seller `json:"data"`
+	Seller []models.Seller `json:"data"`
 }
 
 var gar getAllResponse
@@ -29,14 +33,16 @@ func (c *Sellers) SellersStore() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 		var req request
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.JSON(422, gin.H{
-				"error": err.Error(),
-			})
-			return
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
+		return
 		}
 		p, err := c.service.Store(req.Cid, req.CompanyName, req.Address, req.Telephone)
 		if err != nil {
-			ctx.JSON(409, gin.H{"error": err.Error(),})
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			ctx.JSON(status, res)
 			return
 		}
 		ctx.JSON(201, p)
@@ -61,15 +67,24 @@ func (c *Sellers) SellersGetId() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		ctx.JSON(404, gin.H{
-			"error": "Parametro de busca invalido"})
-		return	
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
+		return
 	}
 	p, err := c.service.GetId(int(id))
 	if err != nil {
-		ctx.JSON(404, gin.H{
-			"error": err.Error()})
-		return	
+		if errors.Is(err, customerrors.ErrorInvalidID) {
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			ctx.JSON(status, res)
+			return
+		} else {
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			ctx.JSON(status, res)
+			return
+		}
 	}
 	ctx.JSON(200, p)
 	}
@@ -79,9 +94,10 @@ func (c *Sellers) SellersUpdate() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
-			ctx.JSON(404, gin.H{
-				"error": "Parametro de busca invalido"})
-			return	
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			ctx.JSON(status, res)
+			return
 		}
 		body := ctx.Request.Body
 		defer body.Close()
@@ -93,9 +109,10 @@ func (c *Sellers) SellersUpdate() gin.HandlerFunc  {
 		}
 		p, err := c.service.Update(data, id)
 		if err != nil {
-			ctx.JSON(404, gin.H{
-				"error": err.Error()})
-			return	
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			ctx.JSON(status, res)
+			return
 		}
 		ctx.JSON(200, p)	
 	}
@@ -105,9 +122,10 @@ func (c *Sellers) SellersDelete() gin.HandlerFunc  {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
-			ctx.JSON(404, gin.H{
-				"error": "Parametro de busca invalido"})
-			return	
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			ctx.JSON(status, res)
+			return
 		}
 			err = c.service.Delete(id)
 			if err != nil {
