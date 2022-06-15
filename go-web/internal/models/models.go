@@ -104,3 +104,8 @@ type Seller struct {
 	Address      string `json:"address"`
 	Telephone    string `json:"telephone"`
 }
+
+type Sellers struct {
+	Seller []Seller `json:"sellers"`
+	LastID int `json:"lastid"`
+}
