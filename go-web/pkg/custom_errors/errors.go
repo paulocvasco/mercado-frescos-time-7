@@ -29,6 +29,7 @@ var (
 	ErrorItemNotFound       = errors.New("item not found")
 	ErrorConflict           = errors.New("conflict error detected")
 	ErrorInvalidDB          = errors.New("invalid database")
+	ErrorCardIdAlreadyExists = errors.New("Card Number Id already exist")
 )
 
 func ErrorHandleResponse(err error) (int, string) {
@@ -85,6 +86,9 @@ func ErrorHandleResponse(err error) (int, string) {
 			return http.StatusConflict, err.Error()
 		}
 		if errors.Is(err, ErrorInvalidDB) {
+			return http.StatusInternalServerError, err.Error()
+		}
+		if errors.Is(err, ErrorCardIdAlreadyExists) {
 			return http.StatusConflict, err.Error()
 		}
 	}
