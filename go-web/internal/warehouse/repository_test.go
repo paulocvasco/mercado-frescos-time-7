@@ -39,11 +39,47 @@ func TestCreate(t *testing.T) {
 		obj, err := repository.Create(v.newObj)
 		if v.expectedError != err {
 			t.Errorf("Create test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
+			continue
 		}
 
 		if v.expectedObj.ID != obj.ID || v.expectedObj.Address != obj.Address || v.expectedObj.MinimunCapacity != obj.MinimunCapacity || v.expectedObj.MinimunTemperature != obj.MinimunTemperature {
 			t.Errorf("Create test[%s]: object expected to be:\n%+v\n\t--- but got ---\n%+v\n", v.testName, v.expectedObj, obj)
 
+		}
+	}
+}
+
+func TestGetAll(t *testing.T) {
+	testCases := []struct {
+		testName      string
+		dbResponse    mock.DatabaseResponse
+		expectedObj   []models.Warehouse
+		expectedError error
+	}{
+		{"NullList",
+			mock.DatabaseResponse{LoadData: "{}", LoadError: nil, SaveError: nil},
+			[]models.Warehouse{}, nil,
+		},
+		{"CheckList",
+			mock.DatabaseResponse{LoadData: `{"last_id":2,"warehouses":[{"id":1,"address":"foobar"}, {"id":2,"address":"foofoo"}]}`, LoadError: nil, SaveError: nil},
+			[]models.Warehouse{{ID: 1, Address: "foobar"}, {ID: 2, Address: "foofoo"}}, nil,
+		},
+	}
+
+	for _, v := range testCases {
+		mockDB := mock.CreateMockedDatabase(v.dbResponse)
+		repository := NewRepository(mockDB)
+
+		repository.CleanCache()
+		objs, err := repository.GetAll()
+		if v.expectedError != err {
+			t.Errorf("Create test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
+		}
+
+		for i, obj := range objs.Warehouses {
+			if v.expectedObj[i].ID != obj.ID || v.expectedObj[i].Address != obj.Address || v.expectedObj[i].MinimunCapacity != obj.MinimunCapacity || v.expectedObj[i].MinimunTemperature != obj.MinimunTemperature {
+				t.Errorf("GetAll test[%s]: object expected to be:\n%+v\n\t--- but got ---\n%+v\n", v.testName, v.expectedObj, obj)
+			}
 		}
 	}
 }
