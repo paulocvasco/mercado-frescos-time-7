@@ -36,17 +36,7 @@ func TestGetAll(t *testing.T)()  {
 			}
 		assert.Equal(t, v.expectedObj, result, "resultados devem ser iguais") 
 	}
-	/*
-	stubBD := []models.Seller{{ID: 12, Cid: 10, Company_name: "apple", Address: "Rua G", Telephone: "998988978"}}	
-	mmock := models.Sellers{
-		Seller: stubBD,
-		LastID: 12,
-	}
-	bd := mock_DB.NewMockedDatabase(mmock)
-	repo := Seller.NewRepository(bd)
-	result, _ := repo.GetAll()
-	assert.Equal(t, stubBD, result, "resultados devem ser iguais") 
-	*/
+
 }
 
 
@@ -76,18 +66,5 @@ func TestStore(t *testing.T)()  {
 			}
 		assert.Equal(t, v.expectedObj, result, "resultados devem ser iguais") 
 	}
-	/*
-	stubBD := models.Seller{ID: 12, Cid: 10, Company_name: "apple", Address: "Rua G", Telephone: "998988978"}	
-	mmock := models.Sellers{
-		Seller: []models.Seller{},
-		LastID: 11,
-	}
-	bd := mock_DB.NewMockedDatabase(mmock)
-	repo := Seller.NewRepository(bd)
-	result, err := repo.Store(12, 10,"apple","Rua G","998988978")
-	if err != nil {
-	fmt.Println(err)	
-	}
-	assert.Equal(t, stubBD, result, "resultados devem ser iguais") 
-	*/
+
 }
