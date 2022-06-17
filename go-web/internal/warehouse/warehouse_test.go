@@ -50,11 +50,11 @@ func TestGetAll(t *testing.T) {
 			testName: "should return error",
 			response: mockResponse{
 				data: models.Warehouses{},
-				err:  nil,
+				err:  customerrors.ErrorInvalidDB,
 			},
 			expectResult: getAllExpected{
 				data: models.Warehouses{},
-				err:  nil,
+				err:  customerrors.ErrorInvalidDB,
 			},
 		},
 	}
@@ -130,6 +130,121 @@ func TestGetById(t *testing.T) {
 		mockRepo.On("GetByID", mock.Anything).Return(test.mockResponse.data, test.mockResponse.err)
 
 		response, err := serv.GetByID(test.serviceArg)
+
+		assert.Equal(t, test.expectedResult.data, response, test.testName)
+		assert.Equal(t, test.expectedResult.err, err, test.testName)
+	}
+}
+
+func TestCreate(t *testing.T) {
+	type mockResponse struct {
+		data models.Warehouse
+		err  error
+	}
+	type expectedResult struct {
+		data models.Warehouse
+		err  error
+	}
+	type testData struct {
+		testName string
+		mockResponse
+		expectedResult
+		serviceArg models.Warehouse
+	}
+
+	testsCases := []testData{
+		{
+			testName: "should return warehouse by id",
+			mockResponse: mockResponse{
+				data: models.Warehouse{ID: 1, Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+				err:  nil,
+			},
+			expectedResult: expectedResult{
+				data: models.Warehouse{ID: 1, Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+				err:  nil,
+			},
+			serviceArg: models.Warehouse{Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+		},
+		{
+			testName: "should return invalid id error",
+			mockResponse: mockResponse{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorInvalidID,
+			},
+			expectedResult: expectedResult{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorInvalidID,
+			},
+			serviceArg: models.Warehouse{Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+		},
+		{
+			testName: "should return invalid db error",
+			mockResponse: mockResponse{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorInvalidDB,
+			},
+			expectedResult: expectedResult{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorInvalidDB,
+			},
+			serviceArg: models.Warehouse{Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+		},
+		{
+			testName: "should return missing address error",
+			mockResponse: mockResponse{
+				data: models.Warehouse{},
+				err:  nil,
+			},
+			expectedResult: expectedResult{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorMissingAddres,
+			},
+			serviceArg: models.Warehouse{Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+		},
+		{
+			testName: "should return missing telephone error ",
+			mockResponse: mockResponse{
+				data: models.Warehouse{},
+				err:  nil,
+			},
+			expectedResult: expectedResult{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorMissingTelephone,
+			},
+			serviceArg: models.Warehouse{Address: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+		},
+		{
+			testName: "should return missing capacity error ",
+			mockResponse: mockResponse{
+				data: models.Warehouse{},
+				err:  nil,
+			},
+			expectedResult: expectedResult{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorMissingCapacity,
+			},
+			serviceArg: models.Warehouse{Address: "foo", Telephone: "foo", MinimunCapacity: -10, MinimunTemperature: 10},
+		},
+		{
+			testName: "should return missing temperature error ",
+			mockResponse: mockResponse{
+				data: models.Warehouse{},
+				err:  nil,
+			},
+			expectedResult: expectedResult{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorMissingTemperature,
+			},
+			serviceArg: models.Warehouse{Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 0},
+		},
+	}
+	for _, test := range testsCases {
+		mockRepo := mockRepository.NewRepository(t)
+		serv := warehouse.NewService(mockRepo)
+
+		mockRepo.On("Create", mock.Anything).Return(test.mockResponse.data, test.mockResponse.err).Maybe()
+
+		response, err := serv.Create(test.serviceArg)
 
 		assert.Equal(t, test.expectedResult.data, response, test.testName)
 		assert.Equal(t, test.expectedResult.err, err, test.testName)
