@@ -3,6 +3,7 @@ package products
 import (
 	"encoding/json"
 	"mercado-frescos-time-7/go-web/internal/models"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 
 	jsonpatch "github.com/evanphx/json-patch/v5"
 )
@@ -32,13 +33,22 @@ func (s *service) Insert(newProduct []byte) (models.Product, error) {
 	if err != nil {
 		return models.Product{}, err
 	}
-
 	productJSON, err = jsonpatch.MergePatch(productJSON, newProduct)
 	if err != nil {
 		return models.Product{}, err
 	}
-
+	
 	json.Unmarshal(productJSON, &product)
+	
+	if products, err := s.repository.GetAll(); err != nil{
+		return models.Product{}, err
+	} else {
+		for _, v := range products.Products {
+			if v.ProductCode == product.ProductCode{
+				return models.Product{}, customerrors.ErrorConflict
+			}
+		} 
+	}
 
 	p, err := s.repository.Insert(product)
 	if err != nil {
@@ -78,6 +88,18 @@ func (s *service) Update(id int, product []byte) (models.Product, error) {
 	var updateProduct models.Product
 	json.Unmarshal(patch, &updateProduct)
 
+	if oldProduct.ProductCode != updateProduct.ProductCode {
+		if products, err := s.repository.GetAll(); err != nil{
+			return models.Product{}, err
+		} else {
+			for _, v := range products.Products {
+				if v.ProductCode == updateProduct.ProductCode{
+					return models.Product{}, customerrors.ErrorConflict
+				}
+			} 
+		}
+	}
+	
 	err = s.repository.Update(updateProduct)
 	if err != nil {
 		return models.Product{}, err
