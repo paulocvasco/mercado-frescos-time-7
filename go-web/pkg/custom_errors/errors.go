@@ -28,8 +28,8 @@ var (
 	ErrorMissingTemperature  = errors.New("temperature parameter is required")
 	ErrorItemNotFound        = errors.New("item not found")
 	ErrorConflict            = errors.New("conflict error detected")
-	ErrorCardIdAlreadyExists = errors.New("Card Number Id already exist")
-  ErrorInvalidDB          = errors.New("invalid database")
+	ErrorCardIdAlreadyExists = errors.New("card Number Id already exist")
+	ErrorInvalidDB           = errors.New("invalid database")
 )
 
 func ErrorHandleResponse(err error) (int, string) {
@@ -86,8 +86,8 @@ func ErrorHandleResponse(err error) (int, string) {
 			return http.StatusConflict, err.Error()
 		}
 		if errors.Is(err, ErrorInvalidDB) {
-      return http.StatusInternalServerError, err.Error()
-    }
+			return http.StatusInternalServerError, err.Error()
+		}
 		if errors.Is(err, ErrorCardIdAlreadyExists) {
 			return http.StatusConflict, err.Error()
 		}
