@@ -23,7 +23,13 @@ func BuyerNewController(b buyer.Service) *BuyerController {
 
 func (b *BuyerController) BuyerGetAll() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		all := b.service.GetAll()
+		all, err := b.service.GetAll()
+		if err != nil {
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			context.JSON(status, res)
+			return
+		}
 		context.JSON(http.StatusOK, web.NewResponse(http.StatusOK, all, ""))
 	}
 }
