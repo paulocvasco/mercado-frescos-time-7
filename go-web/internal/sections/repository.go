@@ -3,57 +3,68 @@ package sections
 import (
 	"mercado-frescos-time-7/go-web/internal/models"
 	customErrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/db"
 )
 
 type Section models.Section
-type repository struct{}
 
-var db []Section
-var lastID int
+var storage models.Sections
 
-func LastID() int {
-	return lastID
+type repository struct {
+	database db.DB
 }
 
-func ValidateID(id int) bool {
-	if id < 0 || id > lastID {
+func (s *repository) ValidateID(id int) bool {
+	err := s.database.Load(&storage)
+	if err != nil {
+		return false
+	}
+
+	if id < 0 || id > storage.LastID {
 		return false
 	}
 	return true
 }
 
 type Repository interface {
-	GetAll() []Section
-	GetById(int) (Section, error)
+	GetAll() ([]models.Section, error)
+	GetById(int) (models.Section, error)
 	Store(Section) (Section, error)
 	Update(int, Section) error
 	Delete(int) error
+	ValidateID(int) bool
 	VerifySectionNumber(int) error
 }
 
-func NewRepository() Repository {
-	return &repository{}
-}
-
-func (s *repository) GetAll() []Section {
-	return db
-}
-
-func (s *repository) GetById(id int) (Section, error) {
-	if !ValidateID(id) {
-		return Section{}, customErrors.ErrorInvalidID
+func NewRepository(database db.DB) Repository {
+	return &repository{
+		database: database,
 	}
+}
 
-	for _, section := range db {
+func (s *repository) GetAll() ([]models.Section, error) {
+	err := s.database.Load(&storage)
+	if err != nil {
+		return []models.Section{}, nil
+	}
+	return storage.SectionList, nil
+}
+
+func (s *repository) GetById(id int) (models.Section, error) {
+	err := s.database.Load(&storage)
+	if err != nil {
+		return models.Section{}, err
+	}
+	for _, section := range storage.SectionList {
 		if section.ID == id {
 			return section, nil
 		}
 	}
-	return Section{}, nil
+	return models.Section{}, nil
 }
 
 func (s *repository) VerifySectionNumber(sectionRequestedNumber int) error {
-	for _, section := range db {
+	for _, section := range storage.SectionList {
 		if section.SectionNumber == sectionRequestedNumber {
 			return customErrors.ErrorConflict
 		}
@@ -62,21 +73,37 @@ func (s *repository) VerifySectionNumber(sectionRequestedNumber int) error {
 }
 
 func (s *repository) Store(newSection Section) (Section, error) {
-	newSection.ID = lastID
-	db = append(db, newSection)
-	lastID++
+	err := s.database.Load(&storage)
+	if err != nil {
+		return Section{}, err
+	}
+	newSection.ID = storage.LastID
+	storage.SectionList = append(storage.SectionList, models.Section(newSection))
+	storage.LastID = storage.LastID + 1
+	err = s.database.Save(&storage)
+
+	if err != nil {
+		return Section{}, err
+	}
 
 	return newSection, nil
 }
 
 func (s *repository) Update(id int, newSection Section) error {
-	if !ValidateID(id) {
+	if !s.ValidateID(id) {
 		return customErrors.ErrorInvalidID
 	}
 
-	for i, section := range db {
+	for i, section := range storage.SectionList {
 		if section.ID == newSection.ID {
-			db[i] = newSection
+
+			section = models.Section(newSection)
+			storage.SectionList[i] = section
+
+			err := s.database.Save(&storage)
+			if err != nil {
+				return err
+			}
 			return nil
 		}
 	}
@@ -84,9 +111,22 @@ func (s *repository) Update(id int, newSection Section) error {
 }
 
 func (s *repository) Delete(id int) error {
-	for i, section := range db {
+	if !s.ValidateID(id) {
+		return customErrors.ErrorInvalidID
+	}
+	err := s.database.Load(&storage)
+	if err != nil {
+		return err
+	}
+
+	for i, section := range storage.SectionList {
 		if section.ID == id {
-			db = append(db[:i], db[i+1:]...)
+
+			storage.SectionList = append(storage.SectionList[:i], storage.SectionList[i+1:]...)
+			err = s.database.Save(&storage)
+			if err != nil {
+				return err
+			}
 			return nil
 		}
 	}

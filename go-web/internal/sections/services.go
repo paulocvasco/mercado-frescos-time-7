@@ -2,6 +2,7 @@ package sections
 
 import (
 	"encoding/json"
+	"mercado-frescos-time-7/go-web/internal/models"
 	customErrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"strconv"
 
@@ -9,8 +10,8 @@ import (
 )
 
 type Service interface {
-	GetAll() ([]Section, error)
-	GetById(string) (Section, error)
+	GetAll() ([]models.Section, error)
+	GetById(string) (models.Section, error)
 	Store([]byte) (Section, error)
 	Update(string, []byte) (Section, error)
 	Delete(string) error
@@ -21,26 +22,28 @@ type service struct {
 }
 
 func NewService(r Repository) Service {
-	newService := &service{
+	return &service{
 		repository: r,
 	}
-	return newService
 }
 
-func (s *service) GetAll() ([]Section, error) {
-	data := s.repository.GetAll()
+func (s *service) GetAll() ([]models.Section, error) {
+	data, err := s.repository.GetAll()
+	if err != nil {
+		return nil, err
+	}
 	return data, nil
 }
 
-func (s *service) GetById(id string) (Section, error) {
+func (s *service) GetById(id string) (models.Section, error) {
 	index, err := strconv.Atoi(id)
 	if err != nil {
-		return Section{}, customErrors.ErrorInvalidID
+		return models.Section{}, customErrors.ErrorInvalidID
 	}
 	data, err := s.repository.GetById(index)
 
-	if err != nil || (data == Section{}) {
-		return Section{}, customErrors.ErrorInvalidID
+	if err != nil || (data == models.Section{}) {
+		return models.Section{}, customErrors.ErrorInvalidID
 	}
 
 	return data, nil
@@ -123,7 +126,6 @@ func (s *service) Update(id string, data []byte) (Section, error) {
 	if newSection.ProductTypeId < 0 {
 		return Section{}, customErrors.ErrorProductTypeID
 	}
-
 	err = s.repository.Update(index, newSection)
 	if err != nil {
 		return Section{}, err
