@@ -1,10 +1,12 @@
 package warehouse_test
 
 import (
+	"errors"
 	"mercado-frescos-time-7/go-web/internal/models"
 	"mercado-frescos-time-7/go-web/internal/warehouse"
 	"mercado-frescos-time-7/go-web/internal/warehouse/mock/mockRepository"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -83,7 +85,7 @@ func TestGetById(t *testing.T) {
 		testName string
 		mockResponse
 		expectedResult getByIdExpected
-		serviceArg int
+		serviceArg     int
 	}
 
 	testsCases := []testData{
@@ -247,6 +249,77 @@ func TestCreate(t *testing.T) {
 		response, err := serv.Create(test.serviceArg)
 
 		assert.Equal(t, test.expectedResult.data, response, test.testName)
+		assert.Equal(t, test.expectedResult.err, err, test.testName)
+	}
+}
+
+func TestDelete(t *testing.T) {
+	type mockResponse struct {
+		err error
+	}
+	type expectedResult struct {
+		err error
+	}
+	type testData struct {
+		testName string
+		mockResponse
+		expectedResult
+		serviceArg string
+	}
+
+	testsCases := []testData{
+		{
+			testName: "should return nil",
+			mockResponse: mockResponse{
+				err: nil,
+			},
+			expectedResult: expectedResult{
+				err: nil,
+			},
+			serviceArg: "1",
+		},
+		{
+			testName: "should return invalid id error",
+			mockResponse: mockResponse{
+				err: customerrors.ErrorInvalidID,
+			},
+			expectedResult: expectedResult{
+				err: customerrors.ErrorInvalidID,
+			},
+			serviceArg: "1",
+		},
+		{
+			testName: "should return invalid db error",
+			mockResponse: mockResponse{
+				err: customerrors.ErrorInvalidDB,
+			},
+			expectedResult: expectedResult{
+				err: customerrors.ErrorInvalidDB,
+			},
+			serviceArg: "1",
+		},
+		{
+			testName: "should return syntax error",
+			mockResponse: mockResponse{
+				err: nil,
+			},
+			expectedResult: expectedResult{
+				err: strconv.ErrSyntax,
+			},
+			serviceArg: "A",
+		},
+	}
+	for _, test := range testsCases {
+		mockRepo := mockRepository.NewRepository(t)
+		serv := warehouse.NewService(mockRepo)
+		mockRepo.On("Delete", mock.Anything).Return(test.mockResponse.err).Maybe()
+
+		err := serv.Delete(test.serviceArg)
+		var conversionError *strconv.NumError;
+		if errors.As(err, &conversionError){
+			err = conversionError.Err
+		}
+		
 		assert.Equal(t, test.expectedResult.err, err, test.testName)
 	}
 }
