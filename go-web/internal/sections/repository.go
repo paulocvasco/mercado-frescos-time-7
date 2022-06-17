@@ -90,10 +90,6 @@ func (s *repository) Store(newSection Section) (Section, error) {
 }
 
 func (s *repository) Update(id int, newSection Section) error {
-	if !s.ValidateID(id) {
-		return customErrors.ErrorInvalidID
-	}
-
 	for i, section := range storage.SectionList {
 		if section.ID == newSection.ID {
 
@@ -111,9 +107,6 @@ func (s *repository) Update(id int, newSection Section) error {
 }
 
 func (s *repository) Delete(id int) error {
-	if !s.ValidateID(id) {
-		return customErrors.ErrorInvalidID
-	}
 	err := s.database.Load(&storage)
 	if err != nil {
 		return err
@@ -121,7 +114,6 @@ func (s *repository) Delete(id int) error {
 
 	for i, section := range storage.SectionList {
 		if section.ID == id {
-
 			storage.SectionList = append(storage.SectionList[:i], storage.SectionList[i+1:]...)
 			err = s.database.Save(&storage)
 			if err != nil {
@@ -130,6 +122,5 @@ func (s *repository) Delete(id int) error {
 			return nil
 		}
 	}
-
 	return customErrors.ErrorInvalidID
 }

@@ -94,6 +94,9 @@ func (s *service) Update(id string, data []byte) (Section, error) {
 	if err != nil {
 		return Section{}, customErrors.ErrorInvalidID
 	}
+	if !s.repository.ValidateID(index) {
+		return Section{}, customErrors.ErrorInvalidID
+	}
 
 	sectionFound, err := s.repository.GetById(index)
 	if err != nil {
@@ -139,6 +142,10 @@ func (s *service) Delete(id string) error {
 	if err != nil {
 		return err
 	}
+	if !s.repository.ValidateID(index) {
+		return customErrors.ErrorInvalidID
+	}
+
 	_, err = s.repository.GetById(index)
 
 	if err != nil {
