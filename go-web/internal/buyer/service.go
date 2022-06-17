@@ -8,7 +8,7 @@ import (
 )
 
 type Service interface {
-	GetAll() []model.Buyer
+	GetAll() (model.Buyers, error)
 	GetId(id int) (model.Buyer, error)
 	Create(card_number_id string, first_name, last_name string) (model.Buyer, error)
 	Update(id int, body RequestPatch) (model.Buyer, error)
@@ -25,9 +25,12 @@ func NewService(r Repository) Service {
 	}
 }
 
-func (s *service) GetAll() []model.Buyer {
-	response := s.repository.GetAll()
-	return response
+func (s *service) GetAll() (model.Buyers, error) {
+	response, err := s.repository.GetAll()
+	if err != nil {
+		return model.Buyers{}, err
+	}
+	return response, nil
 }
 func (s *service) GetId(id int) (model.Buyer, error) {
 	response, err := s.repository.GetId(id)

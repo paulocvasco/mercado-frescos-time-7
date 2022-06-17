@@ -31,6 +31,11 @@ type Buyer struct {
 	LastName     string `json:"last_name" binding:"required"`
 }
 
+type BuyersMetaData struct {
+	LastID  int `json:"last_id"`
+	Content Buyers
+}
+
 type Warehouse struct {
 	ID                 int    `json:"id"`
 	Address            string `json:"address" binding:"required"`
