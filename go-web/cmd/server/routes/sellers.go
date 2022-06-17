@@ -3,13 +3,15 @@ package routes
 import (
 	"mercado-frescos-time-7/go-web/cmd/server/controller"
 	seller "mercado-frescos-time-7/go-web/internal/Seller"
+	"mercado-frescos-time-7/go-web/pkg/db"
 
 	"github.com/gin-gonic/gin"
 )
 
 
 func InstanceSeller(e *gin.Engine) {
-	repo := seller.NewRepository()
+	mydb := db.NewDatabase()
+	repo := seller.NewRepository(mydb)
 	service := seller.NewService(repo)
 	p := controller.NewSellers(service)
 
