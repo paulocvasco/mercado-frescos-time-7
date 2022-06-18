@@ -1,6 +1,7 @@
 package warehouse_test
 
 import (
+	"encoding/json"
 	"errors"
 	"mercado-frescos-time-7/go-web/internal/models"
 	"mercado-frescos-time-7/go-web/internal/warehouse"
@@ -315,11 +316,84 @@ func TestDelete(t *testing.T) {
 		mockRepo.On("Delete", mock.Anything).Return(test.mockResponse.err).Maybe()
 
 		err := serv.Delete(test.serviceArg)
-		var conversionError *strconv.NumError;
-		if errors.As(err, &conversionError){
+		var conversionError *strconv.NumError
+		if errors.As(err, &conversionError) {
 			err = conversionError.Err
 		}
-		
+
+		assert.Equal(t, test.expectedResult.err, err, test.testName)
+	}
+}
+
+func TestUpdate(t *testing.T) {
+	type mockResponse struct {
+		data        models.Warehouse
+		dataUpdated models.Warehouse
+		err         error
+	}
+	type expectedResult struct {
+		data models.Warehouse
+		err  error
+	}
+	type testData struct {
+		testName string
+		mockResponse
+		expectedResult
+		serviceArg models.Warehouse
+	}
+
+	testsCases := []testData{
+		{
+			testName: "should return updated warehouse",
+			mockResponse: mockResponse{
+				data:        models.Warehouse{ID: 1, Address: "foo", WarehouseCode: "CODE",Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+				dataUpdated: models.Warehouse{ID: 1, Address: "foobar",Telephone: "foobar", MinimunCapacity: 10, MinimunTemperature: 10},
+				err:         nil,
+			},
+			expectedResult: expectedResult{
+				data: models.Warehouse{ID: 1, Address: "foobar", WarehouseCode: "CODE", Telephone: "foobar", MinimunCapacity: 10, MinimunTemperature: 10},
+				err:  nil,
+			},
+			serviceArg: models.Warehouse{ID: 1, Address: "foobar", WarehouseCode: "CODE", Telephone: "foobar", MinimunCapacity: 10, MinimunTemperature: 10},
+		},
+		{
+			testName: "should return invalid error id",
+			mockResponse: mockResponse{
+				data:        models.Warehouse{},
+				dataUpdated: models.Warehouse{},
+				err:         customerrors.ErrorInvalidID,
+			},
+			expectedResult: expectedResult{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorInvalidID,
+			},
+			serviceArg: models.Warehouse{ID: 1, Address: "foobar", WarehouseCode: "CODE", Telephone: "foobar", MinimunCapacity: 10, MinimunTemperature: 10},
+		},
+		{
+			testName: "should return invalid error id",
+			mockResponse: mockResponse{
+				data:        models.Warehouse{},
+				dataUpdated: models.Warehouse{},
+				err:         customerrors.ErrorInvalidID,
+			},
+			expectedResult: expectedResult{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorInvalidID,
+			},
+			serviceArg: models.Warehouse{ID: 1, Address: "foobar", WarehouseCode: "CODE", Telephone: "foobar", MinimunCapacity: 10, MinimunTemperature: 10},
+		},
+	}
+	for _, test := range testsCases {
+		mockRepo := mockRepository.NewRepository(t)
+		serv := warehouse.NewService(mockRepo)
+
+		mockRepo.On("GetByID", mock.Anything).Return(test.mockResponse.data, test.mockResponse.err).Maybe()
+		mockRepo.On("Update", mock.Anything, mock.Anything).Return(test.mockResponse.err).Maybe()
+
+		whBytes, _ := json.Marshal(test.serviceArg)
+		response, err := serv.Update(test.serviceArg.ID, whBytes)
+
+		assert.Equal(t, test.expectedResult.data, response, test.testName)
 		assert.Equal(t, test.expectedResult.err, err, test.testName)
 	}
 }
