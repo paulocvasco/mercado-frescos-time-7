@@ -141,17 +141,7 @@ func TestUpdate(t *testing.T) {
 func TestUpdateNE(t *testing.T) {
     repo := mockRepository.NewRepository(t)
     serv := sections.NewService(repo)
-    mysec := models.Section{
-        ID:                 1,
-        SectionNumber:      1,
-        CurrentTemperature: 1,
-        MinimumTemperature: 1,
-        CurrentCapacity:    1,
-        MinimumCapacity:    1,
-        MaximumCapacity:    1,
-        WarehouseId:        1,
-        ProductTypeId:      1,
-    }
+
     umysec := models.Section{
         ID:                 1,
         SectionNumber:      0,
@@ -164,11 +154,31 @@ func TestUpdateNE(t *testing.T) {
         ProductTypeId:      1,
     }
 
-    //repo.On("Update", mock.Anything, mock.Anything).Return(umysec, nil)
-    repo.On("GetById", mock.Anything).Return(mysec, errors.New("esperado"))
+    repo.On("GetById", mock.Anything).Return(models.Section{}, errors.New("erro simulado"))
     repo.On("ValidateID", mock.Anything).Return(true)
 	mbytes, _ := json.Marshal(umysec)
     _, err := serv.Update("2", mbytes)
     assert.Equal(t, customErrors.ErrorInvalidID, err,)
 }
 
+func TestDeleteNE(t *testing.T) {
+    repo := mockRepository.NewRepository(t)
+    serv := sections.NewService(repo)
+    repo.On("GetById", mock.Anything).Return(models.Section{}, customErrors.ErrorInvalidID)
+    
+    _, resultError := serv.GetById("1")
+    assert.Equal(t,customErrors.ErrorInvalidID, resultError,)
+    
+}
+
+func TestDEeleteOK(t *testing.T) {
+    repo := mockRepository.NewRepository(t)
+    serv := sections.NewService(repo)
+    repo.On("GetById", mock.Anything).Return(models.Section{}, nil)
+    repo.On("ValidateID", mock.Anything).Return(true)
+    repo.On("Delete", mock.Anything).Return(nil)
+    resultError := serv.Delete("1")
+    assert.Equal(t,nil, resultError,)
+
+    
+}
