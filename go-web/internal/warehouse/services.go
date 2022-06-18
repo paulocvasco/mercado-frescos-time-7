@@ -89,7 +89,7 @@ func (s *service) Update(id int, data []byte) (models.Warehouse, error) {
 
 	err = s.repository.Update(id, warehouse)
 	if err != nil {
-		return models.Warehouse{}, nil
+		return models.Warehouse{}, err
 	}
 
 	return warehouse, nil
