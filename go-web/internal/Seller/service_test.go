@@ -5,6 +5,7 @@ import (
 	"mercado-frescos-time-7/go-web/internal/Seller"
 	"mercado-frescos-time-7/go-web/internal/Seller/mocks"
 	"mercado-frescos-time-7/go-web/internal/models"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -57,4 +58,53 @@ func TestGetAll(t *testing.T) {
 
 	}
 
+}
+
+func TestGetId(t *testing.T) {
+	type tests struct {
+		name           string
+		mockResponse   models.Seller
+		expectResponse models.Seller
+		expectError    error
+		message        string
+		params         int
+	}
+	response := []models.Seller{
+		{
+			ID:           1,
+			Cid:          123,
+			Company_name: "Meli1",
+			Address:      "Rua 1",
+			Telephone:    "(11) 33387767",
+		},
+		{
+			ID:           2,
+			Cid:          1234,
+			Company_name: "Meli2",
+			Address:      "Rua 3",
+			Telephone:    "(11) 33387768",
+		},
+		{
+			ID:           3,
+			Cid:          12356,
+			Company_name: "Meli3",
+			Address:      "Rua 3",
+			Telephone:    "(11) 33387769",
+		},
+	}
+	// discutir isso, pq eu estou manipulabdo o teste
+	testCases := []tests{
+		{"Get Id = 1", response[0], response[0], nil, "Id doesn`t exist", 1},
+		{"Get Id = 2", response[1], response[1], nil, "Id doesn`t exist", 2},
+		{"Get Id = 3", response[2], response[2], nil, "Id doesn`t exist", 3},
+		{"Get Id = 4", models.Seller{}, models.Seller{}, customerrors.ErrorInvalidID, "Id doesn`t exist", 4},
+	}
+	for _, value := range testCases {
+		mockRepository := mocks.NewRepository(t)
+		service := Seller.NewService(mockRepository)
+		mockRepository.On("GetId", value.params).Return(value.mockResponse, value.expectError)
+		resp, err := service.GetId(value.params)
+		assert.Equal(t, value.expectResponse, resp, value.message)
+		assert.Equal(t, value.expectError, err, value.message)
+	}
 }
