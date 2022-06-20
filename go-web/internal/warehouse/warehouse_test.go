@@ -330,6 +330,7 @@ func TestUpdate(t *testing.T) {
 		data        models.Warehouse
 		dataUpdated models.Warehouse
 		err         error
+		errUpdated  error
 	}
 	type expectedResult struct {
 		data models.Warehouse
@@ -346,8 +347,8 @@ func TestUpdate(t *testing.T) {
 		{
 			testName: "should return updated warehouse",
 			mockResponse: mockResponse{
-				data:        models.Warehouse{ID: 1, Address: "foo", WarehouseCode: "CODE",Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
-				dataUpdated: models.Warehouse{ID: 1, Address: "foobar",Telephone: "foobar", MinimunCapacity: 10, MinimunTemperature: 10},
+				data:        models.Warehouse{ID: 1, Address: "foo", WarehouseCode: "CODE", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+				dataUpdated: models.Warehouse{ID: 1, Address: "foobar", Telephone: "foobar", MinimunCapacity: 10, MinimunTemperature: 10},
 				err:         nil,
 			},
 			expectedResult: expectedResult{
@@ -370,15 +371,16 @@ func TestUpdate(t *testing.T) {
 			serviceArg: models.Warehouse{ID: 1, Address: "foobar", WarehouseCode: "CODE", Telephone: "foobar", MinimunCapacity: 10, MinimunTemperature: 10},
 		},
 		{
-			testName: "should return invalid error id",
+			testName: "should return invalid error db",
 			mockResponse: mockResponse{
 				data:        models.Warehouse{},
 				dataUpdated: models.Warehouse{},
-				err:         customerrors.ErrorInvalidID,
+				err:         nil,
+				errUpdated:  customerrors.ErrorInvalidDB,
 			},
 			expectedResult: expectedResult{
 				data: models.Warehouse{},
-				err:  customerrors.ErrorInvalidID,
+				err:  customerrors.ErrorInvalidDB,
 			},
 			serviceArg: models.Warehouse{ID: 1, Address: "foobar", WarehouseCode: "CODE", Telephone: "foobar", MinimunCapacity: 10, MinimunTemperature: 10},
 		},
@@ -388,7 +390,7 @@ func TestUpdate(t *testing.T) {
 		serv := warehouse.NewService(mockRepo)
 
 		mockRepo.On("GetByID", mock.Anything).Return(test.mockResponse.data, test.mockResponse.err).Maybe()
-		mockRepo.On("Update", mock.Anything, mock.Anything).Return(test.mockResponse.err).Maybe()
+		mockRepo.On("Update", mock.Anything, mock.Anything).Return(test.mockResponse.errUpdated).Maybe()
 
 		whBytes, _ := json.Marshal(test.serviceArg)
 		response, err := serv.Update(test.serviceArg.ID, whBytes)
