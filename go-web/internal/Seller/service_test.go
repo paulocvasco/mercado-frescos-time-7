@@ -192,9 +192,11 @@ func TestUpdate(t *testing.T) {
 		name           string
 		mockResponse   models.Seller
 		expectResponse models.Seller
+		valueUpdate    models.Seller
 		expectError    error
 		message        string
 		getIdError     error
+		cidError       error
 	}
 	type update struct {
 		Company_name string `json:"company_name"`
@@ -207,82 +209,37 @@ func TestUpdate(t *testing.T) {
 		Company_name: "Mercado Livre1",
 		Address:      "Rua 1",
 		Telephone:    "(11) 3333-3333",
-	}, {
-		ID:           1,
-		Cid:          123,
-		Company_name: "Mercado Livre2",
-		Address:      "Rua 1",
-		Telephone:    "(11) 3333-3333",
-	}, {
-		ID:           1,
-		Cid:          123,
-		Company_name: "Mercado Livre2",
-		Address:      "Rua 1",
-		Telephone:    "(11) 3333-3333",
-	}, {
-		ID:           1,
-		Cid:          123,
-		Company_name: "Meli1",
-		Address:      "Rua 1",
-		Telephone:    "(11) 3333-3333",
-	}, {
+	},
+	}
+	valueUpdate := []models.Seller{{
 		ID:           1,
 		Cid:          123,
 		Company_name: "Mercado Livre1",
 		Address:      "Rua 1",
-		Telephone:    "(11) 33387767",
-	}, {
-		ID:           1,
-		Cid:          123,
-		Company_name: "Meli1",
-		Address:      "Rua 2",
-		Telephone:    "(11) 33387767",
-	}, {
-		ID:           1,
-		Cid:          123,
-		Company_name: "Meli1",
-		Address:      "Rua 1",
 		Telephone:    "(11) 3333-3333",
 	},
 	}
-	// valueUpdate := []update{{
-	// 	Company_name: "Mercado Livre1",
-	// 	Address:      "Rua 1",
-	// 	Telephone:    "(11) 3333-3333",
-	// }, {
-	// 	Company_name: "Mercado Livre2",
-	// 	Address:      "Rua 1",
-	// }, {
-	// 	Address:   "Rua 1",
-	// 	Telephone: "(11) 3333-3333",
-	// }, {
-	// 	Company_name: "Mercado Livre1",
-	// 	Telephone:    "(11) 3333-3333",
-	// }, {
-	// 	Company_name: "Mercado Livre1",
-	// }, {
-	// 	Address: "Rua 1",
-	// }, {
-	// 	Telephone: "(11) 3333-3333",
-	// },
-	// }
 
 	testCases := []tests{
-		{"Update", response[0], response[0], nil, "Errro created", nil},
+		{"Update", response[0], response[0], valueUpdate[0], nil, "Errro Update", nil, nil},
+		{"Update Error Cid", models.Seller{}, models.Seller{}, models.Seller{}, customerrors.ErrorConflict, "Errro Update", nil, customerrors.ErrorConflict},
+		{"Update Error Get Id", models.Seller{}, models.Seller{}, models.Seller{}, customerrors.ErrorInvalidID, "Errro Update", customerrors.ErrorInvalidID, nil},
 	}
 	for _, value := range testCases {
 		mockRepository := mocks.NewRepository(t)
 		service := Seller.NewService(mockRepository)
-		sellerByte, _ := json.Marshal(value.expectResponse)
 
 		mockRepository.On("GetId", value.expectResponse.ID).Return(value.mockResponse, value.getIdError).Maybe()
-		mockRepository.On("Update", sellerByte, value.expectResponse.ID).
+		mockRepository.On("CheckCid", value.expectResponse.Cid).Return(value.mockResponse, value.cidError).Maybe()
+		mockRepository.On("Update", Seller.Seller(value.mockResponse), value.mockResponse.ID).
 			Return(value.expectResponse, value.expectError).Maybe()
-		mockRepository.On("CheckCid", value.expectResponse.Cid).Return(value.mockResponse, nil).Maybe()
 
+		sellerByte, _ := json.Marshal(value.valueUpdate)
 		resp, err := service.Update(sellerByte, value.mockResponse.ID)
+
 		assert.Equal(t, value.expectResponse, resp, value.message)
 		assert.Equal(t, value.expectError, err, value.message)
 
+		// t.Skip()
 	}
 }
