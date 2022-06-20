@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+
 	jsonpatch "github.com/evanphx/json-patch/v5"
 )
 
@@ -16,7 +17,7 @@ type Service interface {
 }
 
 type service struct {
-	repository Repository 
+	repository Repository
 }
 
 func (s *service) GetAll() ([]models.Seller, error) {

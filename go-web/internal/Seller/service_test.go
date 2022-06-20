@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
 func TestGetAll(t *testing.T) {
@@ -274,13 +273,13 @@ func TestUpdate(t *testing.T) {
 	for _, value := range testCases {
 		mockRepository := mocks.NewRepository(t)
 		service := Seller.NewService(mockRepository)
-
-		mockRepository.On("GetId", value.expectResponse.ID).Return(value.expectResponse.ID, value.getIdError).Maybe()
-		mockRepository.On("Update", mock.Anything, mock.Anything).
-			Return(value.expectResponse, value.expectError).Maybe()
-		mockRepository.On("Checkid", value.expectResponse.Cid).Return(value.mockResponse.Cid, nil).Maybe()
-
 		sellerByte, _ := json.Marshal(value.expectResponse)
+
+		mockRepository.On("GetId", value.expectResponse.ID).Return(value.mockResponse, value.getIdError).Maybe()
+		mockRepository.On("Update", sellerByte, value.expectResponse.ID).
+			Return(value.expectResponse, value.expectError).Maybe()
+		mockRepository.On("CheckCid", value.expectResponse.Cid).Return(value.mockResponse, nil).Maybe()
+
 		resp, err := service.Update(sellerByte, value.mockResponse.ID)
 		assert.Equal(t, value.expectResponse, resp, value.message)
 		assert.Equal(t, value.expectError, err, value.message)
