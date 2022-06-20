@@ -158,30 +158,24 @@ func TestStore(t *testing.T) {
 		mockRepository := mocks.NewRepository(t)
 		service := Seller.NewService(mockRepository)
 
-		mockRepository.On("LastID").Return((response.ID - 1), value.errorLastID)
-		if value.errorLastID == nil {
+		mockRepository.On("LastID").Return((response.ID - 1), value.errorLastID).Maybe()
 
-			mockRepository.On("Store",
-				response.ID,
-				value.mockResponse.Cid,
+		mockRepository.On("Store",
+			response.ID,
+			value.mockResponse.Cid,
+			value.mockResponse.Company_name,
+			value.mockResponse.Address,
+			value.mockResponse.Telephone).
+			Return(value.mockResponse, value.expectError).Maybe()
+
+		resp, err := service.
+			Store(value.mockResponse.Cid,
 				value.mockResponse.Company_name,
 				value.mockResponse.Address,
-				value.mockResponse.Telephone).
-				Return(value.mockResponse, value.expectError)
-
-			resp, err := service.
-				Store(value.mockResponse.Cid,
-					value.mockResponse.Company_name,
-					value.mockResponse.Address,
-					value.mockResponse.Telephone,
-				)
-			assert.Equal(t, value.expectResponse, resp, value.message)
-			assert.Equal(t, value.expectError, err, value.message)
-
-			t.Skip()
-		}
-		_, err := service.Store(value.mockResponse.Cid, value.mockResponse.Company_name, value.mockResponse.Address, value.mockResponse.Telephone)
-		assert.Error(t, err)
+				value.mockResponse.Telephone,
+			)
+		assert.Equal(t, value.expectResponse, resp, value.message)
+		assert.Equal(t, value.expectError, err, value.message)
 
 	}
 
@@ -197,11 +191,6 @@ func TestUpdate(t *testing.T) {
 		message        string
 		getIdError     error
 		cidError       error
-	}
-	type update struct {
-		Company_name string `json:"company_name"`
-		Address      string `json:"address"`
-		Telephone    string `json:"telephone"`
 	}
 	response := []models.Seller{{
 		ID:           1,
