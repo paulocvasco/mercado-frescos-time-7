@@ -280,3 +280,78 @@ func TestCreateWarehouse(t *testing.T) {
 		}
 	}
 }
+
+func TestDeleteWarehouse(t *testing.T) {
+	type responseServiceMock struct {
+		err error
+	}
+	type expectResult struct {
+		data       interface{}
+		statusCode int
+	}
+	type testData struct {
+		testName string
+		responseServiceMock
+		expectResult
+		requestedId string
+	}
+	testCases := []testData{
+		{
+			testName: "should return status 204",
+			responseServiceMock: responseServiceMock{
+				err: nil,
+			},
+			expectResult: expectResult{
+				statusCode: 204,
+				data:       nil,
+			},
+			requestedId: "1",
+		},
+		{
+			testName: "should return status 404 - invalid id",
+			responseServiceMock: responseServiceMock{
+				err: customerrors.ErrorInvalidID,
+			},
+			expectResult: expectResult{
+				data:       web.Response{Code: "404", Error: customerrors.ErrorInvalidID.Error()},
+				statusCode: 404,
+			},
+			requestedId: "1",
+		},
+		{
+			testName: "should return status 500 - invalid id - ALTERAR ESSE ERRO DPS",
+			responseServiceMock: responseServiceMock{
+				err: customerrors.ErrorInvalidID,
+			},
+			expectResult: expectResult{
+				data:       web.Response{Code: "500", Error: "internal error"},
+				statusCode: 404,
+			},
+			requestedId: "A",
+		},
+	}
+	for _, test := range testCases {
+		gin.SetMode(gin.TestMode)
+
+		mockServ := mockWarehouse.NewService(t)
+		ctrl := controller.NewControllerWarehouse(mockServ)
+		mockServ.On("Delete", mock.Anything).Return(test.responseServiceMock.err).Maybe()
+
+		w := httptest.NewRecorder()
+		_, router := gin.CreateTestContext(w)
+
+		req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/%v", test.requestedId), nil)
+		router.DELETE("/:id", ctrl.DeleteWarehouse)
+		router.ServeHTTP(w, req)
+
+		body, _ := ioutil.ReadAll(w.Body)
+
+		if w.Result().StatusCode < 300 {
+			assert.Equal(t, test.expectResult.statusCode, w.Result().StatusCode, test.testName)
+			assert.Equal(t, "", string(body), test.testName)
+		} else {
+			assert.Equal(t, test.expectResult.statusCode, w.Result().StatusCode, test.testName)
+			assert.Equal(t, "{}", string(body), test.testName)
+		}
+	}
+}
