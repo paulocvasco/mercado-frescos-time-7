@@ -8,7 +8,7 @@ func CreateMockRepository() *mockedRepository {
 }
 
 func (r *mockedRepository) Create(id int, card_number_id string, first_name string, last_name string, warehouse_id int) (Employee, error) {
-	return createResponse.model, createResponse.err
+	return Employee{ID: id, CardNumberId: card_number_id, FirstName: first_name, LastName: last_name, WareHouseId: warehouse_id}, createResponse.err
 }
 
 func (r *mockedRepository) Delete(id int) error {
@@ -28,7 +28,7 @@ func (r *mockedRepository) LastID() (int, error) {
 }
 
 func (r *mockedRepository) Update(e Employee, id int) (Employee, error) {
-	return updateResponse.model, updateResponse.err
+	return e, updateResponse.err
 }
 
 func (r *mockedRepository) ValidationCardNumberID(card_number_id string) error {
@@ -59,8 +59,7 @@ var createResponse struct {
 	err   error
 }
 
-func ConfigCreate(model Employee, err error) {
-	createResponse.model = model
+func ConfigCreate(err error) {
 	createResponse.err = err
 }
 
@@ -69,7 +68,7 @@ var getAllResponse struct {
 	err       error
 }
 
-func ConfigureGetAll(all []Employee, err error) {
+func ConfigGetAll(all []Employee, err error) {
 	getAllResponse.modelList = all
 	getAllResponse.err = err
 }
@@ -78,7 +77,7 @@ var deleteResponse struct {
 	err error
 }
 
-func ConfigureDelete(err error) {
+func ConfigDelete(err error) {
 	deleteResponse.err = err
 }
 
@@ -87,17 +86,15 @@ var getByIdresponse struct {
 	err   error
 }
 
-func ConfigureGetByID(model Employee, err error) {
+func ConfigGetByID(model Employee, err error) {
 	getByIdresponse.model = model
 	getByIdresponse.err = err
 }
 
 var updateResponse struct {
-	model Employee
-	err   error
+	err error
 }
 
-func ConfigureUpdate(model Employee, err error) {
-	updateResponse.model = model
+func ConfigUpdate(err error) {
 	updateResponse.err = err
 }
