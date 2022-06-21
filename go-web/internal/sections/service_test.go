@@ -36,7 +36,6 @@ func TestCreateOK(t *testing.T) {
 	assert.Equal(t, mysec, result)
 }
 
-
 func TestErrorSectionNumber(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
@@ -195,7 +194,7 @@ func TestCreateFailUnMarshal(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
 	_, err := serv.Store(nil)
-    //a funcao verifica se o erro é nil porque o service retorna nil para esses caso de erro
+	//a funcao verifica se o erro é nil porque o service retorna nil para esses caso de erro
 	assert.Equal(t, nil, err)
 }
 
@@ -239,7 +238,7 @@ func TestFindAllERROR(t *testing.T) {
 	repo.On("GetAll", mock.Anything).Return(nil, errors.New("falha ao retornar dados"))
 	result, errResult := serv.GetAll()
 	assert.Equal(t, nil, result)
-    assert.NotEqual(t, nil, errResult)
+	assert.NotEqual(t, nil, errResult)
 }
 
 func TestFindByIdNE(t *testing.T) {
@@ -256,7 +255,7 @@ func TestFindByIdNE(t *testing.T) {
 func TestFindByIdSucess(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
-    mysec1 := models.Section{
+	mysec1 := models.Section{
 		ID:                 1,
 		SectionNumber:      1,
 		CurrentTemperature: 1,
@@ -270,7 +269,7 @@ func TestFindByIdSucess(t *testing.T) {
 	repo.On("GetById", mock.Anything).Return(mysec1, nil)
 
 	result, resultError := serv.GetById("1")
-    assert.Equal(t, mysec1, result)
+	assert.Equal(t, mysec1, result)
 	assert.Equal(t, nil, resultError)
 
 }
