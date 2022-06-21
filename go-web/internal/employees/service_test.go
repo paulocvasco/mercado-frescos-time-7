@@ -35,10 +35,11 @@ func TestGetAll(t *testing.T) {
 		},
 	}
 
+	repo := CreateMockRepository()
+	s := NewService(repo)
+
 	for _, v := range testCases {
-		repo := CreateMockRepository()
 		ConfigGetAll(v.expectedList, v.expectedError)
-		s := NewService(repo)
 		list, err := s.GetAll()
 
 		if v.expectedError != err {
@@ -75,10 +76,11 @@ func TestDelete(t *testing.T) {
 		},
 	}
 
+	repo := CreateMockRepository()
+	s := NewService(repo)
+
 	for _, v := range testCases {
-		repo := CreateMockRepository()
 		ConfigDelete(v.respnseError)
-		s := NewService(repo)
 		err := s.Delete(v.requestID)
 
 		if v.expectedError != err {
@@ -110,10 +112,11 @@ func TestGetByID(t *testing.T) {
 		},
 	}
 
+	repo := CreateMockRepository()
+	s := NewService(repo)
+
 	for _, v := range testCases {
-		repo := CreateMockRepository()
 		ConfigGetByID(v.responseModel, v.responseError)
-		s := NewService(repo)
 		model, err := s.GetByID(v.requestID)
 
 		if v.expectedError != err {
@@ -158,15 +161,15 @@ func TestCreate(t *testing.T) {
 		},
 	}
 
+	repo := CreateMockRepository()
+	s := NewService(repo)
+
 	for _, v := range testCases {
 		ConfigValidationCard(v.validationError)
 		ConfigLastID(v.lastId, v.lastIdError)
 		ConfigCreate(v.createError)
 
-		repo := CreateMockRepository()
-		s := NewService(repo)
 		model, err := s.Create(v.cardID, v.firstName, v.lastName, v.warehouseID)
-
 		if v.expectedError != err {
 			t.Errorf("Create test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
 		}
@@ -219,15 +222,15 @@ func TestUpdate(t *testing.T) {
 		},
 	}
 
+	repo := CreateMockRepository()
+	s := NewService(repo)
+
 	for _, v := range testCases {
 		ConfigValidationCard(v.validationError)
 		ConfigGetByID(v.getIdModelResponse, v.getIdError)
 		ConfigUpdate(v.updateError)
 
-		repo := CreateMockRepository()
-		s := NewService(repo)
 		model, err := s.Update(v.updatedModel, v.id)
-
 		if v.expectedError != err {
 			t.Errorf("Update test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
 		}
