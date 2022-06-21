@@ -1,6 +1,7 @@
 package controller_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -165,6 +166,101 @@ func TestGetByIDWarehouse(t *testing.T) {
 
 		req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/%v", test.requestedId), nil)
 		router.GET("/:id", ctrl.GetByIDWarehouse)
+		router.ServeHTTP(w, req)
+
+		body, _ := ioutil.ReadAll(w.Body)
+
+		if w.Result().StatusCode < 300 {
+			res := models.Warehouse{}
+			json.Unmarshal(body, &res)
+
+			assert.Equal(t, test.expectResult.statusCode, w.Result().StatusCode, test.testName)
+			assert.Equal(t, test.expectResult.data, res, test.testName)
+		} else {
+			res := web.Response{}
+			json.Unmarshal(body, &res)
+
+			assert.Equal(t, test.expectResult.statusCode, w.Result().StatusCode, test.testName)
+			assert.Equal(t, test.expectResult.data, res, test.testName)
+		}
+	}
+}
+
+func TestCreateWarehouse(t *testing.T) {
+	type responseServiceMock struct {
+		data models.Warehouse
+		err  error
+	}
+	type expectResult struct {
+		data       interface{}
+		statusCode int
+	}
+	type testData struct {
+		testName string
+		responseServiceMock
+		expectResult
+		postData interface{}
+	}
+	testCases := []testData{
+		{
+			testName: "should return status 201 and a new warehouse",
+			responseServiceMock: responseServiceMock{
+				data: models.Warehouse{
+					ID: 1, Address: "foo", Telephone: "foo", WarehouseCode: "foo", MinimunCapacity: 20, MinimunTemperature: 20,
+				},
+				err: nil,
+			},
+			expectResult: expectResult{
+				data: models.Warehouse{
+					ID: 1, Address: "foo", Telephone: "foo", WarehouseCode: "foo", MinimunCapacity: 20, MinimunTemperature: 20,
+				},
+				statusCode: 201,
+			},
+			postData: models.Warehouse{
+				Address: "foo", Telephone: "foo", WarehouseCode: "foo", MinimunCapacity: 20, MinimunTemperature: 20,
+			},
+		},
+		{
+			testName: "should return status 409",
+			responseServiceMock: responseServiceMock{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorConflict,
+			},
+			expectResult: expectResult{
+				data:       web.Response{Code: "409", Error: customerrors.ErrorConflict.Error()},
+				statusCode: 409,
+			},
+			postData: models.Warehouse{
+				Address: "foo", Telephone: "foo", WarehouseCode: "foo", MinimunCapacity: 20, MinimunTemperature: 20,
+			},
+		},
+		{
+			testName: "should return status 422 and a validation fields error",
+			responseServiceMock: responseServiceMock{
+				data: models.Warehouse{},
+				err:  nil,
+			},
+			expectResult: expectResult{
+				data:       web.Response{Code: "422", Error: "validation error in the field(s): address, telephone, minimuncapacity, minimuntemperature"},
+				statusCode: 422,
+			},
+			postData: models.Warehouse{},
+		},
+	}
+	for _, test := range testCases {
+		gin.SetMode(gin.TestMode)
+
+		mockServ := mockWarehouse.NewService(t)
+		ctrl := controller.NewControllerWarehouse(mockServ)
+		mockServ.On("Create", mock.Anything).Return(test.responseServiceMock.data, test.responseServiceMock.err).Maybe()
+
+		w := httptest.NewRecorder()
+		_, router := gin.CreateTestContext(w)
+
+		postData, _ := json.Marshal(test.postData)
+
+		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(postData))
+		router.POST("/", ctrl.CreateWarehouse)
 		router.ServeHTTP(w, req)
 
 		body, _ := ioutil.ReadAll(w.Body)
