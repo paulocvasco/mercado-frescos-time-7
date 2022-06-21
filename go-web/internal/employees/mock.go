@@ -98,3 +98,33 @@ var updateResponse struct {
 func ConfigUpdate(err error) {
 	updateResponse.err = err
 }
+
+///////////////////////////////////////////////////////////////////////////////////////
+//                                   MOCK SERVICE                                    //
+///////////////////////////////////////////////////////////////////////////////////////
+
+type mockedService struct{}
+
+func NewMockedService() *mockedService {
+	return &mockedService{}
+}
+
+func (s *mockedService) GetAll() ([]Employee, error) {
+	return nil, nil
+}
+
+func (s *mockedService) GetByID(id int) (Employee, error) {
+	return Employee{}, nil
+}
+
+func (s *mockedService) Create(card_number_id string, first_name string, last_name string, warehouse_id int) (Employee, error) {
+	return Employee{}, nil
+}
+
+func (s *mockedService) Update(e RequestPatch, id int) (Employee, error) {
+	return Employee{}, nil
+}
+
+func (s *mockedService) Delete(id int) error {
+	return nil
+}
