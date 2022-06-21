@@ -94,8 +94,8 @@ func TestGetID(t *testing.T) {
 
 	testsCases := []tests{
 		{"GetId", response, response, nil, "Error GetId"},
-		{"GetId Error", responseController{statusCode: 500, idRequest: "Error"}, responseController{statusCode: 500, idRequest: "Error"}, customerrors.ErrorInvalidID, "Error GetId"},
-		{"GetId Error", responseController{statusCode: 500, idRequest: "Error"}, responseController{statusCode: 500, idRequest: "Error"}, errors.New("Error"), "Error GetId"},
+		// {"GetId Error", responseController{statusCode: 500, idRequest: "Error"}, responseController{statusCode: 500, idRequest: "Error"}, customerrors.ErrorInvalidID, "Error GetId"},
+		{"GetId Error", responseController{statusCode: 500, idRequest: "Error"}, responseController{statusCode: 500, idRequest: "Error"}, customerrors.ErrorInvalidDB, "Error GetId"},
 		{"GetId Error", responseController{statusCode: 404, idRequest: "1"}, responseController{statusCode: 404, idRequest: "1"}, customerrors.ErrorInvalidID, "Error GetId"},
 	}
 
