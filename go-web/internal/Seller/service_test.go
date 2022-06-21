@@ -211,6 +211,7 @@ func TestUpdate(t *testing.T) {
 
 	testCases := []tests{
 		{"Update", response[0], response[0], valueUpdate[0], nil, "Errro Update", nil, nil},
+		{"Update Error", models.Seller{}, models.Seller{}, models.Seller{}, errors.New("Error"), "Errro Update", nil, nil},
 		{"Update Error Cid", models.Seller{}, models.Seller{}, models.Seller{}, customerrors.ErrorConflict, "Errro Update", nil, customerrors.ErrorConflict},
 		{"Update Error Get Id", models.Seller{}, models.Seller{}, models.Seller{}, customerrors.ErrorInvalidID, "Errro Update", customerrors.ErrorInvalidID, nil},
 	}
