@@ -54,6 +54,39 @@ func TestGetAll(t *testing.T) {
 	}
 }
 
+func TestDelete(t *testing.T) {
+	testCases := []struct {
+		testName      string
+		requestID     int
+		respnseError  error
+		expectedError error
+	}{
+		{
+			"InvalidID",
+			1,
+			customerrors.ErrorInvalidID,
+			customerrors.ErrorInvalidID,
+		},
+		{
+			"Success",
+			3,
+			nil,
+			nil,
+		},
+	}
+
+	for _, v := range testCases {
+		repo := CreateMockRepository()
+		ConfigDelete(v.respnseError)
+		s := NewService(repo)
+		err := s.Delete(v.requestID)
+
+		if v.expectedError != err {
+			t.Errorf("Delete test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
+		}
+	}
+}
+
 			nil,
 		},
 	}
