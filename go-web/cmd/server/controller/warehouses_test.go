@@ -142,6 +142,18 @@ func TestGetByIDWarehouse(t *testing.T) {
 			requestedId: "1",
 		},
 		{
+			testName: "should return status 404 - invalid id",
+			responseServiceMock: responseServiceMock{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorInvalidDB,
+			},
+			expectResult: expectResult{
+				data:       web.Response{Code: "500", Error: customerrors.ErrorInvalidDB.Error()},
+				statusCode: 500,
+			},
+			requestedId: "1",
+		},
+		{
 			testName: "should return status 500 - invalid id - ALTERAR ESSE ERRO DPS",
 			responseServiceMock: responseServiceMock{
 				data: models.Warehouse{},
