@@ -126,6 +126,57 @@ func TestGetByID(t *testing.T) {
 	}
 }
 
+func TestCreate(t *testing.T) {
+	testCases := []struct {
+		testName        string
+		cardID          string
+		firstName       string
+		lastName        string
+		warehouseID     int
+		validationError error
+		lastId          int
+		lastIdError     error
+		createError     error
+		expectedModel   Employee
+		expectedError   error
+	}{
+		{
+			"InvalidCardNumber", "0", "Foo", "Bar", 1, customerrors.ErrorCardIdAlreadyExists,
+			1, nil, nil, Employee{}, customerrors.ErrorCardIdAlreadyExists,
+		},
+		{
+			"InvalidCardNumber", "0", "Foo", "Bar", 1, nil,
+			0, customerrors.ErrorInvalidID, nil, Employee{}, customerrors.ErrorInvalidID,
+		},
+		{
+			"CreateFail", "0", "Foo", "Bar", 1, nil,
+			0, nil, customerrors.ErrorInvalidDB, Employee{}, customerrors.ErrorInvalidDB,
+		},
+		{
+			"Success", "0", "Foo", "Bar", 1, nil,
+			1, nil, nil, Employee{ID: 2, CardNumberId: "0", FirstName: "Foo", LastName: "Bar", WareHouseId: 1}, nil,
+		},
+	}
+
+	for _, v := range testCases {
+		ConfigValidationCard(v.validationError)
+		ConfigLastID(v.lastId, v.lastIdError)
+		ConfigCreate(v.createError)
+
+		repo := CreateMockRepository()
+		s := NewService(repo)
+		model, err := s.Create(v.cardID, v.firstName, v.lastName, v.warehouseID)
+
+		if v.expectedError != err {
+			t.Errorf("Create test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
+		}
+
+		if v.expectedModel != model {
+			t.Errorf("Create test[%s]: model expected to be:\n%+v\n\t--- but got ---\n%+v\n", v.testName, v.expectedModel, model)
+		}
+	}
+}
+
 			nil,
 		},
 	}
