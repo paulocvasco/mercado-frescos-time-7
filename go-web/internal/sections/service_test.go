@@ -36,6 +36,139 @@ func TestCreateOK(t *testing.T) {
 	assert.Equal(t, mysec, result)
 }
 
+
+func TestErrorSectionNumber(t *testing.T) {
+	repo := mockRepository.NewRepository(t)
+	serv := sections.NewService(repo)
+	mysec := sections.Section{
+		ID:                 1,
+		SectionNumber:      -1,
+		CurrentTemperature: 1,
+		MinimumTemperature: 1,
+		CurrentCapacity:    1,
+		MinimumCapacity:    1,
+		MaximumCapacity:    1,
+		WarehouseId:        1,
+		ProductTypeId:      1,
+	}
+
+	mbytes, _ := json.Marshal(mysec)
+
+	repo.On("VerifySectionNumber", mock.Anything).Return(nil)
+	_, err := serv.Store(mbytes)
+	assert.Equal(t, customErrors.ErrorSectionNumber, err)
+}
+
+func TestErrorCurrentCapacity(t *testing.T) {
+	repo := mockRepository.NewRepository(t)
+	serv := sections.NewService(repo)
+	mysec := sections.Section{
+		ID:                 1,
+		SectionNumber:      1,
+		CurrentTemperature: 1,
+		MinimumTemperature: 1,
+		CurrentCapacity:    -1,
+		MinimumCapacity:    1,
+		MaximumCapacity:    1,
+		WarehouseId:        1,
+		ProductTypeId:      1,
+	}
+
+	mbytes, _ := json.Marshal(mysec)
+
+	repo.On("VerifySectionNumber", mock.Anything).Return(nil)
+	_, err := serv.Store(mbytes)
+	assert.Equal(t, customErrors.ErrorCurrentCapacity, err)
+}
+
+func TestErrorMinimumCapacity(t *testing.T) {
+	repo := mockRepository.NewRepository(t)
+	serv := sections.NewService(repo)
+	mysec := sections.Section{
+		ID:                 1,
+		SectionNumber:      1,
+		CurrentTemperature: 1,
+		MinimumTemperature: 1,
+		CurrentCapacity:    1,
+		MinimumCapacity:    -1,
+		MaximumCapacity:    1,
+		WarehouseId:        1,
+		ProductTypeId:      1,
+	}
+
+	mbytes, _ := json.Marshal(mysec)
+
+	repo.On("VerifySectionNumber", mock.Anything).Return(nil)
+	_, err := serv.Store(mbytes)
+	assert.Equal(t, customErrors.ErrorMinimumCapacity, err)
+}
+
+func TestErrorMaximumCapacity(t *testing.T) {
+	repo := mockRepository.NewRepository(t)
+	serv := sections.NewService(repo)
+	mysec := sections.Section{
+		ID:                 1,
+		SectionNumber:      1,
+		CurrentTemperature: 1,
+		MinimumTemperature: 1,
+		CurrentCapacity:    1,
+		MinimumCapacity:    1,
+		MaximumCapacity:    -1,
+		WarehouseId:        1,
+		ProductTypeId:      1,
+	}
+
+	mbytes, _ := json.Marshal(mysec)
+
+	repo.On("VerifySectionNumber", mock.Anything).Return(nil)
+	_, err := serv.Store(mbytes)
+	assert.Equal(t, customErrors.ErrorMaximumCapacity, err)
+}
+
+func TestErrorWarehouseID(t *testing.T) {
+	repo := mockRepository.NewRepository(t)
+	serv := sections.NewService(repo)
+	mysec := sections.Section{
+		ID:                 1,
+		SectionNumber:      1,
+		CurrentTemperature: 1,
+		MinimumTemperature: 1,
+		CurrentCapacity:    1,
+		MinimumCapacity:    1,
+		MaximumCapacity:    1,
+		WarehouseId:        -1,
+		ProductTypeId:      1,
+	}
+
+	mbytes, _ := json.Marshal(mysec)
+
+	repo.On("VerifySectionNumber", mock.Anything).Return(nil)
+	_, err := serv.Store(mbytes)
+	assert.Equal(t, customErrors.ErrorWarehouseID, err)
+}
+
+func TestErrorProductTypeID(t *testing.T) {
+	repo := mockRepository.NewRepository(t)
+	serv := sections.NewService(repo)
+	mysec := sections.Section{
+		ID:                 1,
+		SectionNumber:      1,
+		CurrentTemperature: 1,
+		MinimumTemperature: 1,
+		CurrentCapacity:    1,
+		MinimumCapacity:    1,
+		MaximumCapacity:    1,
+		WarehouseId:        1,
+		ProductTypeId:      -1,
+	}
+
+	mbytes, _ := json.Marshal(mysec)
+
+	repo.On("VerifySectionNumber", mock.Anything).Return(nil)
+	_, err := serv.Store(mbytes)
+	assert.Equal(t, customErrors.ErrorProductTypeID, err)
+}
+
 func TestCreateFailConflict(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
@@ -56,6 +189,14 @@ func TestCreateFailConflict(t *testing.T) {
 	repo.On("VerifySectionNumber", mock.Anything).Return(customErrors.ErrorConflict)
 	_, err := serv.Store(mbytes)
 	assert.Equal(t, customErrors.ErrorConflict, err)
+}
+
+func TestCreateFailUnMarshal(t *testing.T) {
+	repo := mockRepository.NewRepository(t)
+	serv := sections.NewService(repo)
+	_, err := serv.Store(nil)
+    //a funcao verifica se o erro é nil porque o service retorna nil para esses caso de erro
+	assert.Equal(t, nil, err)
 }
 
 func TestFindAll(t *testing.T) {
@@ -91,6 +232,16 @@ func TestFindAll(t *testing.T) {
 	assert.Equal(t, stub, result)
 }
 
+func TestFindAllERROR(t *testing.T) {
+	repo := mockRepository.NewRepository(t)
+	serv := sections.NewService(repo)
+
+	repo.On("GetAll", mock.Anything).Return(nil, errors.New("falha ao retornar dados"))
+	result, errResult := serv.GetAll()
+	assert.Equal(t, nil, result)
+    assert.NotEqual(t, nil, errResult)
+}
+
 func TestFindByIdNE(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
@@ -98,6 +249,37 @@ func TestFindByIdNE(t *testing.T) {
 	repo.On("GetById", mock.Anything).Return(models.Section{}, customErrors.ErrorInvalidID)
 
 	_, resultError := serv.GetById("1")
+	assert.Equal(t, customErrors.ErrorInvalidID, resultError)
+
+}
+
+func TestFindByIdSucess(t *testing.T) {
+	repo := mockRepository.NewRepository(t)
+	serv := sections.NewService(repo)
+    mysec1 := models.Section{
+		ID:                 1,
+		SectionNumber:      1,
+		CurrentTemperature: 1,
+		MinimumTemperature: 1,
+		CurrentCapacity:    1,
+		MinimumCapacity:    1,
+		MaximumCapacity:    1,
+		WarehouseId:        1,
+		ProductTypeId:      1,
+	}
+	repo.On("GetById", mock.Anything).Return(mysec1, nil)
+
+	result, resultError := serv.GetById("1")
+    assert.Equal(t, mysec1, result)
+	assert.Equal(t, nil, resultError)
+
+}
+
+func TestFindByIdERROR(t *testing.T) {
+	repo := mockRepository.NewRepository(t)
+	serv := sections.NewService(repo)
+
+	_, resultError := serv.GetById("a")
 	assert.Equal(t, customErrors.ErrorInvalidID, resultError)
 
 }

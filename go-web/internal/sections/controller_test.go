@@ -140,7 +140,7 @@ func TestControllerFindAll(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 }
 
-func TestFindAllERROR(t *testing.T) {
+func TestControllerFindAllERROR(t *testing.T) {
 	serv := mockService.NewService(t)
 	contr := controller.NewController(serv)
 	r := gin.Default()
