@@ -1,4 +1,4 @@
-package Seller
+package seller
 
 import (
 	"encoding/json"
