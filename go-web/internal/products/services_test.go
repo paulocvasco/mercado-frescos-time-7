@@ -212,3 +212,55 @@ func TestService_Find_By_Id_Existent(t *testing.T) {
 	product, _ := service.GetById(body.Id)
 	assert.Equal(t, body, product)
 }
+
+func TestService_Update_Ok(t *testing.T) {
+	repository := mockRepository.NewRepository(t)
+	service := products.NewService(repository)
+	body := models.Product{
+		Id:                             1,
+		ProductCode:                    "ssd1",
+		Description:                    "test 2",
+		Width:                          1.2,
+		Height:                         6.4,
+		Length:                         4.5,
+		NetWeight:                      3.4,
+		ExpirationRate:                 2,
+		RecommendedFreezingTemperature: 1.3,
+		FreezingRate:                   2,
+		ProductTypeId:                  2,
+		SellerId:                       2,
+	}
+	productByte, _ := json.Marshal(body)
+
+	repository.On("GetById", mock.Anything).Return(body, nil)
+	repository.On("Update", mock.Anything).Return(nil)
+
+	newProduct, _ := service.Update(body.Id, productByte)
+	assert.Equal(t, newProduct, body)
+
+}
+
+func TestService_Update_Non_Existent(t *testing.T) {
+	repository := mockRepository.NewRepository(t)
+	service := products.NewService(repository)
+	body := models.Product{
+		Id:                             1,
+		ProductCode:                    "ssd1",
+		Description:                    "test 2",
+		Width:                          1.2,
+		Height:                         6.4,
+		Length:                         4.5,
+		NetWeight:                      3.4,
+		ExpirationRate:                 2,
+		RecommendedFreezingTemperature: 1.3,
+		FreezingRate:                   2,
+		ProductTypeId:                  2,
+		SellerId:                       2,
+	}
+	productByte, _ := json.Marshal(body)
+
+	repository.On("GetById", mock.Anything).Return(models.Product{}, customerrors.ErrorInvalidID)
+
+	_, err := service.Update(body.Id, productByte)
+	assert.Equal(t, customerrors.ErrorInvalidID, err)
+}
