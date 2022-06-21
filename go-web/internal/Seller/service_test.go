@@ -93,7 +93,7 @@ func TestGetId(t *testing.T) {
 			Telephone:    "(11) 33387769",
 		},
 	}
-	// discutir isso, pq eu estou manipulabdo o teste
+
 	testCases := []tests{
 		{"Get Id = 1", response[0], response[0], nil, "Id doesn`t exist", 1},
 		{"Get Id = 2", response[1], response[1], nil, "Id doesn`t exist", 2},
@@ -230,6 +230,5 @@ func TestUpdate(t *testing.T) {
 		assert.Equal(t, value.expectResponse, resp, value.message)
 		assert.Equal(t, value.expectError, err, value.message)
 
-		// t.Skip()
 	}
 }

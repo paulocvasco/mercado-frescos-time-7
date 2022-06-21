@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"mercado-frescos-time-7/go-web/cmd/server/controller"
 	"mercado-frescos-time-7/go-web/internal/Seller/mocks"
 	"mercado-frescos-time-7/go-web/internal/models"
@@ -94,9 +93,9 @@ func TestGetID(t *testing.T) {
 
 	testsCases := []tests{
 		{"GetId", response, response, nil, "Error GetId"},
-		// {"GetId Error", responseController{statusCode: 500, idRequest: "Error"}, responseController{statusCode: 500, idRequest: "Error"}, customerrors.ErrorInvalidID, "Error GetId"},
-		{"GetId Error", responseController{statusCode: 500, idRequest: "Error"}, responseController{statusCode: 500, idRequest: "Error"}, customerrors.ErrorInvalidDB, "Error GetId"},
-		{"GetId Error", responseController{statusCode: 404, idRequest: "1"}, responseController{statusCode: 404, idRequest: "1"}, customerrors.ErrorInvalidID, "Error GetId"},
+		{"GetId Error", responseController{statusCode: 500, idRequest: "1"}, responseController{statusCode: 500, idRequest: "1"}, customerrors.ErrorInvalidDB, "Error GetId status 500"},
+		{"GetId Error", responseController{statusCode: 404, idRequest: "1"}, responseController{statusCode: 404, idRequest: "1"}, customerrors.ErrorInvalidID, "Error GetId status 404"},
+		{"GetId Error", responseController{statusCode: 500, idRequest: "Error"}, responseController{statusCode: 500, idRequest: "Error"}, customerrors.ErrorInvalidID, "Error GetId status 404"},
 	}
 
 	for _, value := range testsCases {
@@ -176,8 +175,6 @@ func TestDelete(t *testing.T) {
 
 		res := value.expectResponse.data
 		json.Unmarshal(body, &res)
-		log.Println(res)
-		// log.Println(w.Result().StatusCode, "value: ", value.expectResponse.statusCode)
 
 		assert.Equal(t, value.expectResponse.data, res, value.message)
 		assert.Equal(t, value.expectResponse.statusCode, w.Result().StatusCode, value.message)
@@ -302,7 +299,7 @@ func TestStore(t *testing.T) {
 
 		res := value.expectResponse.data
 		json.Unmarshal(body, &res)
-		log.Println(res, value.expectResponse.data)
+
 		assert.Equal(t, value.expectResponse.data, res, value.message)
 		assert.Equal(t, value.expectResponse.statusCode, w.Result().StatusCode, value.message)
 
