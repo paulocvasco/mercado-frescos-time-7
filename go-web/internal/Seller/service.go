@@ -54,10 +54,10 @@ func (s *service) Update(sel []byte, id int) (models.Seller, error) {
 
 	oldSellerJSON, _ := json.Marshal(oldSeller)
 	patch, err := jsonpatch.MergePatch(oldSellerJSON, sel)
+	var updatedSeller Seller
 	if err != nil {
 		return models.Seller{}, err
 	}
-	var updatedSeller Seller
 	err = json.Unmarshal(patch, &updatedSeller)
 	if err != nil {
 		return models.Seller{}, err
