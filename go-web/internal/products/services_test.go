@@ -264,3 +264,51 @@ func TestService_Update_Non_Existent(t *testing.T) {
 	_, err := service.Update(body.Id, productByte)
 	assert.Equal(t, customerrors.ErrorInvalidID, err)
 }
+
+func TestService_Delete_Ok(t *testing.T) {
+	repository := mockRepository.NewRepository(t)
+	service := products.NewService(repository)
+	body := models.Product{
+		Id:                             1,
+		ProductCode:                    "ssd1",
+		Description:                    "test 2",
+		Width:                          1.2,
+		Height:                         6.4,
+		Length:                         4.5,
+		NetWeight:                      3.4,
+		ExpirationRate:                 2,
+		RecommendedFreezingTemperature: 1.3,
+		FreezingRate:                   2,
+		ProductTypeId:                  2,
+		SellerId:                       2,
+	}
+
+	repository.On("Delete", mock.Anything).Return(nil)
+	response := service.Delete(body.Id)
+
+	assert.Equal(t, nil, response)
+}
+
+func TestService_Delete_Non_Existent(t *testing.T) {
+	repository := mockRepository.NewRepository(t)
+	service := products.NewService(repository)
+	body := models.Product{
+		Id:                             1,
+		ProductCode:                    "ssd1",
+		Description:                    "test 2",
+		Width:                          1.2,
+		Height:                         6.4,
+		Length:                         4.5,
+		NetWeight:                      3.4,
+		ExpirationRate:                 2,
+		RecommendedFreezingTemperature: 1.3,
+		FreezingRate:                   2,
+		ProductTypeId:                  2,
+		SellerId:                       2,
+	}
+
+	repository.On("Delete", mock.Anything).Return(customerrors.ErrorInvalidID)
+	err := service.Delete(body.Id)
+
+	assert.Equal(t, customerrors.ErrorInvalidID, err)
+}
