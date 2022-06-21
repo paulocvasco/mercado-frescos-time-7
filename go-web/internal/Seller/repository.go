@@ -1,4 +1,4 @@
-package Seller
+package seller
 
 import (
 	"mercado-frescos-time-7/go-web/internal/models"
