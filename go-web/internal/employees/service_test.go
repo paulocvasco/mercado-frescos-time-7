@@ -87,6 +87,45 @@ func TestDelete(t *testing.T) {
 	}
 }
 
+func TestGetByID(t *testing.T) {
+	testCases := []struct {
+		testName      string
+		requestID     int
+		responseModel Employee
+		responseError error
+		expectedModel Employee
+		expectedError error
+	}{
+		{
+			"InvalidID", 1,
+			Employee{}, customerrors.ErrorInvalidID,
+			Employee{}, customerrors.ErrorInvalidID,
+		},
+		{
+			"Success", 1,
+			Employee{ID: 1, CardNumberId: "23", FirstName: "Foo", LastName: "Bar", WareHouseId: 3},
+			nil,
+			Employee{ID: 1, CardNumberId: "23", FirstName: "Foo", LastName: "Bar", WareHouseId: 3},
+			nil,
+		},
+	}
+
+	for _, v := range testCases {
+		repo := CreateMockRepository()
+		ConfigGetByID(v.responseModel, v.responseError)
+		s := NewService(repo)
+		model, err := s.GetByID(v.requestID)
+
+		if v.expectedError != err {
+			t.Errorf("Delete test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
+		}
+
+		if v.expectedModel != model {
+			t.Errorf("GetByID test[%s]: model expected to be:\n%+v\n\t--- but got ---\n%+v\n", v.testName, v.expectedModel, model)
+		}
+	}
+}
+
 			nil,
 		},
 	}
