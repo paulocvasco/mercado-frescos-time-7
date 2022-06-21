@@ -228,7 +228,7 @@ func TestUpdate(t *testing.T) {
 	for _, v := range testCases {
 		ConfigValidationCard(v.validationError)
 		ConfigGetByID(v.getIdModelResponse, v.getIdError)
-		ConfigUpdate(v.updateError)
+		ConfigUpdate(Employee{}, v.updateError)
 
 		model, err := s.Update(v.updatedModel, v.id)
 		if v.expectedError != err {
