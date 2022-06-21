@@ -3,7 +3,7 @@ package controller
 import (
 	"errors"
 	"io/ioutil"
-	seller "mercado-frescos-time-7/go-web/internal/Seller"
+	"mercado-frescos-time-7/go-web/internal/seller"
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/pkg/web"
