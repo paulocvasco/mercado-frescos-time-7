@@ -8,6 +8,7 @@ import (
 	jsonpatch "github.com/evanphx/json-patch/v5"
 )
 
+//go:generate mockery --name=Service --output=./mock/mockService --outpkg=mockService
 type Service interface {
 	Insert(newProduct []byte) (models.Product, error)
 	GetAll() (models.Products, error)
@@ -37,17 +38,17 @@ func (s *service) Insert(newProduct []byte) (models.Product, error) {
 	if err != nil {
 		return models.Product{}, err
 	}
-	
+
 	json.Unmarshal(productJSON, &product)
-	
-	if products, err := s.repository.GetAll(); err != nil{
+
+	if products, err := s.repository.GetAll(); err != nil {
 		return models.Product{}, err
 	} else {
 		for _, v := range products.Products {
-			if v.ProductCode == product.ProductCode{
+			if v.ProductCode == product.ProductCode {
 				return models.Product{}, customerrors.ErrorConflict
 			}
-		} 
+		}
 	}
 
 	p, err := s.repository.Insert(product)
@@ -89,17 +90,17 @@ func (s *service) Update(id int, product []byte) (models.Product, error) {
 	json.Unmarshal(patch, &updateProduct)
 
 	if oldProduct.ProductCode != updateProduct.ProductCode {
-		if products, err := s.repository.GetAll(); err != nil{
+		if products, err := s.repository.GetAll(); err != nil {
 			return models.Product{}, err
 		} else {
 			for _, v := range products.Products {
-				if v.ProductCode == updateProduct.ProductCode{
+				if v.ProductCode == updateProduct.ProductCode {
 					return models.Product{}, customerrors.ErrorConflict
 				}
-			} 
+			}
 		}
 	}
-	
+
 	err = s.repository.Update(updateProduct)
 	if err != nil {
 		return models.Product{}, err
