@@ -37,7 +37,7 @@ func TestGetAll(t *testing.T) {
 
 	for _, v := range testCases {
 		repo := CreateMockRepository()
-		ConfigureGetAll(v.expectedList, v.expectedError)
+		ConfigGetAll(v.expectedList, v.expectedError)
 		s := NewService(repo)
 		list, err := s.GetAll()
 
