@@ -154,7 +154,7 @@ func TestGetByIDWarehouse(t *testing.T) {
 			requestedId: "1",
 		},
 		{
-			testName: "should return status 500 - invalid id - ALTERAR ESSE ERRO DPS",
+			testName: "should return status 500 - invalid id",
 			responseServiceMock: responseServiceMock{
 				data: models.Warehouse{},
 				err:  customerrors.ErrorInvalidID,
@@ -331,7 +331,7 @@ func TestDeleteWarehouse(t *testing.T) {
 			requestedId: "1",
 		},
 		{
-			testName: "should return status 500 - invalid id - ALTERAR ESSE ERRO DPS",
+			testName: "should return status 500 - invalid id",
 			responseServiceMock: responseServiceMock{
 				err: customerrors.ErrorInvalidID,
 			},
@@ -439,7 +439,7 @@ func TestUpdateWarehouse(t *testing.T) {
 			requestedId: "1",
 		},
 		{
-			testName: "should return status 500 - MUDAR ESSE RETORNO",
+			testName: "should return status 500",
 			responseServiceMock: responseServiceMock{
 				data: models.Warehouse{},
 				err:  nil,
