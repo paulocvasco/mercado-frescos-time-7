@@ -177,12 +177,63 @@ func TestCreate(t *testing.T) {
 	}
 }
 
+func TestUpdate(t *testing.T) {
+	testCases := []struct {
+		testName           string
+		updatedModel       RequestPatch
+		id                 int
+		validationError    error
+		getIdModelResponse Employee
+		getIdError         error
+		updateError        error
+		expectedModel      Employee
+		expectedError      error
+	}{
+		{
+			"FailCardID", RequestPatch{}, 1,
+			customerrors.ErrorConflict,
+			Employee{}, nil,
 			nil,
+			Employee{}, customerrors.ErrorConflict,
+		},
+		{
+			"FailGetID", RequestPatch{}, 1,
+			nil,
+			Employee{}, customerrors.ErrorInvalidID,
+			nil,
+			Employee{}, customerrors.ErrorInvalidID,
+		},
+		{
+			"ItemNotFound", RequestPatch{}, 1,
+			nil,
+			Employee{}, nil,
+			customerrors.ErrorItemNotFound,
+			Employee{}, customerrors.ErrorItemNotFound,
+		},
+		{
+			"Success", RequestPatch{CardNumberId: "12", FirstName: "Bar", LastName: "Foo", WareHouseId: 10}, 1,
+			nil,
+			Employee{ID: 1, CardNumberId: "1", FirstName: "Foo", LastName: "Bar", WareHouseId: 1}, nil,
+			nil,
+			Employee{ID: 1, CardNumberId: "12", FirstName: "Bar", LastName: "Foo", WareHouseId: 10}, nil,
 		},
 	}
 
-	for _, t := range testCases {
-		repo := mock.CreateMockRepository(0, t.expectedList, Employee{}, t.expectedError)
+	for _, v := range testCases {
+		ConfigValidationCard(v.validationError)
+		ConfigGetByID(v.getIdModelResponse, v.getIdError)
+		ConfigUpdate(v.updateError)
+
+		repo := CreateMockRepository()
 		s := NewService(repo)
+		model, err := s.Update(v.updatedModel, v.id)
+
+		if v.expectedError != err {
+			t.Errorf("Update test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
+		}
+
+		if v.expectedModel != model {
+			t.Errorf("Update test[%s]: model expected to be:\n%+v\n\t--- but got ---\n%+v\n", v.testName, v.expectedModel, model)
+		}
 	}
 }
