@@ -17,6 +17,7 @@ type Repository interface {
 	Update(e Employee, id int) (Employee, error)
 	Delete(id int) error
 	LastID() (int, error)
+	ValidationCardNumberID(card_number_id string) error
 }
 
 type repository struct {
@@ -91,6 +92,16 @@ func (r *repository) Update(e Employee, id int) (Employee, error) {
 	}
 
 	return e, nil
+}
+
+func (r *repository) ValidationCardNumberID(card_number_id string) error {
+	for _, x := range employees {
+		if x.CardNumberId == card_number_id {
+			return customerrors.ErrorCardIdAlreadyExists
+		}
+	}
+
+	return nil
 }
 
 func NewRepository() Repository {

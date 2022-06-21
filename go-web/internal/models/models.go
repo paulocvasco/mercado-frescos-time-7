@@ -11,9 +11,12 @@ type Section struct {
 	WarehouseId        int `json:"warehouse_id"`
 	ProductTypeId      int `json:"product_type_id"`
 }
+
 type Sections struct {
-	Section []Section `json:"sections"`
+	SectionList []Section `json:"sections"`
+	LastID      int       `json:"last_id"`
 }
+
 type Employee struct {
 	ID           int    `json:"id"`
 	CardNumberId string `json:"card_number_id"`
