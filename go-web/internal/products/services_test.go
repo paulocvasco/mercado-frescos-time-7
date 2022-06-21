@@ -30,7 +30,7 @@ func TestService_Create_Ok(t *testing.T) {
 	}
 	productByte, _ := json.Marshal(body)
 
-	body2 := models.Products{
+	bodyList := models.Products{
 		Products: []models.Product{
 			{
 				Id:                             1,
@@ -64,7 +64,7 @@ func TestService_Create_Ok(t *testing.T) {
 	}
 
 	repository.On("Insert", mock.Anything).Return(body, nil)
-	repository.On("GetAll").Return(body2, nil)
+	repository.On("GetAll").Return(bodyList, nil)
 	response, _ := service.Insert(productByte)
 	assert.Equal(t, body, response)
 }
@@ -88,7 +88,7 @@ func TestService_Create_Conflict(t *testing.T) {
 	}
 	productByte, _ := json.Marshal(body)
 
-	body2 := models.Products{
+	bodyList := models.Products{
 		Products: []models.Product{
 			{
 				Id:                             1,
@@ -121,7 +121,7 @@ func TestService_Create_Conflict(t *testing.T) {
 		},
 	}
 
-	repository.On("GetAll").Return(body2, nil)
+	repository.On("GetAll").Return(bodyList, nil)
 	_, err := service.Insert(productByte)
 	assert.Equal(t, customerrors.ErrorConflict, err)
 }
@@ -129,7 +129,7 @@ func TestService_Create_Conflict(t *testing.T) {
 func TestService_Find_All(t *testing.T) {
 	repository := mockRepository.NewRepository(t)
 	service := products.NewService(repository)
-	body2 := models.Products{
+	bodyList := models.Products{
 		Products: []models.Product{
 			{
 				Id:                             1,
@@ -162,9 +162,9 @@ func TestService_Find_All(t *testing.T) {
 		},
 	}
 
-	repository.On("GetAll").Return(body2, nil)
+	repository.On("GetAll").Return(bodyList, nil)
 	response, _ := service.GetAll()
-	assert.Equal(t, body2, response)
+	assert.Equal(t, bodyList, response)
 }
 
 func TestService_Find_By_Id_Non_Existent(t *testing.T) {
