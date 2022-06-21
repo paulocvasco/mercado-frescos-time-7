@@ -3,6 +3,7 @@ package sections_test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"mercado-frescos-time-7/go-web/cmd/server/controller"
@@ -124,8 +125,7 @@ func TestControllerFindAll(t *testing.T) {
 		ProductTypeId:      1,
 	},
 	}
-	jsonValue, _ := json.Marshal(mysec)
-	req, err := http.NewRequest("GET", "/section", bytes.NewBuffer(jsonValue))
+	req, err := http.NewRequest("GET", "/section", nil)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -138,6 +138,22 @@ func TestControllerFindAll(t *testing.T) {
 	json.Unmarshal(responseData, &result)
 	assert.Equal(t, mysec, result)
 	assert.Equal(t, 200, w.Code)
+}
+
+func TestFindAllERROR(t *testing.T) {
+	serv := mockService.NewService(t)
+	contr := controller.NewController(serv)
+	r := gin.Default()
+	r.GET("/section", contr.GetAll)
+	req, err := http.NewRequest("GET", "/section", nil)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	w := httptest.NewRecorder()
+	serv.On("GetAll").Return(nil, errors.New("No results found"))
+	r.ServeHTTP(w, req)
+	assert.Equal(t, 500, w.Code)
 }
 
 func TestControllerFindByIDNE(t *testing.T) {
