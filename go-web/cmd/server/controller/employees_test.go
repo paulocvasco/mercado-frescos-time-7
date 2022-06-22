@@ -181,11 +181,11 @@ func TestDelete(t *testing.T) {
 		responseBody := w.Body.String()
 
 		if v.expectedCode != responseCode {
-			t.Errorf("GetByID test[%s]: code expected to be [%d], got [%d]", v.testName, v.expectedCode, responseCode)
+			t.Errorf("Delete test[%s]: code expected to be [%d], got [%d]", v.testName, v.expectedCode, responseCode)
 		}
 
 		if v.expectedBody != responseBody {
-			t.Errorf("GetById test[%s]: body expected to be \n%s\n\t--- but got ---\n%s", v.testName, v.expectedBody, responseBody)
+			t.Errorf("Delete test[%s]: body expected to be \n%s\n\t--- but got ---\n%s", v.testName, v.expectedBody, responseBody)
 		}
 	}
 }
@@ -239,11 +239,11 @@ func TestCreate(t *testing.T) {
 		responseBody := w.Body.String()
 
 		if v.expectedCode != responseCode {
-			t.Errorf("GetByID test[%s]: code expected to be [%d], got [%d]", v.testName, v.expectedCode, responseCode)
+			t.Errorf("Create test[%s]: code expected to be [%d], got [%d]", v.testName, v.expectedCode, responseCode)
 		}
 
 		if v.expectedBody != responseBody {
-			t.Errorf("GetById test[%s]: body expected to be \n%s\n\t--- but got ---\n%s", v.testName, v.expectedBody, responseBody)
+			t.Errorf("Create test[%s]: body expected to be \n%s\n\t--- but got ---\n%s", v.testName, v.expectedBody, responseBody)
 		}
 	}
 }
@@ -308,11 +308,11 @@ func TestUpdate(t *testing.T) {
 		responseBody := w.Body.String()
 
 		if v.expectedCode != responseCode {
-			t.Errorf("GetByID test[%s]: code expected to be [%d], got [%d]", v.testName, v.expectedCode, responseCode)
+			t.Errorf("Update test[%s]: code expected to be [%d], got [%d]", v.testName, v.expectedCode, responseCode)
 		}
 
 		if v.expectedBody != responseBody {
-			t.Errorf("GetById test[%s]: body expected to be \n%s\n\t--- but got ---\n%s", v.testName, v.expectedBody, responseBody)
+			t.Errorf("Update test[%s]: body expected to be \n%s\n\t--- but got ---\n%s", v.testName, v.expectedBody, responseBody)
 		}
 	}
 }
