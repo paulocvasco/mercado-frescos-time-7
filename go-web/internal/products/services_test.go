@@ -214,33 +214,159 @@ func TestService_Find_By_Id_Existent(t *testing.T) {
 }
 
 func TestService_Update_Ok(t *testing.T) {
-	repository := mockRepository.NewRepository(t)
-	service := products.NewService(repository)
-	body := models.Product{
-		Id:                             1,
-		ProductCode:                    "ssd1",
-		Description:                    "test 2",
-		Width:                          1.2,
-		Height:                         6.4,
-		Length:                         4.5,
-		NetWeight:                      3.4,
-		ExpirationRate:                 2,
-		RecommendedFreezingTemperature: 1.3,
-		FreezingRate:                   2,
-		ProductTypeId:                  2,
-		SellerId:                       2,
+	type mockResponse struct {
+		dataGetById models.Product
+		dataGetAll  models.Products
+		errGetById  error
+		errGetAll   error
+		errUpdate   error
 	}
-	productByte, _ := json.Marshal(body)
+	type expectedResult struct {
+		data models.Product
+		err  error
+	}
+	type testData struct {
+		testName string
+		mockResponse
+		expectedResult
+	}
 
-	repository.On("GetById", mock.Anything).Return(body, nil)
-	repository.On("Update", mock.Anything).Return(nil)
+	testsCases := []testData{
+		{
+			testName: "should return updated warehouse",
+			mockResponse: mockResponse{
+				dataGetById: models.Product{
+					Id:                             1,
+					ProductCode:                    "codigo13",
+					Description:                    "test 2",
+					Width:                          1.2,
+					Height:                         6.4,
+					Length:                         4.5,
+					NetWeight:                      3.4,
+					ExpirationRate:                 3,
+					RecommendedFreezingTemperature: 1.3,
+					FreezingRate:                   2,
+					ProductTypeId:                  2,
+					SellerId:                       2,
+				},
+				errGetById: nil,
+				dataGetAll: models.Products{
+					Products: []models.Product{
+						{
+							Id:                             1,
+							ProductCode:                    "codigo",
+							Description:                    "test 2",
+							Width:                          1.2,
+							Height:                         6.4,
+							Length:                         4.5,
+							NetWeight:                      3.4,
+							ExpirationRate:                 2,
+							RecommendedFreezingTemperature: 1.3,
+							FreezingRate:                   2,
+							ProductTypeId:                  2,
+							SellerId:                       2,
+						},
+					},
+				},
+				errGetAll: nil,
+				errUpdate: nil,
+			},
+			expectedResult: expectedResult{
+				data: models.Product{
+					Id:                             1,
+					ProductCode:                    "ssd1",
+					Description:                    "test 2",
+					Width:                          1.2,
+					Height:                         6.4,
+					Length:                         4.5,
+					NetWeight:                      3.4,
+					ExpirationRate:                 3,
+					RecommendedFreezingTemperature: 1.3,
+					FreezingRate:                   2,
+					ProductTypeId:                  2,
+					SellerId:                       2,
+				},
+				err: nil,
+			},
+		},
+		{
+			testName: "should return updated warehouse",
+			mockResponse: mockResponse{
+				dataGetById: models.Product{
+					Id:                             1,
+					ProductCode:                    "codigo",
+					Description:                    "test 2",
+					Width:                          1.2,
+					Height:                         6.4,
+					Length:                         4.5,
+					NetWeight:                      3.4,
+					ExpirationRate:                 3,
+					RecommendedFreezingTemperature: 1.3,
+					FreezingRate:                   2,
+					ProductTypeId:                  2,
+					SellerId:                       2,
+				},
+				errGetById: nil,
+				dataGetAll: models.Products{
+					Products: []models.Product{
+						{
+							Id:                             1,
+							ProductCode:                    "codigo",
+							Description:                    "test 2",
+							Width:                          1.2,
+							Height:                         6.4,
+							Length:                         4.5,
+							NetWeight:                      3.4,
+							ExpirationRate:                 2,
+							RecommendedFreezingTemperature: 1.3,
+							FreezingRate:                   2,
+							ProductTypeId:                  2,
+							SellerId:                       2,
+						},
+						{
+							Id:                             2,
+							ProductCode:                    "codigo2",
+							Description:                    "test 2",
+							Width:                          1.2,
+							Height:                         6.4,
+							Length:                         4.5,
+							NetWeight:                      3.4,
+							ExpirationRate:                 2,
+							RecommendedFreezingTemperature: 1.3,
+							FreezingRate:                   2,
+							ProductTypeId:                  2,
+							SellerId:                       2,
+						},
+					},
+				},
+				errGetAll: nil,
+				errUpdate: nil,
+			},
+			expectedResult: expectedResult{
+				data: models.Product{},
+				err:  nil,
+			},
+		},
+	}
 
-	newProduct, _ := service.Update(body.Id, productByte)
-	assert.Equal(t, newProduct, body)
+	for _, test := range testsCases {
+		repository := mockRepository.NewRepository(t)
+		service := products.NewService(repository)
 
+		productByte, _ := json.Marshal(test.expectedResult.data)
+
+		repository.On("GetById", mock.Anything).Return(test.mockResponse.dataGetById, test.mockResponse.errGetById)
+		repository.On("GetAll").Return(test.mockResponse.dataGetAll, test.mockResponse.errGetAll)
+		repository.On("Update", mock.Anything).Return(test.mockResponse.errUpdate)
+
+		newProduct, err := service.Update(1, productByte)
+		assert.Equal(t, newProduct, test.expectedResult.data)
+		assert.Equal(t, err, test.expectedResult.err)
+	}
 }
 
 func TestService_Update_Non_Existent(t *testing.T) {
+
 	repository := mockRepository.NewRepository(t)
 	service := products.NewService(repository)
 	body := models.Product{
