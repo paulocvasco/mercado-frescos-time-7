@@ -1,4 +1,4 @@
-package sections_test
+package controller_test
 
 import (
 	"bytes"
