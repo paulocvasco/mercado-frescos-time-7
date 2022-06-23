@@ -234,6 +234,51 @@ func TestControllerUpdateNE(t *testing.T) {
 	assert.Equal(t, 404, w.Code)
 }
 
+func TestControllerUpdateSucess(t *testing.T) {
+	serv := mockService.NewService(t)
+	contr := controller.NewController(serv)
+	r := gin.Default()
+	r.PATCH("/section/:id", contr.Update)
+	mysec := sections.Section{
+		ID:                 2,
+		SectionNumber:      1,
+		CurrentTemperature: 1,
+		MinimumTemperature: 1,
+		CurrentCapacity:    1,
+		MinimumCapacity:    1,
+		MaximumCapacity:    1,
+		WarehouseId:        1,
+		ProductTypeId:      1,
+	}
+	jsonValue, _ := json.Marshal(mysec)
+	req, err := http.NewRequest("PATCH", "/section/1", bytes.NewBuffer(jsonValue))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	w := httptest.NewRecorder()
+	serv.On("Update", mock.Anything, mock.Anything).Return(mysec, nil)
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t,http.StatusOK, w.Code)
+}
+
+func TestControllerUpdateFailBindJSON(t *testing.T) {
+	serv := mockService.NewService(t)
+	contr := controller.NewController(serv)
+	r := gin.Default()
+	r.PATCH("/section/:id", contr.Update)
+	req, err := http.NewRequest("PATCH", "/section/1", nil)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+	
+	assert.Equal(t,http.StatusUnprocessableEntity, w.Code)
+}
+
 func TestControlleDeleteNE(t *testing.T) {
 	serv := mockService.NewService(t)
 	contr := controller.NewController(serv)
