@@ -343,3 +343,110 @@ func TestService_Find_By_Id(t *testing.T) {
 	}
 
 }
+
+func TestService_Update(t *testing.T) {
+	type responseServiceMock struct {
+		data models.Product
+		err  error
+	}
+	type expectResult struct {
+		data       interface{}
+		statusCode int
+	}
+	type testData struct {
+		testName string
+		responseServiceMock
+		expectResult
+		idUrlRequest string
+		postData     interface{}
+	}
+	type responseWeb struct {
+		Code  string         `json:"code"`
+		Data  models.Product `json:"data,omitempty"`
+		Error string         `json:"error,omitempty"`
+	}
+
+	prd1 := models.Product{
+		ProductCode: "ssd3",
+		Description: "test 20",
+		Width:       20,
+	}
+	prd2 := models.Product{
+		Id:                             3,
+		ProductCode:                    "ssd3",
+		Description:                    "test 20",
+		Width:                          20,
+		Height:                         6.4,
+		Length:                         4.5,
+		NetWeight:                      3.4,
+		ExpirationRate:                 2,
+		RecommendedFreezingTemperature: 1.3,
+		FreezingRate:                   2,
+		ProductTypeId:                  2,
+		SellerId:                       2,
+	}
+	testes := []testData{
+		{
+			testName: "update product - http code 200",
+			responseServiceMock: responseServiceMock{
+				data: prd2,
+				err:  nil,
+			},
+			expectResult: expectResult{
+				data: responseWeb{
+					Code: "200",
+					Data: prd2,
+				},
+				statusCode: 200,
+			},
+			idUrlRequest: "3",
+			postData:     prd1,
+		},
+		{
+			testName: "update product not found - http code 404",
+			responseServiceMock: responseServiceMock{
+				data: models.Product{},
+				err:  customerrors.ErrorInvalidID,
+			},
+			expectResult: expectResult{
+				data: responseWeb{
+					Code:  "404",
+					Data:  models.Product{},
+					Error: "invalid id",
+				},
+				statusCode: 404,
+			},
+			idUrlRequest: "33",
+			postData:     prd1,
+		},
+	}
+
+	for _, test := range testes {
+		gin.SetMode(gin.TestMode)
+
+		mockP := mockService.NewService(t)
+		ctrl := controller.NewProductHandler(mockP)
+		mockP.On("Update", mock.Anything, mock.Anything).Return(test.responseServiceMock.data, test.responseServiceMock.err).Maybe()
+
+		w := httptest.NewRecorder()
+		_, router := gin.CreateTestContext(w)
+
+		postData, _ := json.Marshal(test.postData)
+
+		req := httptest.NewRequest(http.MethodPatch, "/"+test.idUrlRequest, bytes.NewReader(postData))
+		router.PATCH("/:id", ctrl.UpdateProducts())
+		router.ServeHTTP(w, req)
+
+		body, _ := ioutil.ReadAll(w.Body)
+		responseCode := w.Result().StatusCode
+
+		res := responseWeb{}
+		json.Unmarshal(body, &res)
+
+		assert.Equal(t, test.expectResult.statusCode, responseCode, test.testName)
+		assert.Equal(t, test.expectResult.data, res, test.testName)
+
+	}
+}
+
+//func TestService_Delete(t *testing.T) {}
