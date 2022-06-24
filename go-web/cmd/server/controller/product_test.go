@@ -3,6 +3,7 @@ package controller_test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -315,6 +316,22 @@ func TestService_Find_By_Id(t *testing.T) {
 			},
 			idUrlRequest: "77",
 		},
+		{
+			testName: "product not found-  http code 500",
+			responseServiceMock: responseServiceMock{
+				data: models.Product{},
+				err:  errors.New("internal error"),
+			},
+			expectResult: expectResult{
+				data: responseWeb{
+					Code:  "500",
+					Data:  models.Product{},
+					Error: "internal error",
+				},
+				statusCode: 500,
+			},
+			idUrlRequest: "ID",
+		},
 	}
 
 	for _, test := range testes {
@@ -322,7 +339,7 @@ func TestService_Find_By_Id(t *testing.T) {
 
 		mockP := mockService.NewService(t)
 		ctrl := controller.NewProductHandler(mockP)
-		mockP.On("GetById", mock.Anything).Return(test.responseServiceMock.data, test.responseServiceMock.err)
+		mockP.On("GetById", mock.Anything).Return(test.responseServiceMock.data, test.responseServiceMock.err).Maybe()
 
 		w := httptest.NewRecorder()
 		_, router := gin.CreateTestContext(w)
@@ -385,6 +402,7 @@ func TestService_Update(t *testing.T) {
 		ProductTypeId:                  2,
 		SellerId:                       2,
 	}
+
 	testes := []testData{
 		{
 			testName: "update product - http code 200",
@@ -418,6 +436,36 @@ func TestService_Update(t *testing.T) {
 			},
 			idUrlRequest: "33",
 			postData:     prd1,
+		},
+		{
+			testName: "update product invalid id - http code 500",
+			responseServiceMock: responseServiceMock{
+				data: models.Product{},
+				err:  errors.New("internal error"),
+			},
+			expectResult: expectResult{
+				data: responseWeb{
+					Code:  "500",
+					Data:  models.Product{},
+					Error: "internal error",
+				},
+				statusCode: 500,
+			},
+			idUrlRequest: "ID",
+			postData:     prd1,
+		},
+		{
+			testName:            "update product invalid json - http code 400",
+			responseServiceMock: responseServiceMock{},
+			expectResult: expectResult{
+				data: responseWeb{
+					Code:  "400",
+					Error: "type error in ",
+				},
+				statusCode: 400,
+			},
+			idUrlRequest: "1",
+			postData:     `{}`,
 		},
 	}
 
@@ -495,6 +543,20 @@ func TestService_Delete(t *testing.T) {
 			},
 			idUrlRequest: "3",
 		},
+		{
+			testName: "delete product id invalid type - http code 500",
+			responseServiceMock: responseServiceMock{
+				err: errors.New("internal error"),
+			},
+			expectResult: expectResult{
+				data: responseWeb{
+					Code:  "500",
+					Error: "internal error",
+				},
+				statusCode: 500,
+			},
+			idUrlRequest: "ID",
+		},
 	}
 
 	for _, test := range testes {
@@ -502,7 +564,7 @@ func TestService_Delete(t *testing.T) {
 
 		mockP := mockService.NewService(t)
 		ctrl := controller.NewProductHandler(mockP)
-		mockP.On("Delete", mock.Anything).Return(test.responseServiceMock.err)
+		mockP.On("Delete", mock.Anything).Return(test.responseServiceMock.err).Maybe()
 
 		w := httptest.NewRecorder()
 		_, router := gin.CreateTestContext(w)
