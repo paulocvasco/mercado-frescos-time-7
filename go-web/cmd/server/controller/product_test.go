@@ -449,4 +449,76 @@ func TestService_Update(t *testing.T) {
 	}
 }
 
-//func TestService_Delete(t *testing.T) {}
+func TestService_Delete(t *testing.T) {
+	type responseServiceMock struct {
+		err error
+	}
+	type expectResult struct {
+		data       interface{}
+		statusCode int
+	}
+	type testData struct {
+		testName string
+		responseServiceMock
+		expectResult
+		idUrlRequest string
+	}
+	type responseWeb struct {
+		Code  string         `json:"code"`
+		Data  models.Product `json:"data,omitempty"`
+		Error string         `json:"error,omitempty"`
+	}
+
+	testes := []testData{
+		{
+			testName: "delete product - http code 204",
+			responseServiceMock: responseServiceMock{
+				err: nil,
+			},
+			expectResult: expectResult{
+				data:       responseWeb{},
+				statusCode: 204,
+			},
+			idUrlRequest: "3",
+		},
+		{
+			testName: "delete product not found - http code 404",
+			responseServiceMock: responseServiceMock{
+				err: customerrors.ErrorInvalidID,
+			},
+			expectResult: expectResult{
+				data: responseWeb{
+					Code:  "404",
+					Error: "invalid id",
+				},
+				statusCode: 404,
+			},
+			idUrlRequest: "3",
+		},
+	}
+
+	for _, test := range testes {
+		gin.SetMode(gin.TestMode)
+
+		mockP := mockService.NewService(t)
+		ctrl := controller.NewProductHandler(mockP)
+		mockP.On("Delete", mock.Anything).Return(test.responseServiceMock.err)
+
+		w := httptest.NewRecorder()
+		_, router := gin.CreateTestContext(w)
+
+		req := httptest.NewRequest(http.MethodDelete, "/"+test.idUrlRequest, nil)
+		router.DELETE("/:id", ctrl.DeleteProducts())
+		router.ServeHTTP(w, req)
+
+		body, _ := ioutil.ReadAll(w.Body)
+		responseCode := w.Result().StatusCode
+
+		res := responseWeb{}
+		json.Unmarshal(body, &res)
+
+		assert.Equal(t, test.expectResult.statusCode, responseCode, test.testName)
+		assert.Equal(t, test.expectResult.data, res, test.testName)
+
+	}
+}
