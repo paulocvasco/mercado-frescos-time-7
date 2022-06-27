@@ -14,7 +14,7 @@ type repository struct {
 	database db.DB
 }
 
-func (s *repository) ValidateID(id int) bool {
+func (s *repository)ValidateID(id int) bool {
 	err := s.database.Load(&storage)
 	if err != nil {
 		return false
@@ -26,6 +26,7 @@ func (s *repository) ValidateID(id int) bool {
 	return true
 }
 
+//go:generate mockery --name=Repository --output=./mock/mockRepository --outpkg=mockRepository
 type Repository interface {
 	GetAll() ([]models.Section, error)
 	GetById(int) (models.Section, error)
