@@ -61,6 +61,59 @@ definitions:
         x-go-name: Products
     type: object
     x-go-package: mercado-frescos-time-7/go-web/internal/models
+  Section:
+    properties:
+      current_capacity:
+        format: int64
+        type: integer
+        x-go-name: CurrentCapacity
+      current_temperature:
+        format: int64
+        type: integer
+        x-go-name: CurrentTemperature
+      id:
+        format: int64
+        type: integer
+        x-go-name: ID
+      maximum_capacity:
+        format: int64
+        type: integer
+        x-go-name: MaximumCapacity
+      minimum_capacity:
+        format: int64
+        type: integer
+        x-go-name: MinimumCapacity
+      minimum_temperature:
+        format: int64
+        type: integer
+        x-go-name: MinimumTemperature
+      product_type_id:
+        format: int64
+        type: integer
+        x-go-name: ProductTypeId
+      section_number:
+        format: int64
+        type: integer
+        x-go-name: SectionNumber
+      warehouse_id:
+        format: int64
+        type: integer
+        x-go-name: WarehouseId
+    type: object
+    x-go-package: mercado-frescos-time-7/go-web/internal/models
+  Sections:
+    properties:
+      last_id:
+        format: int64
+        type: integer
+        x-go-name: LastID
+      sections:
+        items:
+          $ref: '#/definitions/Section'
+        type: array
+        x-go-name: SectionList
+    type: object
+    x-go-package: mercado-frescos-time-7/go-web/internal/models
   Warehouse:
     properties:
       address:
@@ -159,6 +212,46 @@ definitions:
         x-go-name: Width
     type: object
     x-go-package: mercado-frescos-time-7/go-web/docs
+  updateSection:
+    properties:
+      current_capacity:
+        format: int64
+        type: integer
+        x-go-name: CurrentCapacity
+      current_temperature:
+        format: int64
+        type: integer
+        x-go-name: CurrentTemperature
+      id:
+        format: int64
+        type: integer
+        x-go-name: ID
+      maximum_capacity:
+        format: int64
+        type: integer
+        x-go-name: MaximumCapacity
+      minimum_capacity:
+        format: int64
+        type: integer
+        x-go-name: MinimumCapacity
+      minimum_temperature:
+        format: int64
+        type: integer
+        x-go-name: MinimumTemperature
+      product_type_id:
+        format: int64
+        type: integer
+        x-go-name: ProductTypeId
+      section_number:
+        format: int64
+        type: integer
+        x-go-name: SectionNumber
+      warehouse_id:
+        format: int64
+        type: integer
+        x-go-name: WarehouseId
+    type: object
+    x-go-package: mercado-frescos-time-7/go-web/docs
 host: 0.0.0.0:8080
 info:
   description: Documentation of mercado frescos API.
@@ -245,6 +338,70 @@ paths:
       summary: Edit an object on db.
       tags:
       - Product
+  /sections/:
+    get:
+      operationId: GetAll
+      responses:
+        "200":
+          $ref: '#/responses/sectionAll'
+        "404":
+          $ref: '#/responses/errorResponse'
+        "500":
+          $ref: '#/responses/errorServerResponse'
+      summary: Get all objects stored on db.
+      tags:
+      - Section
+    post:
+      operationId: Create
+      responses:
+        "201":
+          $ref: '#/responses/sectionIDResponse'
+        "422":
+          $ref: '#/responses/errorResponse'
+        "500":
+          $ref: '#/responses/errorServerResponse'
+      summary: Add a new object on db.
+      tags:
+      - Section
+  /sections/{id}:
+    delete:
+      operationId: Delete
+      responses:
+        "204":
+          description: ' OK'
+        "404":
+          $ref: '#/responses/errorResponse'
+        "500":
+          $ref: '#/responses/errorServerResponse'
+      summary: Remove a corresponding ID object from db.
+      tags:
+      - Section
+    get:
+      operationId: GetById
+      responses:
+        "200":
+          $ref: '#/responses/sectionIDResponse'
+        "404":
+          $ref: '#/responses/errorResponse'
+        "500":
+          $ref: '#/responses/errorServerResponse'
+      summary: Get a section from db.
+      tags:
+      - Section
+    patch:
+      operationId: Update
+      responses:
+        "200":
+          $ref: '#/responses/sectionIDResponse'
+        "404":
+          $ref: '#/responses/errorResponse'
+        "422":
+          $ref: '#/responses/errorResponse'
+        "500":
+          $ref: '#/responses/errorServerResponse'
+      summary: Edit an object on db.
+      tags:
+      - Section
   /warehouses/:
     get:
       operationId: allWarehouseResponse
@@ -389,6 +546,26 @@ responses:
           x-go-name: Code
         data:
           $ref: '#/definitions/Product'
+      type: object
+  sectionAll:
+    description: Corresponding object from db on json format.
+    schema:
+      properties:
+        code:
+          type: string
+          x-go-name: Code
+        data:
+          $ref: '#/definitions/Sections'
+      type: object
+  sectionIDResponse:
+    description: Corresponding object from db on json format.
+    schema:
+      properties:
+        code:
+          type: string
+          x-go-name: Code
+        data:
+          $ref: '#/definitions/Section'
       type: object
   warehouseIDResponse:
     description: Corresponding object from db on json format.
