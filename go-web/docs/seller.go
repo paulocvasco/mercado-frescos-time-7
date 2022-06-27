@@ -47,7 +47,7 @@ import "mercado-frescos-time-7/go-web/internal/models"
 /////////////////////////////////////////////////////////////////////////////////////
 
 // Corresponding object from db on json format.
-// swagger:response productIDResponse
+// swagger:response sellerResponse
 type sellerResponse struct {
 	//in: body
 	data struct {
@@ -57,7 +57,7 @@ type sellerResponse struct {
 }
 
 // Corresponding object from db on json format.
-// swagger:response productAll
+// swagger:response sellersResponse
 type sellersResponse struct {
 	//in: body
 	data struct {
@@ -101,7 +101,7 @@ type getSellerRequest struct {
 // swagger:parameters CreateSeller
 type newSellerRequest struct {
 	//in: body
-	NewProduct models.Product
+	NewProduct models.Seller
 }
 
 // swagger:parameters UpdateSeller
