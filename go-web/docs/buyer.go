@@ -8,7 +8,7 @@ import (
 //////////////////               END POINTS               ///////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-// swagger:route GET /buyers/{id} Buyer GetBuyerID
+// swagger:route GET /buyers/{id} Buyer getBuyerID
 // Get a buyer from db.
 // responses:
 //    200: buyerIDResponse
@@ -36,7 +36,7 @@ import (
 //    404: errorResponse
 //    500: errorServerResponse
 
-// swagger:route PATCH /buyers/{id} Buyer updatebuyer
+// swagger:route PATCH /buyers/{id} Buyer patchBuyer
 // Edit an object on db.
 // responses:
 //    200: buyerIDResponse
@@ -92,12 +92,12 @@ type errorServerResponseBuyer struct {
 //////////////////                  REQUESTS                /////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-// swagger:parameters  deleteID getID
+// swagger:parameters  deleteBuyerID getBuyerID
 type buyerRequestID struct {
 	// Value corresponding to object ID on db.
 	// in: path
 	// required: true
-	Id string
+	Id string `json:"id"`
 }
 
 // swagger:parameters createBuyer
@@ -110,7 +110,7 @@ type buyerNewResquest struct {
 type patchBuyer struct {
 	// Corresponding object on db.
 	//in: path
-	Id string
+	Id string `json:"id"`
 	// New values
 	//in: body
 	PatchValues updateBuyer
