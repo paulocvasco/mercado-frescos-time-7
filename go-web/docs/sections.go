@@ -8,35 +8,35 @@ import (
 //////////////////               END POINTS               ///////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-// swagger:route GET /sections/{id} Section GetById
+// swagger:route GET /sections/{id} Section getSectionID
 // Get a section from db.
 // responses:
 //    200: sectionIDResponse
 //    404: errorResponse
 //    500: errorServerResponse
 
-// swagger:route GET /sections/ Section GetAll
+// swagger:route GET /sections/ Section sectionAll
 // Get all objects stored on db.
 // responses:
 //    200: sectionAll
 //    404: errorResponse
 //    500: errorServerResponse
 
-// swagger:route POST /sections/ Section Create
+// swagger:route POST /sections/ Section createSection
 // Add a new object on db.
 // responses:
 //    201: sectionIDResponse
 //    422: errorResponse
 //    500: errorServerResponse
 
-// swagger:route DELETE /sections/{id} Section Delete
+// swagger:route DELETE /sections/{id} Section deleteSectionID
 // Remove a corresponding ID object from db.
 // responses:
 //    204: description: OK
 //    404: errorResponse
 //    500: errorServerResponse
 
-// swagger:route PATCH /sections/{id} Section Update
+// swagger:route PATCH /sections/{id} Section patchSection
 // Edit an object on db.
 // responses:
 //    200: sectionIDResponse
@@ -92,12 +92,12 @@ type errorServerResponseSection struct {
 //////////////////                  REQUESTS                /////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-// swagger:parameters  deleteID getID
+// swagger:parameters  deleteSectionID getSectionID
 type SectionRequestID struct {
 	// Value corresponding to object ID on db.
 	// in: path
 	// required: true
-	Id string
+	Id string `json:"id"`
 }
 
 // swagger:parameters createSection
@@ -110,7 +110,7 @@ type SectionNewResquest struct {
 type patchSection struct {
 	// Corresponding object on db.
 	//in: path
-	Id string
+	Id string `json:"id"`
 	// New values
 	//in: body
 	PatchValues updateSection
