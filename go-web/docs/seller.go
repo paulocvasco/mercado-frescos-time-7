@@ -61,8 +61,10 @@ type sellerResponse struct {
 type sellersResponse struct {
 	//in: body
 	data struct {
-		Code string         `json:"code"`
-		Data models.Sellers `json:"data"`
+		Code string `json:"code"`
+		Data struct {
+			Sellers []models.Seller `json:"data"`
+		}
 	}
 }
 
