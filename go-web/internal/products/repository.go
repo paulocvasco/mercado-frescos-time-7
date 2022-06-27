@@ -6,6 +6,7 @@ import (
 	"mercado-frescos-time-7/go-web/pkg/db"
 )
 
+//go:generate mockery --name=Repository --output=./mock/mockRepository --outpkg=mockRepository
 type Repository interface {
 	Insert(product models.Product) (models.Product, error)
 	GetAll() (models.Products, error)
