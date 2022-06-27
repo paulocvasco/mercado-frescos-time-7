@@ -1,0 +1,5 @@
+*.db
+*~
+*.orig
+*.json
+.DS_Store
