@@ -36,30 +36,35 @@ import (
 // responses:
 //    200: warehouseIDResponse
 //    404: errorResponse
+//    500: errorServerResponse
 
 // swagger:route GET /warehouses/ Warehouse allWarehouseResponse
 // Get all objects stored on db.
 // responses:
 //    200: allWarehouseResponse
 //    404: errorResponse
+//    500: errorServerResponse
 
 // swagger:route POST /warehouses/ Warehouse createWarehouse
 // Add a new object on db.
 // responses:
 //    201: warehouseIDResponse
 //    422: errorResponse
+//    500: errorServerResponse
 
 // swagger:route DELETE /warehouses/{id} Warehouse deleteID
 // Remove a corresponding ID object from db.
 // responses:
 //    204: description: ok
 //    404: errorResponse
+//    500: errorServerResponse
 
 // swagger:route PATCH /warehouses/{id} Warehouse patchWarehouse
 // Edit an object on db.
 // responses:
 //    200: warehouseIDResponse
 //    404: errorResponse
+//    500: errorServerResponse
 
 /////////////////////////////////////////////////////////////////////////////////////
 //////////////////                  RESPONSES               /////////////////////////
@@ -69,21 +74,30 @@ import (
 // swagger:response warehouseIDResponse
 type warehouseIDResponse struct {
 	//in: body
-	Body models.Warehouse
+	data struct {
+		Code string         `json:"code"`
+		Data models.Product `json:"data"`
+	}
 }
 
 // All objectes stored on db
 // swagger:response allWarehouseResponse
 type warehouseAll struct {
 	//in: body
-	body models.Warehouses
+	data struct {
+		Code string            `json:"code"`
+		Body models.Warehouses `json:"data"`
+	}
 }
 
 // Error message has the returned code and a descripton to help understand the cause.
 // swagger:response errorResponse
 type errorResponse struct {
 	// in: body
-	ErrorMessage string
+	data struct {
+		Code    string `json:"code"`
+		Message string `json:"error"`
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
