@@ -63,7 +63,7 @@ type sellersResponse struct {
 	data struct {
 		Code string `json:"code"`
 		Data struct {
-			Sellers []models.Seller `json:"data"`
+			Sellers []models.Seller `json:"sellers"`
 		}
 	}
 }
