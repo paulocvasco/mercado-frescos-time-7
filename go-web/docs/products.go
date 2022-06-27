@@ -92,12 +92,12 @@ type errorServerResponseProduct struct {
 //////////////////                  REQUESTS                /////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-// swagger:parameters  deleteID getID
+// swagger:parameters  deleteProductID getProductID
 type productRequestID struct {
 	// Value corresponding to object ID on db.
 	// in: path
 	// required: true
-	Id string
+	Id string `json:"id"`
 }
 
 // swagger:parameters createProduct
@@ -110,7 +110,7 @@ type productNewResquest struct {
 type patchProduct struct {
 	// Corresponding object on db.
 	//in: path
-	Id string
+	Id string `json:"id"`
 	// New values
 	//in: body
 	PatchValues updateProduct
