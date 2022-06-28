@@ -116,15 +116,9 @@ func TestGetID(t *testing.T) {
 
 		res := value.expectResponse.data
 		json.Unmarshal(body, &res)
-		if value.expectError != customerrors.ErrorInvalidID && value.expectError != nil {
-			status, msg := customerrors.ErrorHandleResponse(value.expectError)
-			assert.Equal(t, value.expectResponse.data, res, value.message)
-			assert.Equal(t, status, w.Result().StatusCode, msg)
-
-		} else {
-			assert.Equal(t, value.expectResponse.data, res, value.message)
-			assert.Equal(t, value.expectResponse.statusCode, w.Result().StatusCode, value.message)
-		}
+	assert.Equal(t, value.expectResponse.data, res, value.message)
+	assert.Equal(t, value.expectResponse.statusCode, w.Result().StatusCode, value.message)
+		
 
 	}
 
