@@ -161,7 +161,6 @@ func TestCreate(t *testing.T) {
 	}
 
 	cap := 10
-	capNeg := -10
 	temp := 10
 
 	testsCases := []testData{
@@ -212,70 +211,6 @@ func TestCreate(t *testing.T) {
 				err:  customerrors.ErrorInvalidDB,
 			},
 			argModelCreate: models.PostWarehouse{Address: "foo", Telephone: "foo", MinimunCapacity: &cap, MinimunTemperature: &temp},
-		},
-		{
-			testName: "should return missing address error",
-			mockCreateResponse: mockCreateResponse{
-				data: models.Warehouse{},
-				err:  nil,
-			},
-			mockGetAllResponse: mockGetAllResponse{
-				data: models.Warehouses{},
-				err:  nil,
-			},
-			expectedResult: expectedResult{
-				data: models.Warehouse{},
-				err:  customerrors.ErrorMissingAddres,
-			},
-			argModelCreate: models.PostWarehouse{Telephone: "foo", MinimunCapacity: &cap, MinimunTemperature: &temp},
-		},
-		{
-			testName: "should return missing telephone error ",
-			mockCreateResponse: mockCreateResponse{
-				data: models.Warehouse{},
-				err:  nil,
-			},
-			mockGetAllResponse: mockGetAllResponse{
-				data: models.Warehouses{},
-				err:  nil,
-			},
-			expectedResult: expectedResult{
-				data: models.Warehouse{},
-				err:  customerrors.ErrorMissingTelephone,
-			},
-			argModelCreate: models.PostWarehouse{Address: "foo", MinimunCapacity: &cap, MinimunTemperature: &temp},
-		},
-		{
-			testName: "should return missing capacity error ",
-			mockCreateResponse: mockCreateResponse{
-				data: models.Warehouse{},
-				err:  nil,
-			},
-			mockGetAllResponse: mockGetAllResponse{
-				data: models.Warehouses{},
-				err:  nil,
-			},
-			expectedResult: expectedResult{
-				data: models.Warehouse{},
-				err:  customerrors.ErrorMissingCapacity,
-			},
-			argModelCreate: models.PostWarehouse{Address: "foo", Telephone: "foo", MinimunCapacity: &capNeg, MinimunTemperature: &temp},
-		},
-		{
-			testName: "should return missing temperature error ",
-			mockCreateResponse: mockCreateResponse{
-				data: models.Warehouse{},
-				err:  nil,
-			},
-			mockGetAllResponse: mockGetAllResponse{
-				data: models.Warehouses{},
-				err:  nil,
-			},
-			expectedResult: expectedResult{
-				data: models.Warehouse{},
-				err:  customerrors.ErrorMissingTemperature,
-			},
-			argModelCreate: models.PostWarehouse{Address: "foo", Telephone: "foo", MinimunCapacity: &cap, MinimunTemperature: nil},
 		},
 	}
 	for _, test := range testsCases {
@@ -336,16 +271,6 @@ func TestDelete(t *testing.T) {
 				err: customerrors.ErrorInvalidDB,
 			},
 			serviceArg: 1,
-		},
-		{
-			testName: "should return syntax error",
-			mockDeleteResponse: mockDeleteResponse{
-				err: nil,
-			},
-			expectedResult: expectedResult{
-				err: strconv.ErrSyntax,
-			},
-			serviceArg: 0x68,
 		},
 	}
 	for _, test := range testsCases {
