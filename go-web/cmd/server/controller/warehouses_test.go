@@ -19,13 +19,19 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
+type webResponse struct {
+	Code  string            `json:"code"`
+	Data  models.Warehouses `json:"data"`
+	Error string            `json:"error"`
+}
+
 func TestGetAllWarehouse(t *testing.T) {
 	type responseServiceMock struct {
 		data models.Warehouses
 		err  error
 	}
 	type expectResult struct {
-		data       interface{}
+		response   web.Response
 		statusCode int
 	}
 	type testData struct {
@@ -45,11 +51,15 @@ func TestGetAllWarehouse(t *testing.T) {
 				err: nil,
 			},
 			expectResult: expectResult{
-				data: models.Warehouses{
-					Warehouses: []models.Warehouse{
-						{Address: "foo", Telephone: "foo", WarehouseCode: "foo", MinimunCapacity: 20, MinimunTemperature: 20},
-						{Address: "foo", Telephone: "foo", WarehouseCode: "foo", MinimunCapacity: 20, MinimunTemperature: 20},
-					}},
+				response: web.Response{
+					Code: "200",
+					Data: models.Warehouses{
+						Warehouses: []models.Warehouse{
+							{Address: "foo", Telephone: "foo", WarehouseCode: "foo", MinimunCapacity: 20, MinimunTemperature: 20},
+							{Address: "foo", Telephone: "foo", WarehouseCode: "foo", MinimunCapacity: 20, MinimunTemperature: 20},
+						}},
+					Error: "",
+				},
 				statusCode: 200,
 			},
 		},
@@ -60,7 +70,11 @@ func TestGetAllWarehouse(t *testing.T) {
 				err:  customerrors.ErrorInvalidDB,
 			},
 			expectResult: expectResult{
-				data:       web.Response{Code: "500", Error: customerrors.ErrorInvalidDB.Error()},
+				response: web.Response{
+					Code:  "500",
+					Data:  models.Warehouses{},
+					Error: customerrors.ErrorInvalidDB.Error(),
+				},
 				statusCode: 500,
 			},
 		},
@@ -70,7 +84,7 @@ func TestGetAllWarehouse(t *testing.T) {
 
 		mockServ := mockWarehouse.NewService(t)
 		ctrl := controller.NewControllerWarehouse(mockServ)
-		mockServ.On("GetAll").Return(test.responseServiceMock.data, test.responseServiceMock.err)
+		mockServ.On("GetAll").Return(test.data, test.err)
 
 		w := httptest.NewRecorder()
 		_, router := gin.CreateTestContext(w)
@@ -81,19 +95,14 @@ func TestGetAllWarehouse(t *testing.T) {
 
 		body, _ := ioutil.ReadAll(w.Body)
 
-		if w.Result().StatusCode < 300 {
-			res := models.Warehouses{}
-			json.Unmarshal(body, &res)
+		var res webResponse
+		json.Unmarshal(body, &res)
 
-			assert.Equal(t, test.expectResult.statusCode, w.Result().StatusCode, test.testName)
-			assert.Equal(t, test.expectResult.data, res, test.testName)
-		} else {
-			res := web.Response{}
-			json.Unmarshal(body, &res)
+		assert.Equal(t, test.statusCode, w.Result().StatusCode, test.testName)
+		assert.Equal(t, test.response.Code, res.Code, test.testName)
+		assert.Equal(t, test.response.Data, res.Data, test.testName)
+		assert.Equal(t, test.response.Error, res.Error, test.testName)
 
-			assert.Equal(t, test.expectResult.statusCode, w.Result().StatusCode, test.testName)
-			assert.Equal(t, test.expectResult.data, res, test.testName)
-		}
 	}
 }
 
@@ -182,19 +191,12 @@ func TestGetByIDWarehouse(t *testing.T) {
 
 		body, _ := ioutil.ReadAll(w.Body)
 
-		if w.Result().StatusCode < 300 {
-			res := models.Warehouse{}
-			json.Unmarshal(body, &res)
+		res := webResponse{}
+		json.Unmarshal(body, &res)
 
-			assert.Equal(t, test.expectResult.statusCode, w.Result().StatusCode, test.testName)
-			assert.Equal(t, test.expectResult.data, res, test.testName)
-		} else {
-			res := web.Response{}
-			json.Unmarshal(body, &res)
+		assert.Equal(t, test.expectResult.statusCode, w.Result().StatusCode, test.testName)
+		assert.Equal(t, test.expectResult.data, res, test.testName)
 
-			assert.Equal(t, test.expectResult.statusCode, w.Result().StatusCode, test.testName)
-			assert.Equal(t, test.expectResult.data, res, test.testName)
-		}
 	}
 }
 
