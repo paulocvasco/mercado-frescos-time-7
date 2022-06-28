@@ -3,4 +3,4 @@
 *.orig
 *.json
 .DS_Store
-vendor
+coverage.out
