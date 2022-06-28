@@ -11,25 +11,26 @@ import (
 )
 
 var (
-	ErrorSectionNotFound     = errors.New("section not found")
-	ErrorStoreFailed         = errors.New("failed to store")
-	ErrorEmptySection        = errors.New("empty section")
-	ErrorSectionNumber       = errors.New("invalid parameter")
-	ErrorCurrentCapacity     = errors.New("invalid current capacity")
-	ErrorMinimumCapacity     = errors.New("invalid minimum capacity")
-	ErrorMaximumCapacity     = errors.New("invalid maximum capacity")
-	ErrorWarehouseID         = errors.New("invalid warehouse id")
-	ErrorProductTypeID       = errors.New("invalid product type id")
-	ErrorInvalidID           = errors.New("invalid id")
-	ErrorInvalidIDParameter  = errors.New("invalid parameter recieved as id")
-	ErrorMissingAddres       = errors.New("address parameter is required")
-	ErrorMissingTelephone    = errors.New("telephone parameter is required")
-	ErrorMissingCapacity     = errors.New("capacity parameter is required")
-	ErrorMissingTemperature  = errors.New("temperature parameter is required")
-	ErrorItemNotFound        = errors.New("item not found")
-	ErrorConflict            = errors.New("conflict error detected")
-	ErrorCardIdAlreadyExists = errors.New("Card Number Id already exist")
-  ErrorInvalidDB          = errors.New("invalid database")
+	ErrorSectionNotFound      = errors.New("section not found")
+	ErrorStoreFailed          = errors.New("failed to store")
+	ErrorEmptySection         = errors.New("empty section")
+	ErrorSectionNumber        = errors.New("invalid parameter")
+	ErrorCurrentCapacity      = errors.New("invalid current capacity")
+	ErrorMinimumCapacity      = errors.New("invalid minimum capacity")
+	ErrorMaximumCapacity      = errors.New("invalid maximum capacity")
+	ErrorWarehouseID          = errors.New("invalid warehouse id")
+	ErrorProductTypeID        = errors.New("invalid product type id")
+	ErrorInvalidID            = errors.New("invalid id")
+	ErrorInvalidIDParameter   = errors.New("invalid parameter recieved as id")
+	ErrorMissingAddres        = errors.New("address parameter is required")
+	ErrorMissingTelephone     = errors.New("telephone parameter is required")
+	ErrorMissingCapacity      = errors.New("capacity parameter is required")
+	ErrorMissingTemperature   = errors.New("temperature parameter is required")
+	ErrorItemNotFound         = errors.New("item not found")
+	ErrorConflict             = errors.New("conflict error detected")
+	ErrorCardIdAlreadyExists  = errors.New("card Number Id already exist")
+	ErrorInvalidDB            = errors.New("invalid database")
+	ErrorSectionAlreadyExists = errors.New("section number already exists")
 )
 
 func ErrorHandleResponse(err error) (int, string) {
@@ -86,9 +87,12 @@ func ErrorHandleResponse(err error) (int, string) {
 			return http.StatusConflict, err.Error()
 		}
 		if errors.Is(err, ErrorInvalidDB) {
-      return http.StatusInternalServerError, err.Error()
-    }
+			return http.StatusInternalServerError, err.Error()
+		}
 		if errors.Is(err, ErrorCardIdAlreadyExists) {
+			return http.StatusConflict, err.Error()
+		}
+		if errors.Is(err, ErrorSectionAlreadyExists) {
 			return http.StatusConflict, err.Error()
 		}
 	}
@@ -111,4 +115,9 @@ func ErrorHandleResponse(err error) (int, string) {
 		}
 	}
 	return http.StatusInternalServerError, "internal error"
+}
+
+type ErrorFormat struct {
+	ErrorCode    int
+	ErrorMessage string
 }

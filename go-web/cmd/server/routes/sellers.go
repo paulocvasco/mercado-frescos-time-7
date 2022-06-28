@@ -2,7 +2,7 @@ package routes
 
 import (
 	"mercado-frescos-time-7/go-web/cmd/server/controller"
-	seller "mercado-frescos-time-7/go-web/internal/Seller"
+	"mercado-frescos-time-7/go-web/internal/seller"
 	"mercado-frescos-time-7/go-web/pkg/db"
 
 	"github.com/gin-gonic/gin"

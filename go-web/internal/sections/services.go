@@ -8,12 +8,12 @@ import (
 
 	jsonpatch "github.com/evanphx/json-patch/v5"
 )
-
+//go:generate mockery --name=Service --output=./mock/mockService --outpkg=mockService
 type Service interface {
-	GetAll() (Sections, error)
+	GetAll() ([]models.Section, error)
 	GetById(string) (models.Section, error)
-	Store(models.Section) (models.Section, error)
-	Update(string, []byte) (models.Section, error)
+	Store([]byte) (Section, error)
+	Update(string, []byte) (Section, error)
 	Delete(string) error
 }
 
@@ -22,14 +22,16 @@ type service struct {
 }
 
 func NewService(r Repository) Service {
-	newService := &service{
+	return &service{
 		repository: r,
 	}
-	return newService
 }
 
-func (s *service) GetAll() (Sections, error) {
-	data := s.repository.GetAll()
+func (s *service) GetAll() ([]models.Section, error) {
+	data, err := s.repository.GetAll()
+	if err != nil {
+		return nil, err
+	}
 	return data, nil
 }
 
@@ -47,75 +49,89 @@ func (s *service) GetById(id string) (models.Section, error) {
 	return data, nil
 }
 
-func (s *service) Store(section models.Section) (models.Section, error) {
+func (s *service) Store(section []byte) (Section, error) {
+	var newSection Section
+	err := json.Unmarshal(section, &newSection)
 
-	if section.SectionNumber < 0 {
-		return models.Section{}, customErrors.ErrorSectionNumber
-	}
-	if section.CurrentCapacity < 0 {
-		return models.Section{}, customErrors.ErrorCurrentCapacity
-	}
-	if section.MinimumCapacity < 0 {
-		return models.Section{}, customErrors.ErrorMinimumCapacity
-	}
-	if section.MaximumCapacity < 0 {
-		return models.Section{}, customErrors.ErrorMaximumCapacity
-	}
-	if section.WarehouseId < 0 {
-		return models.Section{}, customErrors.ErrorWarehouseID
-	}
-	if section.ProductTypeId < 0 {
-		return models.Section{}, customErrors.ErrorProductTypeID
-	}
-
-	newSection, err := s.repository.Store(section)
 	if err != nil {
-		return models.Section{}, customErrors.ErrorStoreFailed
+		return Section{}, nil
+	}
+
+	err = s.repository.VerifySectionNumber(newSection.SectionNumber)
+
+	if err != nil {
+		return Section{}, customErrors.ErrorConflict
+	}
+
+	if newSection.SectionNumber < 0 {
+		return Section{}, customErrors.ErrorSectionNumber
+	}
+	if newSection.CurrentCapacity < 0 {
+		return Section{}, customErrors.ErrorCurrentCapacity
+	}
+	if newSection.MinimumCapacity < 0 {
+		return Section{}, customErrors.ErrorMinimumCapacity
+	}
+	if newSection.MaximumCapacity < 0 {
+		return Section{}, customErrors.ErrorMaximumCapacity
+	}
+	if newSection.WarehouseId < 0 {
+		return Section{}, customErrors.ErrorWarehouseID
+	}
+	if newSection.ProductTypeId < 0 {
+		return Section{}, customErrors.ErrorProductTypeID
+	}
+
+	newSection, err = s.repository.Store(newSection)
+	if err != nil {
+		return Section{}, customErrors.ErrorStoreFailed
 	}
 	return newSection, nil
 }
 
-func (s *service) Update(id string, data []byte) (models.Section, error) {
+func (s *service) Update(id string, data []byte) (Section, error) {
 	index, err := strconv.Atoi(id)
 	if err != nil {
-		return models.Section{}, customErrors.ErrorInvalidID
+		return Section{}, customErrors.ErrorInvalidID
+	}
+	if !s.repository.ValidateID(index) {
+		return Section{}, customErrors.ErrorInvalidID
 	}
 
-	sectionFound, err := repository.GetById(index)
+	sectionFound, err := s.repository.GetById(index)
 	if err != nil {
-		return models.Section{}, customErrors.ErrorInvalidID
+		return Section{}, customErrors.ErrorInvalidID
 	}
 	sectionFoundJSON, _ := json.Marshal(sectionFound)
 	patch, err := jsonpatch.MergePatch(sectionFoundJSON, data)
 
 	if err != nil {
-		return models.Section{}, err
+		return Section{}, err
 	}
-	var newSection models.Section
+	var newSection Section
 	json.Unmarshal(patch, &newSection)
 
 	if newSection.SectionNumber < 0 {
-		return models.Section{}, customErrors.ErrorSectionNumber
+		return Section{}, customErrors.ErrorSectionNumber
 	}
 	if newSection.CurrentCapacity < 0 {
-		return models.Section{}, customErrors.ErrorCurrentCapacity
+		return Section{}, customErrors.ErrorCurrentCapacity
 	}
 	if newSection.MinimumCapacity < 0 {
-		return models.Section{}, customErrors.ErrorMinimumCapacity
+		return Section{}, customErrors.ErrorMinimumCapacity
 	}
 	if newSection.MaximumCapacity < 0 {
-		return models.Section{}, customErrors.ErrorMaximumCapacity
+		return Section{}, customErrors.ErrorMaximumCapacity
 	}
 	if newSection.WarehouseId < 0 {
-		return models.Section{}, customErrors.ErrorWarehouseID
+		return Section{}, customErrors.ErrorWarehouseID
 	}
 	if newSection.ProductTypeId < 0 {
-		return models.Section{}, customErrors.ErrorProductTypeID
+		return Section{}, customErrors.ErrorProductTypeID
 	}
-
 	err = s.repository.Update(index, newSection)
 	if err != nil {
-		return models.Section{}, err
+		return Section{}, err
 	}
 
 	return newSection, nil
@@ -126,7 +142,11 @@ func (s *service) Delete(id string) error {
 	if err != nil {
 		return err
 	}
-	_, err = repository.GetById(index)
+	if !s.repository.ValidateID(index) {
+		return customErrors.ErrorInvalidID
+	}
+
+	_, err = s.repository.GetById(index)
 
 	if err != nil {
 		return customErrors.ErrorInvalidID

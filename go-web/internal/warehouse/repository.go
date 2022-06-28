@@ -13,7 +13,7 @@ type repository struct {
 }
 
 var cache models.WarehouseMetaData
-
+//go:generate mockery --name=Repository --output=./mock/mockRepository --outpkg=mockRepository
 type Repository interface {
 	Create(models.Warehouse) (models.Warehouse, error)
 	Update(int, models.Warehouse) error
