@@ -75,8 +75,8 @@ import (
 type warehouseIDResponse struct {
 	//in: body
 	data struct {
-		Code string         `json:"code"`
-		Data models.Product `json:"data"`
+		Code string           `json:"code"`
+		Data models.Warehouse `json:"data"`
 	}
 }
 
@@ -115,7 +115,7 @@ type warehouseRequestID struct {
 // swagger:parameters createWarehouse
 type warehouseNewResquest struct {
 	//in: body
-	NewWarehouse postModel
+	NewWarehouse models.PostWarehouse
 }
 
 // swagger:parameters patchWarehouse
@@ -126,11 +126,4 @@ type patchWarehouse struct {
 	// New values.
 	//in: body
 	PatchValues models.Warehouse
-}
-
-type postModel struct {
-	Address            string `json:"address"`
-	Telephone          string `json:"telephone"`
-	MinimunCapacity    int    `json:"minimun_capacity"`
-	MinimunTemperature int    `json:"minimun_temperature"`
 }
