@@ -34,9 +34,9 @@ var buyerList = model.Buyers{
 }
 
 func TestService_Create(t *testing.T) {
-	repository := mocks.NewRepository(t)
 
 	t.Run("should create a buyer", func(t *testing.T) {
+		repository := mocks.NewRepository(t)
 		repository.On("GetCardNumberId", expectBuyer.CardNumberID).Return(nil).Once()
 		repository.On("Create", expectBuyer.CardNumberID, expectBuyer.FirstName, expectBuyer.LastName).
 			Return(expectBuyer, nil).Once()
@@ -49,6 +49,7 @@ func TestService_Create(t *testing.T) {
 	})
 
 	t.Run("shouldn`t create a buyer", func(t *testing.T) {
+		repository := mocks.NewRepository(t)
 		repository.On("GetCardNumberId", expectBuyer.CardNumberID).Return(nil)
 		repository.On("Create", "40543", "Alice", "Souza").
 			Return(expectBuyer, fmt.Errorf("card number id already exists")).Once()
@@ -62,6 +63,7 @@ func TestService_Create(t *testing.T) {
 	})
 
 	t.Run("should return an error card number id", func(t *testing.T) {
+		repository := mocks.NewRepository(t)
 		repository.On("GetCardNumberId", expectBuyer.CardNumberID).Return(customErrors.ErrorCardIdAlreadyExists).Maybe()
 		repository.On("Create", "40543", "Alice", "Souza").
 			Return(model.Buyer{}, fmt.Errorf("card number id already exists")).Maybe()
@@ -160,9 +162,9 @@ func TestService_Delete(t *testing.T) {
 }
 
 func TestService_Update(t *testing.T) {
-	repository := mocks.NewRepository(t)
 
 	t.Run("should update a buyer", func(t *testing.T) {
+		repository := mocks.NewRepository(t)
 		repository.On("GetCardNumberId", "Upd1234").Return(nil).Once()
 		repository.On("GetId", 1).Return(expectBuyer, nil).Once()
 		repository.On("Update", 1, mock.Anything).
@@ -177,6 +179,7 @@ func TestService_Update(t *testing.T) {
 	})
 
 	t.Run("should return an error", func(t *testing.T) {
+		repository := mocks.NewRepository(t)
 		repository.On("GetCardNumberId", "Upd1234").Return(nil).Maybe()
 		repository.On("GetId", 8).Return(model.Buyer{}, customErrors.ErrorInvalidID).Maybe()
 		repository.On("Update", 8, "Upd1234",
@@ -189,4 +192,34 @@ func TestService_Update(t *testing.T) {
 
 		assert.Equal(t, customErrors.ErrorInvalidID, err)
 	})
+
+	t.Run("should return an error card number id", func(t *testing.T) {
+		repository := mocks.NewRepository(t)
+		repository.On("GetCardNumberId", "Upd1234").Return(customErrors.ErrorCardIdAlreadyExists).Maybe()
+		repository.On("GetId", 1).Return(model.Buyer{}, customErrors.ErrorCardIdAlreadyExists).Maybe()
+		repository.On("Update", 1, "Upd1234",
+			expectBuyer.FirstName, expectBuyer.LastName).
+			Return(model.Buyer{}, customErrors.ErrorCardIdAlreadyExists).Maybe()
+
+		service := buyer.NewService(repository)
+		_, err := service.Update(8, buyer.RequestPatch{CardNumberID: "Upd1234", FirstName: "Alice",
+			LastName: "Souza"})
+
+		assert.Equal(t, customErrors.ErrorCardIdAlreadyExists, err)
+	})
+
+	t.Run("should return an error invalid id", func(t *testing.T) {
+		repository := mocks.NewRepository(t)
+		repository.On("GetCardNumberId", "Upd1234").Return(nil).Maybe()
+		repository.On("GetId", 1).Return(model.Buyer{}, nil).Maybe()
+		repository.On("Update", mock.Anything, mock.Anything).
+			Return(model.Buyer{}, customErrors.ErrorInvalidID).Maybe()
+
+		service := buyer.NewService(repository)
+		_, err := service.Update(1, buyer.RequestPatch{CardNumberID: "Upd1234", FirstName: "Alice",
+			LastName: "Souza"})
+
+		assert.Equal(t, customErrors.ErrorInvalidID, err)
+	})
+
 }
