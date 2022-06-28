@@ -33,13 +33,14 @@ func NewControllerWarehouse(s warehouse.Service) WarehousesController {
 }
 
 func (control *warehousesController) GetAllWarehouse(c *gin.Context) {
-	response, err := control.service.GetAll()
+	warehouses, err := control.service.GetAll()
 	if err != nil {
 		status, msg := customerrors.ErrorHandleResponse(err)
 		res := web.NewResponse(status, nil, msg)
 		c.JSON(status, res)
 		return
 	}
+	response := web.NewResponse(http.StatusOK, warehouses, "")
 	c.JSON(http.StatusOK, response)
 }
 
@@ -51,7 +52,7 @@ func (control *warehousesController) GetByIDWarehouse(c *gin.Context) {
 		c.JSON(status, res)
 		return
 	}
-	response, err := control.service.GetByID(id)
+	warehouse, err := control.service.GetByID(id)
 	if err != nil {
 		if errors.Is(err, customerrors.ErrorInvalidID) {
 			status, msg := customerrors.ErrorHandleResponse(err)
@@ -65,6 +66,7 @@ func (control *warehousesController) GetByIDWarehouse(c *gin.Context) {
 			return
 		}
 	}
+	response := web.NewResponse(http.StatusOK, warehouse, "")
 	c.JSON(http.StatusOK, response)
 }
 
@@ -78,13 +80,14 @@ func (control *warehousesController) CreateWarehouse(c *gin.Context) {
 		return
 	}
 
-	response, err := control.service.Create(newWarehouse)
+	nw, err := control.service.Create(newWarehouse)
 	if err != nil {
 		status, msg := customerrors.ErrorHandleResponse(err)
 		res := web.NewResponse(status, nil, msg)
 		c.JSON(status, res)
 		return
 	}
+	response := web.NewResponse(http.StatusCreated, nw, "")
 	c.JSON(http.StatusCreated, response)
 }
 
@@ -106,13 +109,14 @@ func (control *warehousesController) UpdateWarehouse(c *gin.Context) {
 		return
 	}
 
-	response, err := control.service.Update(id, data)
+	updatedWarehouse, err := control.service.Update(id, data)
 	if err != nil {
 		status, msg := customerrors.ErrorHandleResponse(err)
 		res := web.NewResponse(status, nil, msg)
 		c.JSON(status, res)
 		return
 	}
+	response := web.NewResponse(http.StatusOK, updatedWarehouse, "")
 	c.JSON(http.StatusOK, response)
 }
 
@@ -130,5 +134,6 @@ func (control *warehousesController) DeleteWarehouse(c *gin.Context) {
 		c.JSON(http.StatusNotFound, err)
 		return
 	}
-	c.JSON(http.StatusNoContent, nil)
+	response := web.NewResponse(http.StatusNoContent, nil, "")
+	c.JSON(http.StatusNoContent, response)
 }
