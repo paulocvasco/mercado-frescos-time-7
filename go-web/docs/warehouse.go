@@ -50,6 +50,7 @@ import (
 // responses:
 //    201: warehouseIDResponse
 //    422: errorResponse
+//    409: errorResponse
 //    500: errorServerResponse
 
 // swagger:route DELETE /warehouses/{id} Warehouse deleteID
