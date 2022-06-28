@@ -3,7 +3,6 @@ package warehouse
 import (
 	"encoding/json"
 	"mercado-frescos-time-7/go-web/internal/models"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 
 	jsonpatch "github.com/evanphx/json-patch"
 )
@@ -12,7 +11,7 @@ import (
 type Service interface {
 	GetAll() (models.Warehouses, error)
 	GetByID(int) (models.Warehouse, error)
-	Create(models.Warehouse) (models.Warehouse, error)
+	Create(models.PostWarehouse) (models.Warehouse, error)
 	Update(int, []byte) (models.Warehouse, error)
 	Delete(int) error
 }
@@ -45,27 +44,17 @@ func (s *service) GetByID(id int) (models.Warehouse, error) {
 	return data, nil
 }
 
-func (s *service) Create(newWarehouse models.Warehouse) (models.Warehouse, error) {
-	// validate request fields
-	if newWarehouse.Address == "" {
-		return models.Warehouse{}, customerrors.ErrorMissingAddres
-	}
-	if newWarehouse.Telephone == "" {
-		return models.Warehouse{}, customerrors.ErrorMissingTelephone
-	}
-	if newWarehouse.MinimunCapacity < 0 {
-		return models.Warehouse{}, customerrors.ErrorMissingCapacity
-	}
-	if newWarehouse.MinimunTemperature == 0 {
-		return models.Warehouse{}, customerrors.ErrorMissingTemperature
-	}
+func (s *service) Create(newWarehouse models.PostWarehouse) (models.Warehouse, error) {
+	rawWarehouse, _ := json.Marshal(newWarehouse)
+	var storeWarehouse models.Warehouse
+	json.Unmarshal(rawWarehouse, &storeWarehouse)
 
-	newWarehouse, err := s.repository.Create(newWarehouse)
+	createdWarehouse, err := s.repository.Create(storeWarehouse)
 	if err != nil {
 		return models.Warehouse{}, err
 	}
 
-	return newWarehouse, nil
+	return createdWarehouse, nil
 }
 
 func (s *service) Update(id int, data []byte) (models.Warehouse, error) {
