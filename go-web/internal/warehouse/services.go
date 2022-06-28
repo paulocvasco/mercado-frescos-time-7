@@ -3,6 +3,7 @@ package warehouse
 import (
 	"encoding/json"
 	"mercado-frescos-time-7/go-web/internal/models"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 
 	jsonpatch "github.com/evanphx/json-patch"
 )
@@ -48,6 +49,16 @@ func (s *service) Create(newWarehouse models.PostWarehouse) (models.Warehouse, e
 	rawWarehouse, _ := json.Marshal(newWarehouse)
 	var storeWarehouse models.Warehouse
 	json.Unmarshal(rawWarehouse, &storeWarehouse)
+
+	all, err := s.repository.GetAll()
+	if err != nil {
+		return models.Warehouse{}, err
+	}
+	for _, w := range all.Warehouses {
+		if storeWarehouse.WarehouseCode == w.WarehouseCode {
+			return models.Warehouse{}, customerrors.ErrorWarehouseCodeConflict
+		}
+	}
 
 	createdWarehouse, err := s.repository.Create(storeWarehouse)
 	if err != nil {
