@@ -4,17 +4,17 @@ import (
 	"encoding/json"
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"strconv"
 
 	jsonpatch "github.com/evanphx/json-patch"
 )
+
 //go:generate mockery --name=Service --output=./mock/mockService --outpkg=mockService
 type Service interface {
 	GetAll() (models.Warehouses, error)
 	GetByID(int) (models.Warehouse, error)
 	Create(models.Warehouse) (models.Warehouse, error)
 	Update(int, []byte) (models.Warehouse, error)
-	Delete(string) error
+	Delete(int) error
 }
 
 type service struct {
@@ -95,13 +95,8 @@ func (s *service) Update(id int, data []byte) (models.Warehouse, error) {
 	return warehouse, nil
 }
 
-func (s *service) Delete(id string) error {
-	index, err := strconv.Atoi(id)
-	if err != nil {
-		return err
-	}
-
-	err = s.repository.Delete(index)
+func (s *service) Delete(id int) error {
+	err := s.repository.Delete(id)
 	if err != nil {
 		return err
 	}

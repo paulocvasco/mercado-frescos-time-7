@@ -117,9 +117,15 @@ func (control *warehousesController) UpdateWarehouse(c *gin.Context) {
 }
 
 func (control *warehousesController) DeleteWarehouse(c *gin.Context) {
-	id := c.Param("id")
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
+		return
+	}
 
-	err := control.service.Delete(id)
+	err = control.service.Delete(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, err)
 		return
