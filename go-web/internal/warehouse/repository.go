@@ -96,6 +96,13 @@ func (r *repository) GetByID(id int) (models.Warehouse, error) {
 }
 
 func (r *repository) Delete(id int) error {
+	if cache.LastID == 0 {
+		err := r.database.Load(&cache)
+		if err != nil {
+			return err
+		}
+	}
+
 	if id < 0 || id > cache.LastID {
 		return customerrors.ErrorInvalidID
 	}
