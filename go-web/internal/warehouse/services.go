@@ -8,7 +8,7 @@ import (
 	jsonpatch "github.com/evanphx/json-patch"
 )
 
-//go:generate mockery --name=Service --output=./mock/mockService --outpkg=mockService
+//go:generate mockery --name=Service --output=./mock/ --outpkg=mock
 type Service interface {
 	GetAll() (models.Warehouses, error)
 	GetByID(int) (models.Warehouse, error)
