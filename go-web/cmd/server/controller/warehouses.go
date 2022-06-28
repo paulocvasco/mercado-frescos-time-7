@@ -71,7 +71,7 @@ func (control *warehousesController) GetByIDWarehouse(c *gin.Context) {
 }
 
 func (control *warehousesController) CreateWarehouse(c *gin.Context) {
-	var newWarehouse models.Warehouse
+	var newWarehouse models.PostWarehouse
 	err := c.ShouldBindJSON(&newWarehouse)
 	if err != nil {
 		status, msg := customerrors.ErrorHandleResponse(err)
