@@ -144,6 +144,10 @@ func TestCreate(t *testing.T) {
 		data models.Warehouse
 		err  error
 	}
+	type mockGetAllResponse struct {
+		data models.Warehouses
+		err  error
+	}
 	type expectedResult struct {
 		data models.Warehouse
 		err  error
@@ -151,9 +155,14 @@ func TestCreate(t *testing.T) {
 	type testData struct {
 		testName string
 		mockCreateResponse
+		mockGetAllResponse
 		expectedResult
-		argModelCreate models.Warehouse
+		argModelCreate models.PostWarehouse
 	}
+
+	cap := 10
+	capNeg := -10
+	temp := 10
 
 	testsCases := []testData{
 		{
@@ -162,11 +171,15 @@ func TestCreate(t *testing.T) {
 				data: models.Warehouse{ID: 1, Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
 				err:  nil,
 			},
+			mockGetAllResponse: mockGetAllResponse{
+				data: models.Warehouses{},
+				err:  nil,
+			},
 			expectedResult: expectedResult{
 				data: models.Warehouse{ID: 1, Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
 				err:  nil,
 			},
-			argModelCreate: models.Warehouse{Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+			argModelCreate: models.PostWarehouse{Address: "foo", Telephone: "foo", MinimunCapacity: &cap, MinimunTemperature: &temp},
 		},
 		{
 			testName: "should return invalid id error",
@@ -174,11 +187,15 @@ func TestCreate(t *testing.T) {
 				data: models.Warehouse{},
 				err:  customerrors.ErrorInvalidID,
 			},
+			mockGetAllResponse: mockGetAllResponse{
+				data: models.Warehouses{},
+				err:  nil,
+			},
 			expectedResult: expectedResult{
 				data: models.Warehouse{},
 				err:  customerrors.ErrorInvalidID,
 			},
-			argModelCreate: models.Warehouse{Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+			argModelCreate: models.PostWarehouse{Address: "foo", Telephone: "foo", MinimunCapacity: &cap, MinimunTemperature: &temp},
 		},
 		{
 			testName: "should return invalid db error",
@@ -186,11 +203,15 @@ func TestCreate(t *testing.T) {
 				data: models.Warehouse{},
 				err:  customerrors.ErrorInvalidDB,
 			},
+			mockGetAllResponse: mockGetAllResponse{
+				data: models.Warehouses{},
+				err:  nil,
+			},
 			expectedResult: expectedResult{
 				data: models.Warehouse{},
 				err:  customerrors.ErrorInvalidDB,
 			},
-			argModelCreate: models.Warehouse{Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+			argModelCreate: models.PostWarehouse{Address: "foo", Telephone: "foo", MinimunCapacity: &cap, MinimunTemperature: &temp},
 		},
 		{
 			testName: "should return missing address error",
@@ -198,11 +219,15 @@ func TestCreate(t *testing.T) {
 				data: models.Warehouse{},
 				err:  nil,
 			},
+			mockGetAllResponse: mockGetAllResponse{
+				data: models.Warehouses{},
+				err:  nil,
+			},
 			expectedResult: expectedResult{
 				data: models.Warehouse{},
 				err:  customerrors.ErrorMissingAddres,
 			},
-			argModelCreate: models.Warehouse{Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+			argModelCreate: models.PostWarehouse{Telephone: "foo", MinimunCapacity: &cap, MinimunTemperature: &temp},
 		},
 		{
 			testName: "should return missing telephone error ",
@@ -210,11 +235,15 @@ func TestCreate(t *testing.T) {
 				data: models.Warehouse{},
 				err:  nil,
 			},
+			mockGetAllResponse: mockGetAllResponse{
+				data: models.Warehouses{},
+				err:  nil,
+			},
 			expectedResult: expectedResult{
 				data: models.Warehouse{},
 				err:  customerrors.ErrorMissingTelephone,
 			},
-			argModelCreate: models.Warehouse{Address: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+			argModelCreate: models.PostWarehouse{Address: "foo", MinimunCapacity: &cap, MinimunTemperature: &temp},
 		},
 		{
 			testName: "should return missing capacity error ",
@@ -222,11 +251,15 @@ func TestCreate(t *testing.T) {
 				data: models.Warehouse{},
 				err:  nil,
 			},
+			mockGetAllResponse: mockGetAllResponse{
+				data: models.Warehouses{},
+				err:  nil,
+			},
 			expectedResult: expectedResult{
 				data: models.Warehouse{},
 				err:  customerrors.ErrorMissingCapacity,
 			},
-			argModelCreate: models.Warehouse{Address: "foo", Telephone: "foo", MinimunCapacity: -10, MinimunTemperature: 10},
+			argModelCreate: models.PostWarehouse{Address: "foo", Telephone: "foo", MinimunCapacity: &capNeg, MinimunTemperature: &temp},
 		},
 		{
 			testName: "should return missing temperature error ",
@@ -234,11 +267,15 @@ func TestCreate(t *testing.T) {
 				data: models.Warehouse{},
 				err:  nil,
 			},
+			mockGetAllResponse: mockGetAllResponse{
+				data: models.Warehouses{},
+				err:  nil,
+			},
 			expectedResult: expectedResult{
 				data: models.Warehouse{},
 				err:  customerrors.ErrorMissingTemperature,
 			},
-			argModelCreate: models.Warehouse{Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 0},
+			argModelCreate: models.PostWarehouse{Address: "foo", Telephone: "foo", MinimunCapacity: &cap, MinimunTemperature: nil},
 		},
 	}
 	for _, test := range testsCases {
@@ -246,6 +283,7 @@ func TestCreate(t *testing.T) {
 		serv := warehouse.NewService(mockRepo)
 
 		mockRepo.On("Create", mock.Anything).Return(test.mockCreateResponse.data, test.mockCreateResponse.err).Maybe()
+		mockRepo.On("GetAll", mock.Anything).Return(test.mockGetAllResponse.data, test.mockGetAllResponse.err).Maybe()
 
 		response, err := serv.Create(test.argModelCreate)
 
@@ -265,7 +303,7 @@ func TestDelete(t *testing.T) {
 		testName string
 		mockDeleteResponse
 		expectedResult
-		serviceArg string
+		serviceArg int
 	}
 
 	testsCases := []testData{
@@ -277,7 +315,7 @@ func TestDelete(t *testing.T) {
 			expectedResult: expectedResult{
 				err: nil,
 			},
-			serviceArg: "1",
+			serviceArg: 1,
 		},
 		{
 			testName: "should return invalid id error",
@@ -287,7 +325,7 @@ func TestDelete(t *testing.T) {
 			expectedResult: expectedResult{
 				err: customerrors.ErrorInvalidID,
 			},
-			serviceArg: "1",
+			serviceArg: 1,
 		},
 		{
 			testName: "should return invalid db error",
@@ -297,7 +335,7 @@ func TestDelete(t *testing.T) {
 			expectedResult: expectedResult{
 				err: customerrors.ErrorInvalidDB,
 			},
-			serviceArg: "1",
+			serviceArg: 1,
 		},
 		{
 			testName: "should return syntax error",
@@ -307,7 +345,7 @@ func TestDelete(t *testing.T) {
 			expectedResult: expectedResult{
 				err: strconv.ErrSyntax,
 			},
-			serviceArg: "A",
+			serviceArg: 0x68,
 		},
 	}
 	for _, test := range testsCases {
