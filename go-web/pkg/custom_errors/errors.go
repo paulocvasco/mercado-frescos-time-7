@@ -96,6 +96,9 @@ func ErrorHandleResponse(err error) (int, string) {
 		if errors.Is(err, ErrorSectionAlreadyExists) {
 			return http.StatusConflict, err.Error()
 		}
+		if errors.Is(err, ErrorWarehouseCodeConflict) {
+			return http.StatusConflict, err.Error()
+		}
 	}
 	{ // validate errors
 		var ve validator.ValidationErrors
