@@ -212,6 +212,38 @@ func TestCreate(t *testing.T) {
 			},
 			argModelCreate: models.PostWarehouse{Address: "foo", Telephone: "foo", MinimunCapacity: &cap, MinimunTemperature: &temp},
 		},
+		{
+			testName: "fail to get all models",
+			mockCreateResponse: mockCreateResponse{
+				data: models.Warehouse{},
+				err:  nil,
+			},
+			mockGetAllResponse: mockGetAllResponse{
+				data: models.Warehouses{},
+				err:  customerrors.ErrorInvalidDB,
+			},
+			expectedResult: expectedResult{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorInvalidDB,
+			},
+			argModelCreate: models.PostWarehouse{Address: "foo", Telephone: "foo", MinimunCapacity: &cap, MinimunTemperature: &temp},
+		},
+		{
+			testName: "conflict on warehouse code",
+			mockCreateResponse: mockCreateResponse{
+				data: models.Warehouse{},
+				err:  nil,
+			},
+			mockGetAllResponse: mockGetAllResponse{
+				data: models.Warehouses{Warehouses: []models.Warehouse{{WarehouseCode: "foo"}}},
+				err:  nil,
+			},
+			expectedResult: expectedResult{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorWarehouseCodeConflict,
+			},
+			argModelCreate: models.PostWarehouse{Address: "foo", Telephone: "foo", MinimunCapacity: &cap, MinimunTemperature: &temp, WarehouseCode: "foo"},
+		},
 	}
 	for _, test := range testsCases {
 		mockRepo := mockRepository.NewRepository(t)
