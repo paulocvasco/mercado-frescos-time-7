@@ -324,8 +324,10 @@ func TestUpdate(t *testing.T) {
 	type mockResponse struct {
 		dataGetById models.Warehouse
 		dataUpdate  models.Warehouse
+		dataGetAll  models.Warehouses
 		errGetById  error
 		errUpdate   error
+		errGetAll   error
 	}
 	type expectedResult struct {
 		data models.Warehouse
@@ -386,11 +388,80 @@ func TestUpdate(t *testing.T) {
 
 		mockRepo.On("GetByID", mock.Anything).Return(test.mockResponse.dataGetById, test.mockResponse.errGetById).Maybe()
 		mockRepo.On("Update", mock.Anything, mock.Anything).Return(test.mockResponse.errUpdate).Maybe()
+		mockRepo.On("GetAll").Return(test.mockResponse.dataGetAll, test.mockResponse.errGetAll).Maybe()
 
 		whBytes, _ := json.Marshal(test.serviceArg)
 		response, err := serv.Update(test.serviceArg.ID, whBytes)
 
-		assert.Equal(t, test.expectedResult.data, response, test.testName)
-		assert.Equal(t, test.expectedResult.err, err, test.testName)
+		assert.Equal(t, test.data, response, test.testName)
+		assert.Equal(t, test.err, err, test.testName)
+	}
+}
+
+func TestUpdateCodeVerification(t *testing.T) {
+	type mockResponse struct {
+		dataGetById models.Warehouse
+		dataUpdate  models.Warehouse
+		dataGetAll  models.Warehouses
+		errGetById  error
+		errUpdate   error
+		errGetAll   error
+	}
+	type expectedResult struct {
+		data models.Warehouse
+		err  error
+	}
+	type testData struct {
+		testName string
+		mockResponse
+		expectedResult
+		id         int
+		serviceArg string
+	}
+
+	testsCases := []testData{
+		{
+			testName:     "malformed json",
+			mockResponse: mockResponse{},
+			expectedResult: expectedResult{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorMarshallJson,
+			},
+			id:         1,
+			serviceArg: `"address": foo`,
+		},
+		{
+			testName:     "fail to get all",
+			mockResponse: mockResponse{errGetAll: customerrors.ErrorInvalidDB},
+			expectedResult: expectedResult{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorInvalidDB,
+			},
+			id:         1,
+			serviceArg: `{"address": "foo"}`,
+		},
+		{
+			testName:     "warehouse code conflict",
+			mockResponse: mockResponse{dataGetAll: models.Warehouses{Warehouses: []models.Warehouse{{WarehouseCode: "foo"}}}},
+			expectedResult: expectedResult{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorWarehouseCodeConflict,
+			},
+			id:         1,
+			serviceArg: `{"warehouse_code": "foo"}`,
+		},
+	}
+	for _, test := range testsCases {
+		mockRepo := mockRepository.NewRepository(t)
+		serv := warehouse.NewService(mockRepo)
+
+		mockRepo.On("GetByID", mock.Anything).Return(test.mockResponse.dataGetById, test.mockResponse.errGetById).Maybe()
+		mockRepo.On("Update", mock.Anything, mock.Anything).Return(test.mockResponse.errUpdate).Maybe()
+		mockRepo.On("GetAll").Return(test.mockResponse.dataGetAll, test.mockResponse.errGetAll).Maybe()
+
+		response, err := serv.Update(test.id, []byte(test.serviceArg))
+
+		assert.Equal(t, test.data, response, test.testName)
+		assert.Equal(t, test.err, err, test.testName)
 	}
 }
