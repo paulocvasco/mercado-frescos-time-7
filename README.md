@@ -69,8 +69,6 @@ cd mercado-frescos-time-7/go-web/cmd/server
 # Instale as depêndecias
 go install
 
-# Acessar a Pasta Server
-cd /cmd/server
 
 # Roda o Projeto
 go run main.go
