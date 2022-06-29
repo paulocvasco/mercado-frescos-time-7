@@ -105,7 +105,9 @@ func (control *warehousesController) UpdateWarehouse(c *gin.Context) {
 
 	data, err := ioutil.ReadAll(body)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
 		return
 	}
 
