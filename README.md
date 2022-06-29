@@ -61,18 +61,49 @@ Projeto  Mercado Frescos tem como objetivo implementar uma API REST, aplicando o
 
 ```sh  
 # Clone o repositorio
-https://github.com/Gopher-Rangers/mercadofresco-gopherrangers
+git clone git@github.com:paulocvasco/mercado-frescos-time-7.git
 
 # Entre na pasta
-cd /mercado-frescos-time-7
+cd mercado-frescos-time-7/go-web/cmd/server
 
 # Instale as depêndecias
-go get -u
+go install
 
-# Acessar as a Pasta Server
-cd /cmd/server
 
-# Roda o Projeto
-go run main.go
+# Iniciar o servidor
+server
 
 ```
+
+## Rodando os Testes:
+
+```sh  
+# Rode o comando 
+go test ./...
+
+# Gerando um arquivo de Coverege
+go test ./...  -coverprofile=coverage.out
+
+# Gerando um HTML para melhor visualização
+go tool cover -html=coverage.out
+
+```
+
+## Gerando a documentação:
+
+```sh 
+
+# Certifique que o Vendor esta OK 
+go mod vendor
+
+# Gerando a documentação
+swagger generate spec -o ./swagger.yaml --scan-models\n
+
+# Gerando gerando o server visualização
+swagger serve -F=swagger swagger.yaml
+
+```
+
+
+
+
