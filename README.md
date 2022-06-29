@@ -67,7 +67,7 @@ git clone git@github.com:paulocvasco/mercado-frescos-time-7.git
 cd mercado-frescos-time-7/go-web/cmd/server
 
 # Instale as depêndecias
-go get -u
+go install
 
 # Acessar a Pasta Server
 cd /cmd/server
