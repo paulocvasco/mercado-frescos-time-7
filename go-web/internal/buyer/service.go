@@ -64,9 +64,6 @@ func (s *service) Update(id int, newData RequestPatch) (model.Buyer, error) {
 	if err != nil {
 		return emptyBuyer, err
 	}
-	if err != nil {
-		return model.Buyer{}, err
-	}
 	buyerByte, err := json.Marshal(getById)
 	if err != nil {
 		return emptyBuyer, err

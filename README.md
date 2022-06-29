@@ -8,8 +8,12 @@ Projeto  Mercado Frescos tem como objetivo implementar uma API REST, aplicando o
 - Utilizar o gin.
 - Realizar Unit Testes.
 
-
-## End Points Devenvolvidos:
+## Tecnologias Utilizadas:
+- [Go](https://go.dev/doc/) 
+- [Gin-Goninc](https://github.com/gin-gonic/gin)
+- [Testify](https://github.com/stretchr/testify)
+- [Swaggo](https://github.com/swaggo/swag)
+## End Points Desenvolvidos:
 
 1. endpoint: `sellers`<br/>
 /api/v1/sellers `[GET]`: List all Seller.<br/>
