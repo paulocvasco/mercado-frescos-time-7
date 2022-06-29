@@ -70,8 +70,8 @@ cd mercado-frescos-time-7/go-web/cmd/server
 go install
 
 
-# Roda o Projeto
-go run main.go
+# Iniciar o servidor
+server
 
 ```
 
