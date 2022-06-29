@@ -8,7 +8,7 @@ import (
 
 	jsonpatch "github.com/evanphx/json-patch"
 )
-
+//go:generate mockery --name=Service --output=./mock/mockService --outpkg=mockService
 type Service interface {
 	GetAll() (models.Warehouses, error)
 	GetByID(int) (models.Warehouse, error)
@@ -89,7 +89,7 @@ func (s *service) Update(id int, data []byte) (models.Warehouse, error) {
 
 	err = s.repository.Update(id, warehouse)
 	if err != nil {
-		return models.Warehouse{}, nil
+		return models.Warehouse{}, err
 	}
 
 	return warehouse, nil
