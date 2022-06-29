@@ -52,13 +52,13 @@ func TestService_Create(t *testing.T) {
 		repository := mocks.NewRepository(t)
 		repository.On("GetCardNumberId", expectBuyer.CardNumberID).Return(nil)
 		repository.On("Create", "40543", "Alice", "Souza").
-			Return(expectBuyer, fmt.Errorf("card number id already exists")).Once()
+			Return(expectBuyer, customErrors.ErrorCardIdAlreadyExists).Once()
 
 		service := buyer.NewService(repository)
 
 		_, err := service.Create("40543", "Alice", "Souza")
 
-		assert.Equal(t, err.Error(), "card number id already exists")
+		assert.Equal(t, err, customErrors.ErrorCardIdAlreadyExists)
 
 	})
 
@@ -66,13 +66,13 @@ func TestService_Create(t *testing.T) {
 		repository := mocks.NewRepository(t)
 		repository.On("GetCardNumberId", expectBuyer.CardNumberID).Return(customErrors.ErrorCardIdAlreadyExists).Maybe()
 		repository.On("Create", "40543", "Alice", "Souza").
-			Return(model.Buyer{}, fmt.Errorf("card number id already exists")).Maybe()
+			Return(model.Buyer{}, customErrors.ErrorCardIdAlreadyExists).Maybe()
 
 		service := buyer.NewService(repository)
 
 		_, err := service.Create("40543", "Alice", "Souza")
 
-		assert.Equal(t, err.Error(), "card number id already exists")
+		assert.Equal(t, err, customErrors.ErrorCardIdAlreadyExists)
 
 	})
 
