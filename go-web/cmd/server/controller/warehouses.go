@@ -131,7 +131,9 @@ func (control *warehousesController) DeleteWarehouse(c *gin.Context) {
 
 	err = control.service.Delete(id)
 	if err != nil {
-		c.JSON(http.StatusNotFound, err)
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
 		return
 	}
 	response := web.NewResponse(http.StatusNoContent, nil, "")
