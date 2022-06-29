@@ -69,6 +69,23 @@ func (s *service) Create(newWarehouse models.PostWarehouse) (models.Warehouse, e
 }
 
 func (s *service) Update(id int, data []byte) (models.Warehouse, error) {
+	// check if warehouse code is unique
+	var patchModel models.Warehouse
+	err := json.Unmarshal(data, &patchModel)
+	if err != nil {
+		return models.Warehouse{}, err
+	}
+	all, err := s.repository.GetAll()
+	if err != nil {
+		return models.Warehouse{}, err
+	}
+	for _, w := range all.Warehouses {
+		if patchModel.WarehouseCode == w.WarehouseCode {
+			return models.Warehouse{}, customerrors.ErrorWarehouseCodeConflict
+		}
+	}
+
+	// if all is ok change the model
 	warehouse, err := s.repository.GetByID(id)
 	if err != nil {
 		return models.Warehouse{}, err
