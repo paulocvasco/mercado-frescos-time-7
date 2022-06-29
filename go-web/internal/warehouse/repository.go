@@ -4,8 +4,6 @@ import (
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/pkg/db"
-
-	"github.com/google/uuid"
 )
 
 type repository struct {
@@ -13,7 +11,8 @@ type repository struct {
 }
 
 var cache models.WarehouseMetaData
-//go:generate mockery --name=Repository --output=./mock/mockRepository --outpkg=mockRepository
+
+//go:generate mockery --name=Repository --output=./mock/ --outpkg=mock
 type Repository interface {
 	Create(models.Warehouse) (models.Warehouse, error)
 	Update(int, models.Warehouse) error
@@ -37,7 +36,6 @@ func (r *repository) Create(new models.Warehouse) (models.Warehouse, error) {
 
 	warehouses.LastID++
 	new.ID = warehouses.LastID
-	new.WarehouseCode = uuid.NewString()
 
 	warehouses.Content.Warehouses = append(warehouses.Content.Warehouses, new)
 	err = r.database.Save(warehouses)
@@ -98,6 +96,13 @@ func (r *repository) GetByID(id int) (models.Warehouse, error) {
 }
 
 func (r *repository) Delete(id int) error {
+	if cache.LastID == 0 {
+		err := r.database.Load(&cache)
+		if err != nil {
+			return err
+		}
+	}
+
 	if id < 0 || id > cache.LastID {
 		return customerrors.ErrorInvalidID
 	}

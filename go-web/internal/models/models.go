@@ -57,6 +57,14 @@ type WarehouseMetaData struct {
 	Content Warehouses
 }
 
+type PostWarehouse struct {
+	Address            string `json:"address" binding:"required"`
+	Telephone          string `json:"telephone" binding:"required"`
+	WarehouseCode      string `json:"warehouse_code" binding:"required"`
+	MinimunCapacity    *int   `json:"minimun_capacity" binding:"required"`
+	MinimunTemperature *int   `json:"minimun_temperature" binding:"required"`
+}
+
 type Products struct {
 	Products []Product `json:"products"`
 }
@@ -91,5 +99,5 @@ type Seller struct {
 
 type Sellers struct {
 	Seller []Seller `json:"sellers"`
-	LastID int `json:"lastid"`
+	LastID int      `json:"lastid"`
 }

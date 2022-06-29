@@ -50,6 +50,7 @@ import (
 // responses:
 //    201: warehouseIDResponse
 //    422: errorResponse
+//    409: errorResponse
 //    500: errorServerResponse
 
 // swagger:route DELETE /warehouses/{id} Warehouse deleteID
@@ -64,6 +65,7 @@ import (
 // responses:
 //    200: warehouseIDResponse
 //    404: errorResponse
+//    409: errorResponse
 //    500: errorServerResponse
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -75,8 +77,8 @@ import (
 type warehouseIDResponse struct {
 	//in: body
 	data struct {
-		Code string         `json:"code"`
-		Data models.Product `json:"data"`
+		Code string           `json:"code"`
+		Data models.Warehouse `json:"data"`
 	}
 }
 
@@ -115,7 +117,7 @@ type warehouseRequestID struct {
 // swagger:parameters createWarehouse
 type warehouseNewResquest struct {
 	//in: body
-	NewWarehouse postModel
+	NewWarehouse models.PostWarehouse
 }
 
 // swagger:parameters patchWarehouse
@@ -125,12 +127,13 @@ type patchWarehouse struct {
 	Id string `json:"id"`
 	// New values.
 	//in: body
-	PatchValues models.Warehouse
+	PatchValues patchModel
 }
 
-type postModel struct {
+type patchModel struct {
 	Address            string `json:"address"`
 	Telephone          string `json:"telephone"`
+	WarehouseCode      string `json:"warehouse_code"`
 	MinimunCapacity    int    `json:"minimun_capacity"`
 	MinimunTemperature int    `json:"minimun_temperature"`
 }
