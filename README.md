@@ -64,7 +64,7 @@ Projeto  Mercado Frescos tem como objetivo implementar uma API REST, aplicando o
 git clone git@github.com:paulocvasco/mercado-frescos-time-7.git
 
 # Entre na pasta
-cd /mercado-frescos-time-7
+cd mercado-frescos-time-7/go-web/cmd/server
 
 # Instale as depêndecias
 go get -u
