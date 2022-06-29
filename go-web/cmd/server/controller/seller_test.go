@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"mercado-frescos-time-7/go-web/cmd/server/controller"
-	"mercado-frescos-time-7/go-web/internal/Seller/mocks"
 	"mercado-frescos-time-7/go-web/internal/models"
+	"mercado-frescos-time-7/go-web/internal/seller/mocks"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"net/http"
 	"net/http/httptest"
@@ -116,9 +116,8 @@ func TestGetID(t *testing.T) {
 
 		res := value.expectResponse.data
 		json.Unmarshal(body, &res)
-	assert.Equal(t, value.expectResponse.data, res, value.message)
-	assert.Equal(t, value.expectResponse.statusCode, w.Result().StatusCode, value.message)
-		
+		assert.Equal(t, value.expectResponse.data, res, value.message)
+		assert.Equal(t, value.expectResponse.statusCode, w.Result().StatusCode, value.message)
 
 	}
 

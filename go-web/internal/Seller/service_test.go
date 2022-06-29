@@ -1,11 +1,11 @@
-package Seller_test
+package seller_test
 
 import (
 	"encoding/json"
 	"errors"
-	"mercado-frescos-time-7/go-web/internal/Seller"
-	"mercado-frescos-time-7/go-web/internal/Seller/mocks"
 	"mercado-frescos-time-7/go-web/internal/models"
+	"mercado-frescos-time-7/go-web/internal/seller"
+	"mercado-frescos-time-7/go-web/internal/seller/mocks"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"testing"
 
@@ -51,7 +51,7 @@ func TestGetAll(t *testing.T) {
 
 	for _, value := range testCases {
 		mockRepository := mocks.NewRepository(t)
-		service := Seller.NewService(mockRepository)
+		service := seller.NewService(mockRepository)
 		mockRepository.On("GetAll").Return(value.mockResponse, value.expectError)
 		resp, err := service.GetAll()
 		assert.Equal(t, value.expectResponse, resp, value.name, value.message)
@@ -102,7 +102,7 @@ func TestGetId(t *testing.T) {
 	}
 	for _, value := range testCases {
 		mockRepository := mocks.NewRepository(t)
-		service := Seller.NewService(mockRepository)
+		service := seller.NewService(mockRepository)
 		mockRepository.On("GetId", value.params).Return(value.mockResponse, value.expectError)
 		resp, err := service.GetId(value.params)
 		assert.Equal(t, value.expectResponse, resp, value.message)
@@ -125,7 +125,7 @@ func TestDelete(t *testing.T) {
 	}
 	for _, value := range testCases {
 		mockRepository := mocks.NewRepository(t)
-		service := Seller.NewService(mockRepository)
+		service := seller.NewService(mockRepository)
 		mockRepository.On("Delete", value.params).Return(value.mockResponse, value.expectError)
 		err := service.Delete(value.params)
 		assert.Equal(t, value.expectError, err, value.message)
@@ -156,7 +156,7 @@ func TestStore(t *testing.T) {
 	}
 	for _, value := range testCases {
 		mockRepository := mocks.NewRepository(t)
-		service := Seller.NewService(mockRepository)
+		service := seller.NewService(mockRepository)
 
 		mockRepository.On("LastID").Return((response.ID - 1), value.errorLastID).Maybe()
 
@@ -217,11 +217,11 @@ func TestUpdate(t *testing.T) {
 	}
 	for _, value := range testCases {
 		mockRepository := mocks.NewRepository(t)
-		service := Seller.NewService(mockRepository)
+		service := seller.NewService(mockRepository)
 
 		mockRepository.On("GetId", value.expectResponse.ID).Return(value.mockResponse, value.getIdError).Maybe()
 		mockRepository.On("CheckCid", value.expectResponse.Cid).Return(value.mockResponse, value.cidError).Maybe()
-		mockRepository.On("Update", Seller.Seller(value.mockResponse), value.mockResponse.ID).
+		mockRepository.On("Update", seller.Seller(value.mockResponse), value.mockResponse.ID).
 			Return(value.expectResponse, value.expectError).Maybe()
 
 		sellerByte, _ := json.Marshal(value.valueUpdate)
