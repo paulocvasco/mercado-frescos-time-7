@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	Seller "mercado-frescos-time-7/go-web/internal/Seller"
+	Seller "mercado-frescos-time-7/go-web/internal/seller"
 
 	mock "github.com/stretchr/testify/mock"
 

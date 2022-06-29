@@ -3,3 +3,4 @@
 *.orig
 *.json
 .DS_Store
+vendor
