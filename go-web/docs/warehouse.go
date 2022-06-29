@@ -65,6 +65,7 @@ import (
 // responses:
 //    200: warehouseIDResponse
 //    404: errorResponse
+//    409: errorResponse
 //    500: errorServerResponse
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -126,5 +127,13 @@ type patchWarehouse struct {
 	Id string `json:"id"`
 	// New values.
 	//in: body
-	PatchValues models.Warehouse
+	PatchValues patchModel
+}
+
+type patchModel struct {
+	Address            string `json:"address"`
+	Telephone          string `json:"telephone"`
+	WarehouseCode      string `json:"warehouse_code"`
+	MinimunCapacity    int    `json:"minimun_capacity"`
+	MinimunTemperature int    `json:"minimun_temperature"`
 }
