@@ -73,7 +73,7 @@ func (s *service) Update(id int, data []byte) (models.Warehouse, error) {
 	var patchModel models.Warehouse
 	err := json.Unmarshal(data, &patchModel)
 	if err != nil {
-		return models.Warehouse{}, err
+		return models.Warehouse{}, customerrors.ErrorMarshallJson
 	}
 	all, err := s.repository.GetAll()
 	if err != nil {

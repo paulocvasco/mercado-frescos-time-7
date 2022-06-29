@@ -32,6 +32,7 @@ var (
 	ErrorInvalidDB             = errors.New("invalid database")
 	ErrorSectionAlreadyExists  = errors.New("section number already exists")
 	ErrorWarehouseCodeConflict = errors.New("warehouse code already exist")
+	ErrorMarshallJson          = errors.New("malformed json")
 )
 
 func ErrorHandleResponse(err error) (int, string) {
