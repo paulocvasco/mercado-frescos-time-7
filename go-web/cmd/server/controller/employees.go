@@ -39,7 +39,7 @@ func (c *EmployeeController) GetAll() gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(http.StatusOK, e)
+		ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, e, ""))
 	}
 }
 
@@ -61,7 +61,7 @@ func (c *EmployeeController) GetByID() gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(http.StatusOK, e)
+		ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, e, ""))
 	}
 }
 
@@ -95,7 +95,7 @@ func (c *EmployeeController) Update() gin.HandlerFunc {
 			ctx.JSON(status, res)
 			return
 		}
-		ctx.JSON(200, e)
+		ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, e, ""))
 
 	}
 }
@@ -121,7 +121,7 @@ func (c *EmployeeController) Create() gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(http.StatusCreated, e)
+		ctx.JSON(http.StatusCreated, web.NewResponse(http.StatusCreated, e, ""))
 	}
 
 }
@@ -145,7 +145,7 @@ func (c *EmployeeController) Delete() gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(http.StatusNoContent, id)
+		ctx.JSON(http.StatusNoContent, web.NewResponse(http.StatusNoContent, nil, ""))
 
 	}
 }
