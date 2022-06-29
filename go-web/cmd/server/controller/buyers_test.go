@@ -4,9 +4,6 @@ import (
 	"bytes"
 	json2 "encoding/json"
 	"errors"
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"io/ioutil"
 	"mercado-frescos-time-7/go-web/internal/buyer/mocks"
 	model "mercado-frescos-time-7/go-web/internal/models"
@@ -14,6 +11,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 var expectBuyer = model.Buyer{
@@ -328,4 +329,22 @@ func TestBuyerController_BuyerUpdate(t *testing.T) {
 		assert.Equal(t, 500, w.Code)
 
 	})
+
+	t.Run("should return 400", func(t *testing.T) {
+		type badBuyer struct {
+			CardNumberID []int `json:"card_number_id,omitempty"`
+		}
+		expectBuyerError := badBuyer{CardNumberID: []int{1, 2, 3, 4, 5}}
+		service := mocks.NewService(t)
+		controller := BuyerNewController(service)
+		service.On("Update", mock.Anything, mock.Anything).Return(model.Buyer{}, errors.New("invalid param")).Maybe()
+		r := gin.Default()
+		r.PATCH("/buyers/:id", controller.BuyerUpdate())
+		body, _ := json2.Marshal(expectBuyerError)
+		req, _ := http.NewRequest("PATCH", "/buyers/1", bytes.NewBuffer(body))
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+		assert.Equal(t, 400, w.Code)
+	})
+
 }
