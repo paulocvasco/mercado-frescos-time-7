@@ -14,7 +14,11 @@ type Section struct {
 
 type Sections struct {
 	SectionList []Section `json:"sections"`
-	LastID      int       `json:"last_id"`
+}
+
+type SectionMetaData struct {
+	LastID  int `json:"last_id"`
+	Content Sections
 }
 
 type Employee struct {
