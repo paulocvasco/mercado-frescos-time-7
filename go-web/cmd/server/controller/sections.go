@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"mercado-frescos-time-7/go-web/internal/sections"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -29,21 +30,27 @@ func NewController(s sections.Service) SectionsController {
 }
 
 func (controller *sectionsController) GetAll(ctx *gin.Context) {
-	response, err := controller.service.GetAll()
+	sections, err := controller.service.GetAll()
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
+	response := web.NewResponse(http.StatusOK, sections, "")
 	ctx.JSON(http.StatusOK, response)
 }
 
 func (controller *sectionsController) GetById(ctx *gin.Context) {
 	id := ctx.Param("id")
-	response, err := controller.service.GetById(id)
+	section, err := controller.service.GetById(id)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, customerrors.ErrorSectionNotFound)
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
+	response := web.NewResponse(http.StatusOK, section, "")
 	ctx.JSON(http.StatusOK, response)
 }
 
@@ -51,42 +58,55 @@ func (controller *sectionsController) Store(ctx *gin.Context) {
 	newSection := storeSection{}
 	err := ctx.ShouldBindJSON(&newSection)
 	if err != nil {
-		ctx.JSON(http.StatusUnprocessableEntity, customerrors.ErrorSectionNumber)
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
 	sectionToJson, err := json.Marshal(newSection)
 	if err != nil {
-		ctx.JSON(http.StatusUnprocessableEntity, customerrors.ErrorSectionNumber)
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
 	section, err := controller.service.Store(sectionToJson)
 	if err != nil {
-		ctx.JSON(http.StatusConflict, customerrors.ErrorCardIdAlreadyExists)
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
-	ctx.JSON(http.StatusCreated, section)
-
+	response := web.NewResponse(http.StatusCreated, section, "")
+	ctx.JSON(http.StatusCreated, response)
 }
 
 func (controller *sectionsController) Update(ctx *gin.Context) {
 	newSection := updateSection{}
 	err := ctx.ShouldBindJSON(&newSection)
 	if err != nil {
-		ctx.JSON(http.StatusUnprocessableEntity, customerrors.ErrorSectionNumber)
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
 	section, err := json.Marshal(newSection)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
 	id := ctx.Param("id")
 	data, err := controller.service.Update(id, section)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, customerrors.ErrorSectionNotFound)
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
-	ctx.JSON(http.StatusOK, data)
+	response := web.NewResponse(http.StatusOK, data, "")
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (controller *sectionsController) Delete(ctx *gin.Context) {
@@ -95,10 +115,13 @@ func (controller *sectionsController) Delete(ctx *gin.Context) {
 	err := controller.service.Delete(id)
 
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, customerrors.ErrorSectionNotFound)
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
-	ctx.JSON(http.StatusNoContent, nil)
+	response := web.NewResponse(http.StatusNoContent, nil, "")
+	ctx.JSON(http.StatusNotFound, response)
 }
 
 type storeSection struct {
