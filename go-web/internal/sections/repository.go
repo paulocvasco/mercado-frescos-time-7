@@ -6,8 +6,6 @@ import (
 	"mercado-frescos-time-7/go-web/pkg/db"
 )
 
-type Section models.Section
-
 type repository struct {
 	database db.DB
 }
@@ -18,8 +16,8 @@ var cache models.SectionMetaData
 type Repository interface {
 	GetAll() (models.Sections, error)
 	GetById(int) (models.Section, error)
-	Store(Section) (Section, error)
-	Update(int, Section) error
+	Store(models.Section) (models.Section, error)
+	Update(int, models.Section) error
 	Delete(int) error
 	ValidateID(int) bool
 	VerifySectionNumber(int) error
@@ -62,25 +60,26 @@ func (s *repository) VerifySectionNumber(sectionRequestedNumber int) error {
 	return nil
 }
 
-func (s *repository) Store(newSection Section) (Section, error) {
+func (s *repository) Store(newSection models.Section) (models.Section, error) {
 	var sections models.SectionMetaData
 	err := s.database.Load(&sections)
 	if err != nil {
-		return Section{}, err
+		return models.Section{}, err
 	}
 	newSection.ID = sections.LastID
 	sections.Content.SectionList = append(sections.Content.SectionList, models.Section(newSection))
 	sections.LastID = sections.LastID + 1
-	err = s.database.Save(&sections)
 
+	err = s.database.Save(&sections)
 	if err != nil {
-		return Section{}, err
+		return models.Section{}, err
 	}
 
+	cache = sections
 	return newSection, nil
 }
 
-func (s *repository) Update(id int, newSection Section) error {
+func (s *repository) Update(id int, newSection models.Section) error {
 	for i, section := range cache.Content.SectionList {
 		if section.ID == newSection.ID {
 
