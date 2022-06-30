@@ -85,9 +85,9 @@ func (controller *sectionsController) Update(ctx *gin.Context) {
 	newSection := updateSection{}
 	err := ctx.ShouldBindJSON(&newSection)
 	if err != nil {
-		status, msg := customerrors.ErrorHandleResponse(err)
-		res := web.NewResponse(status, nil, msg)
-		ctx.JSON(status, res)
+		_, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(http.StatusUnprocessableEntity, nil, msg)
+		ctx.JSON(http.StatusUnprocessableEntity, res)
 		return
 	}
 	section, err := json.Marshal(newSection)
@@ -121,7 +121,7 @@ func (controller *sectionsController) Delete(ctx *gin.Context) {
 		return
 	}
 	response := web.NewResponse(http.StatusNoContent, nil, "")
-	ctx.JSON(http.StatusNotFound, response)
+	ctx.JSON(http.StatusNoContent, response)
 }
 
 type storeSection struct {

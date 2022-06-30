@@ -260,9 +260,9 @@ func TestFindAllERROR(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
 
-	repo.On("GetAll", mock.Anything).Return(nil, errors.New("falha ao retornar dados"))
+	repo.On("GetAll", mock.Anything).Return(models.Sections{}, errors.New("falha ao retornar dados"))
 	result, errResult := serv.GetAll()
-	assert.Equal(t, nil, result)
+	assert.Equal(t, models.Sections{}, result)
 	assert.NotEqual(t, nil, errResult)
 }
 
