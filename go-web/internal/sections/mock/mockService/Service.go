@@ -4,7 +4,6 @@ package mockService
 
 import (
 	models "mercado-frescos-time-7/go-web/internal/models"
-	sections "mercado-frescos-time-7/go-web/internal/sections"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -29,16 +28,14 @@ func (_m *Service) Delete(_a0 string) error {
 }
 
 // GetAll provides a mock function with given fields:
-func (_m *Service) GetAll() ([]models.Section, error) {
+func (_m *Service) GetAll() (models.Sections, error) {
 	ret := _m.Called()
 
-	var r0 []models.Section
-	if rf, ok := ret.Get(0).(func() []models.Section); ok {
+	var r0 models.Sections
+	if rf, ok := ret.Get(0).(func() models.Sections); ok {
 		r0 = rf()
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]models.Section)
-		}
+		r0 = ret.Get(0).(models.Sections)
 	}
 
 	var r1 error
@@ -73,14 +70,14 @@ func (_m *Service) GetById(_a0 string) (models.Section, error) {
 }
 
 // Store provides a mock function with given fields: _a0
-func (_m *Service) Store(_a0 []byte) (sections.Section, error) {
+func (_m *Service) Store(_a0 []byte) (models.Section, error) {
 	ret := _m.Called(_a0)
 
-	var r0 sections.Section
-	if rf, ok := ret.Get(0).(func([]byte) sections.Section); ok {
+	var r0 models.Section
+	if rf, ok := ret.Get(0).(func([]byte) models.Section); ok {
 		r0 = rf(_a0)
 	} else {
-		r0 = ret.Get(0).(sections.Section)
+		r0 = ret.Get(0).(models.Section)
 	}
 
 	var r1 error
@@ -94,14 +91,14 @@ func (_m *Service) Store(_a0 []byte) (sections.Section, error) {
 }
 
 // Update provides a mock function with given fields: _a0, _a1
-func (_m *Service) Update(_a0 string, _a1 []byte) (sections.Section, error) {
+func (_m *Service) Update(_a0 string, _a1 []byte) (models.Section, error) {
 	ret := _m.Called(_a0, _a1)
 
-	var r0 sections.Section
-	if rf, ok := ret.Get(0).(func(string, []byte) sections.Section); ok {
+	var r0 models.Section
+	if rf, ok := ret.Get(0).(func(string, []byte) models.Section); ok {
 		r0 = rf(_a0, _a1)
 	} else {
-		r0 = ret.Get(0).(sections.Section)
+		r0 = ret.Get(0).(models.Section)
 	}
 
 	var r1 error
