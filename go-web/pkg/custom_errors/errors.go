@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
@@ -102,6 +103,15 @@ func ErrorHandleResponse(err error) (int, string) {
 		}
 	}
 	{ // validate errors
+		var numError *strconv.NumError
+		if errors.As(err, &numError){
+			if numError.Func == "Atoi" {
+				return http.StatusBadRequest, fmt.Sprintf("input param: %v must be an integer", numError.Num)
+			} else {
+				return http.StatusBadRequest, fmt.Sprintf("conversion error in field: %v", numError.Num)
+			}
+		}
+
 		var ve validator.ValidationErrors
 		if errors.As(err, &ve) {
 			fields := []string{}
