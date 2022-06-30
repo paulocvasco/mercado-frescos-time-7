@@ -13,8 +13,8 @@ import (
 type Service interface {
 	GetAll() (models.Sections, error)
 	GetById(string) (models.Section, error)
-	Store([]byte) (Section, error)
-	Update(string, []byte) (Section, error)
+	Store([]byte) (models.Section, error)
+	Update(string, []byte) (models.Section, error)
 	Delete(string) error
 }
 
@@ -50,89 +50,89 @@ func (s *service) GetById(id string) (models.Section, error) {
 	return data, nil
 }
 
-func (s *service) Store(section []byte) (Section, error) {
-	var newSection Section
+func (s *service) Store(section []byte) (models.Section, error) {
+	var newSection models.Section
 	err := json.Unmarshal(section, &newSection)
 
 	if err != nil {
-		return Section{}, nil
+		return models.Section{}, nil
 	}
 
 	err = s.repository.VerifySectionNumber(newSection.SectionNumber)
 
 	if err != nil {
-		return Section{}, customErrors.ErrorConflict
+		return models.Section{}, customErrors.ErrorConflict
 	}
 
 	if newSection.SectionNumber < 0 {
-		return Section{}, customErrors.ErrorSectionNumber
+		return models.Section{}, customErrors.ErrorSectionNumber
 	}
 	if newSection.CurrentCapacity < 0 {
-		return Section{}, customErrors.ErrorCurrentCapacity
+		return models.Section{}, customErrors.ErrorCurrentCapacity
 	}
 	if newSection.MinimumCapacity < 0 {
-		return Section{}, customErrors.ErrorMinimumCapacity
+		return models.Section{}, customErrors.ErrorMinimumCapacity
 	}
 	if newSection.MaximumCapacity < 0 {
-		return Section{}, customErrors.ErrorMaximumCapacity
+		return models.Section{}, customErrors.ErrorMaximumCapacity
 	}
 	if newSection.WarehouseId < 0 {
-		return Section{}, customErrors.ErrorWarehouseID
+		return models.Section{}, customErrors.ErrorWarehouseID
 	}
 	if newSection.ProductTypeId < 0 {
-		return Section{}, customErrors.ErrorProductTypeID
+		return models.Section{}, customErrors.ErrorProductTypeID
 	}
-
 	newSection, err = s.repository.Store(newSection)
 	if err != nil {
-		return Section{}, customErrors.ErrorStoreFailed
+		return models.Section{}, customErrors.ErrorStoreFailed
 	}
+
 	return newSection, nil
 }
 
-func (s *service) Update(id string, data []byte) (Section, error) {
+func (s *service) Update(id string, data []byte) (models.Section, error) {
 	index, err := strconv.Atoi(id)
 	if err != nil {
-		return Section{}, customErrors.ErrorInvalidID
+		return models.Section{}, customErrors.ErrorInvalidID
 	}
 	if !s.repository.ValidateID(index) {
-		return Section{}, customErrors.ErrorInvalidID
+		return models.Section{}, customErrors.ErrorInvalidID
 	}
 
 	sectionFound, err := s.repository.GetById(index)
 	if err != nil {
-		return Section{}, customErrors.ErrorInvalidID
+		return models.Section{}, customErrors.ErrorInvalidID
 	}
 	sectionFoundJSON, _ := json.Marshal(sectionFound)
 	patch, err := jsonpatch.MergePatch(sectionFoundJSON, data)
 
 	if err != nil {
-		return Section{}, err
+		return models.Section{}, err
 	}
-	var newSection Section
+	var newSection models.Section
 	json.Unmarshal(patch, &newSection)
 
 	if newSection.SectionNumber < 0 {
-		return Section{}, customErrors.ErrorSectionNumber
+		return models.Section{}, customErrors.ErrorSectionNumber
 	}
 	if newSection.CurrentCapacity < 0 {
-		return Section{}, customErrors.ErrorCurrentCapacity
+		return models.Section{}, customErrors.ErrorCurrentCapacity
 	}
 	if newSection.MinimumCapacity < 0 {
-		return Section{}, customErrors.ErrorMinimumCapacity
+		return models.Section{}, customErrors.ErrorMinimumCapacity
 	}
 	if newSection.MaximumCapacity < 0 {
-		return Section{}, customErrors.ErrorMaximumCapacity
+		return models.Section{}, customErrors.ErrorMaximumCapacity
 	}
 	if newSection.WarehouseId < 0 {
-		return Section{}, customErrors.ErrorWarehouseID
+		return models.Section{}, customErrors.ErrorWarehouseID
 	}
 	if newSection.ProductTypeId < 0 {
-		return Section{}, customErrors.ErrorProductTypeID
+		return models.Section{}, customErrors.ErrorProductTypeID
 	}
 	err = s.repository.Update(index, newSection)
 	if err != nil {
-		return Section{}, err
+		return models.Section{}, err
 	}
 
 	return newSection, nil
