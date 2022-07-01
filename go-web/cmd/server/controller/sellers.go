@@ -131,7 +131,7 @@ func (c *Sellers) SellersDelete() gin.HandlerFunc  {
 			res := web.NewResponse(status, nil, msg)
 			ctx.JSON(status, res)
 			return
-		}
+		} 
 			err = c.service.Delete(id)
 			if err != nil {
 				status, msg := customerrors.ErrorHandleResponse(err)

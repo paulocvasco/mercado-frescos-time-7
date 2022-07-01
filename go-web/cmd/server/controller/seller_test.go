@@ -106,11 +106,10 @@ func TestGetID(t *testing.T) {
 		nil,
 	}
 
-
 	testsCases := []tests{
 		{"GetId", 1, resp, webResponse{Code: "200", Data: resp.data}, http.StatusOK, "Ok GetId"},
-		{"GetId Error", 2, serviceResponse{resp.data,customerrors.ErrorInvalidDB}, webResponse{Code: "500", Data: models.Seller{}, Error: customerrors.ErrorInvalidDB.Error()}, http.StatusInternalServerError, "InternalError GetId"},
-		{"GetId Error", 3, serviceResponse{resp.data,customerrors.ErrorInvalidID}, webResponse{Code: "404", Data: models.Seller{}, Error: customerrors.ErrorInvalidID.Error()}, http.StatusNotFound, "InternalError GetId"},
+		{"GetId Error", 2, serviceResponse{resp.data, customerrors.ErrorInvalidDB}, webResponse{Code: "500", Data: models.Seller{}, Error: customerrors.ErrorInvalidDB.Error()}, http.StatusInternalServerError, "InternalError GetId"},
+		{"GetId Error", 3, serviceResponse{resp.data, customerrors.ErrorInvalidID}, webResponse{Code: "404", Data: models.Seller{}, Error: customerrors.ErrorInvalidID.Error()}, http.StatusNotFound, "InternalError GetId"},
 		//{"GetId Error", responseController{statusCode: 400, idRequest: "Error"}, responseController{statusCode: 400, idRequest: "Error"}, customerrors.ErrorInvalidID, "Error GetId status 400"},
 	}
 
@@ -140,30 +139,33 @@ func TestGetID(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	type responseController struct {
-		data       models.Seller
-		statusCode int
-		idRequest  string
+
+	type webResponse struct {
+		Code  string        `json:"code"`
+		Error string        `json:"error"`
+	}
+
+	type serviceResponse struct {
+		err  error
 	}
 
 	type tests struct {
-		name           string
-		mockResponse   responseController
-		expectResponse responseController
-		expectError    error
-		message        string
+		name               string
+		id                 string
+		mockResponse       serviceResponse
+		expectResponse     webResponse
+		expectedstatuscode int
+		message            string
 	}
 
-	response := responseController{
-		models.Seller{ID: 1, Cid: 0, Company_name: "", Address: "", Telephone: ""},
-		204,
-		"1",
+	resp := serviceResponse{
+		nil,
 	}
 
 	testsCases := []tests{
-		{"Delete", response, response, nil, "Error Delete"},
-		{"Delete Error", responseController{statusCode: 500, idRequest: "Error"}, responseController{statusCode: 500, idRequest: "Error"}, customerrors.ErrorInvalidID, "Error Delete"},
-		{"Delete Error", responseController{statusCode: 404, idRequest: "1"}, responseController{statusCode: 404, idRequest: "1"}, customerrors.ErrorInvalidID, "Error Delete"},
+		{"Delete", "1", resp, webResponse{Code: "204", Error: "delete erro"}, http.StatusNoContent, "Error Delete"},
+		//{"Delete Error", responseController{statusCode: 500, idRequest: "Error"}, responseController{statusCode: 500, idRequest: "Error"}, customerrors.ErrorInvalidID, "Error Delete"},
+		//{"Delete Error", responseController{statusCode: 404, idRequest: "1"}, responseController{statusCode: 404, idRequest: "1"}, customerrors.ErrorInvalidID, "Error Delete"},
 	}
 
 	for _, value := range testsCases {
@@ -171,22 +173,15 @@ func TestDelete(t *testing.T) {
 		mockService := mocks.NewService(t)
 		control := controller.NewSellers(mockService)
 
-		mockService.On("Delete", mock.Anything).Return(value.expectError).Maybe()
+		mockService.On("Delete", mock.Anything).Return(value.mockResponse.err).Maybe()
 
 		w := httptest.NewRecorder()
 		_, router := gin.CreateTestContext(w)
-
-		req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/%v", value.mockResponse.idRequest), nil)
 		router.DELETE("/:id", control.SellersDelete())
+		req := httptest.NewRequest(http.MethodDelete, "/"+value.id, nil)
 		router.ServeHTTP(w, req)
 
-		body, _ := ioutil.ReadAll(w.Body)
-
-		res := value.expectResponse.data
-		json.Unmarshal(body, &res)
-
-		assert.Equal(t, value.expectResponse.data, res, value.message)
-		assert.Equal(t, value.expectResponse.statusCode, w.Result().StatusCode, value.message)
+		assert.Equal(t, value.expectedstatuscode, w.Result().StatusCode, value.message)
 
 	}
 
