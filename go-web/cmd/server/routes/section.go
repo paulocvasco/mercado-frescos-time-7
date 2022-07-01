@@ -14,7 +14,7 @@ func InstanceSection(eng *gin.Engine) {
 	services := sections.NewService(repository)
 	controller := controller.NewController(services)
 	sec := eng.Group("/api/v1/sections")
-	sec.GET("", controller.GetAll)
+	sec.GET("/", controller.GetAll)
 	sec.GET("/:id", controller.GetById)
 	sec.POST("/", controller.Store)
 	sec.PATCH("/:id", controller.Update)

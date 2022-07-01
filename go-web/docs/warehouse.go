@@ -56,7 +56,7 @@ import (
 // swagger:route DELETE /warehouses/{id} Warehouse deleteID
 // Remove a corresponding ID object from db.
 // responses:
-//    204: description: ok
+//    204: 
 //    404: errorResponse
 //    500: errorServerResponse
 

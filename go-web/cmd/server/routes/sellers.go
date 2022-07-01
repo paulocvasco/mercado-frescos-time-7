@@ -16,9 +16,9 @@ func InstanceSeller(e *gin.Engine) {
 	p := controller.NewSellers(service)
 
 	r := e.Group("api/v1") 
-	r.GET("/sellers", p.SellersGetAll())
+	r.GET("/sellers/", p.SellersGetAll())
 	r.GET("/sellers/:id", p.SellersGetId())
-	r.POST("/sellers", p.SellersStore())
+	r.POST("/sellers/", p.SellersStore())
 	r.PATCH("/sellers/:id", p.SellersUpdate())
 	r.DELETE("/sellers/:id", p.SellersDelete())
 
