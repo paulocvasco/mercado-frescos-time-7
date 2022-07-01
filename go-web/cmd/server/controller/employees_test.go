@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func TestGetAll(t *testing.T) {
+func TestGetAllEmployee(t *testing.T) {
 	testCases := []struct {
 		testName      string
 		responseList  []employees.Employee
@@ -73,7 +73,7 @@ func TestGetAll(t *testing.T) {
 	}
 }
 
-func TestGetByID(t *testing.T) {
+func TestGetByIDEmployee(t *testing.T) {
 	testCases := []struct {
 		testName      string
 		requestID     string
@@ -85,7 +85,7 @@ func TestGetByID(t *testing.T) {
 		{
 			"InvalidParameter", "a",
 			employees.Employee{}, nil,
-			`{"code":"500","error":"internal error"}`, http.StatusInternalServerError,
+			`{"code":"400","error":"input param: a must be an integer"}`, http.StatusBadRequest,
 		},
 		{
 			"InvalidID", "3",
@@ -132,7 +132,7 @@ func TestGetByID(t *testing.T) {
 	}
 }
 
-func TestDelete(t *testing.T) {
+func TestDeleteEmployee(t *testing.T) {
 	testCases := []struct {
 		testName      string
 		requestID     string
@@ -143,7 +143,7 @@ func TestDelete(t *testing.T) {
 		{
 			"InvalidParameter", "a",
 			nil,
-			`{"code":"500","error":"internal error"}`, http.StatusInternalServerError,
+			`{"code":"400","error":"input param: a must be an integer"}`, http.StatusBadRequest,
 		},
 		{
 			"ItemNotFound", "1",
@@ -190,7 +190,7 @@ func TestDelete(t *testing.T) {
 	}
 }
 
-func TestCreate(t *testing.T) {
+func TestCreateEmployee(t *testing.T) {
 	testCases := []struct {
 		testName      string
 		requestBody   string
@@ -248,7 +248,7 @@ func TestCreate(t *testing.T) {
 	}
 }
 
-func TestUpdate(t *testing.T) {
+func TestUpdateEmployee(t *testing.T) {
 	testCases := []struct {
 		testName      string
 		requestID     string
@@ -262,7 +262,7 @@ func TestUpdate(t *testing.T) {
 			"InvalidParameter",
 			"a", "",
 			employees.Employee{}, nil,
-			`{"code":"500","error":"internal error"}`, http.StatusInternalServerError,
+			`{"code":"400","error":"input param: a must be an integer"}`, http.StatusBadRequest,
 		},
 		{
 			"MissingBody",

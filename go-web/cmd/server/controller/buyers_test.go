@@ -173,7 +173,7 @@ func TestBuyerController_BuyerGetId(t *testing.T) {
 
 	})
 
-	t.Run("should return 500", func(t *testing.T) {
+	t.Run("should return 400", func(t *testing.T) {
 		service := mocks.NewService(t)
 		controller := BuyerNewController(service)
 		service.On("GetId", mock.Anything).Return(model.Buyer{}, errors.New("incorrect param")).Maybe()
@@ -186,7 +186,7 @@ func TestBuyerController_BuyerGetId(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.ServeHTTP(w, req)
 
-		assert.Equal(t, 500, w.Code)
+		assert.Equal(t, 400, w.Code)
 
 	})
 
@@ -229,7 +229,7 @@ func TestBuyerController_BuyerDelete(t *testing.T) {
 
 	})
 
-	t.Run("should return 500", func(t *testing.T) {
+	t.Run("should return 400", func(t *testing.T) {
 		service := mocks.NewService(t)
 		controller := BuyerNewController(service)
 		service.On("Delete", mock.Anything).Return(errors.New("invalid param")).Maybe()
@@ -244,7 +244,7 @@ func TestBuyerController_BuyerDelete(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.ServeHTTP(w, req)
 
-		assert.Equal(t, 500, w.Code)
+		assert.Equal(t, 400, w.Code)
 
 	})
 
@@ -310,7 +310,7 @@ func TestBuyerController_BuyerUpdate(t *testing.T) {
 
 	})
 
-	t.Run("should return 500", func(t *testing.T) {
+	t.Run("should return 400", func(t *testing.T) {
 		service := mocks.NewService(t)
 		controller := BuyerNewController(service)
 
@@ -326,7 +326,7 @@ func TestBuyerController_BuyerUpdate(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.ServeHTTP(w, req)
 
-		assert.Equal(t, 500, w.Code)
+		assert.Equal(t, 400, w.Code)
 
 	})
 
@@ -337,7 +337,7 @@ func TestBuyerController_BuyerUpdate(t *testing.T) {
 		expectBuyerError := badBuyer{CardNumberID: []int{1, 2, 3, 4, 5}}
 		service := mocks.NewService(t)
 		controller := BuyerNewController(service)
-		service.On("Update", mock.Anything, mock.Anything).Return(model.Buyer{}, errors.New("invalid param")).Maybe()
+		service.On("Update", mock.Anything, mock.Anything).Return(model.Buyer{}, customErrors.ErrorInvalidID).Maybe()
 		r := gin.Default()
 		r.PATCH("/buyers/:id", controller.BuyerUpdate())
 		body, _ := json2.Marshal(expectBuyerError)

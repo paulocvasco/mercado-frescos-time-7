@@ -178,8 +178,8 @@ func TestGetByIDWarehouse(t *testing.T) {
 				err:  customerrors.ErrorInvalidID,
 			},
 			expectResult: expectResult{
-				data:       webResponse{Code: "500", Error: "internal error"},
-				statusCode: 500,
+				data:       webResponse{Code: "400", Error: "input param: A must be an integer"},
+				statusCode: 400,
 			},
 			requestedId: "A",
 		},
@@ -324,9 +324,9 @@ func TestDeleteWarehouse(t *testing.T) {
 			requestedId:         "1",
 		},
 		{
-			testName:            "should return status 500 - invalid id",
+			testName:            "should return status 400 - invalid id",
 			responseServiceMock: responseServiceMock{err: strconv.ErrSyntax},
-			expectResult:        expectResult{data: web.Response{Code: "500", Error: "internal error"}, statusCode: 500},
+			expectResult:        expectResult{data: web.Response{Code: "400", Error: "input param: A must be an integer"}, statusCode: 400},
 			requestedId:         "A",
 		},
 	}
@@ -414,8 +414,8 @@ func TestUpdateWarehouse(t *testing.T) {
 			testName:            "should return status 500",
 			responseServiceMock: responseServiceMock{data: models.Warehouse{}, err: nil},
 			expectResult: expectResult{
-				data:       webResponse{Code: "500", Error: "internal error"},
-				statusCode: 500,
+				data:       webResponse{Code: "400", Error: "input param: A must be an integer"},
+				statusCode: 400,
 			},
 			patchData:   `{"warehouse_code": "foo"}`,
 			requestedId: "/A",
