@@ -165,7 +165,7 @@ func TestControllerFindAllERROR(t *testing.T) {
 		return
 	}
 	w := httptest.NewRecorder()
-	serv.On("GetAll").Return(nil, errors.New("No results found"))
+	serv.On("GetAll").Return(models.Sections{}, errors.New("No results found"))
 	r.ServeHTTP(w, req)
 	assert.Equal(t, 500, w.Code)
 }
