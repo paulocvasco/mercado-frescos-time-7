@@ -17,7 +17,7 @@ import (
 	"testing"
 )
 
-func TestService_Find_All(t *testing.T) {
+func TestServiceFindAll(t *testing.T) {
 	type responseServiceMock struct {
 		data models.Products
 		err  error
@@ -128,7 +128,7 @@ func TestService_Find_All(t *testing.T) {
 	}
 }
 
-func TestService_Create(t *testing.T) {
+func TestServiceCreate(t *testing.T) {
 	type responseServiceMock struct {
 		data models.Product
 		err  error
@@ -248,7 +248,7 @@ func TestService_Create(t *testing.T) {
 	}
 }
 
-func TestService_Find_By_Id(t *testing.T) {
+func TestServiceFindById(t *testing.T) {
 	type responseServiceMock struct {
 		data models.Product
 		err  error
@@ -317,18 +317,18 @@ func TestService_Find_By_Id(t *testing.T) {
 			idUrlRequest: "77",
 		},
 		{
-			testName: "product not found-  http code 500",
+			testName: "invalid argument-  http code 400",
 			responseServiceMock: responseServiceMock{
 				data: models.Product{},
 				err:  errors.New("internal error"),
 			},
 			expectResult: expectResult{
 				data: responseWeb{
-					Code:  "500",
+					Code:  "400",
 					Data:  models.Product{},
-					Error: "internal error",
+					Error: "input param: ID must be an integer",
 				},
-				statusCode: 500,
+				statusCode: 400,
 			},
 			idUrlRequest: "ID",
 		},
@@ -361,7 +361,7 @@ func TestService_Find_By_Id(t *testing.T) {
 
 }
 
-func TestService_Update(t *testing.T) {
+func TestServiceUpdate(t *testing.T) {
 	type responseServiceMock struct {
 		data models.Product
 		err  error
@@ -438,18 +438,18 @@ func TestService_Update(t *testing.T) {
 			postData:     prd1,
 		},
 		{
-			testName: "update product invalid id - http code 500",
+			testName: "update product invalid id - http code 400",
 			responseServiceMock: responseServiceMock{
 				data: models.Product{},
 				err:  errors.New("internal error"),
 			},
 			expectResult: expectResult{
 				data: responseWeb{
-					Code:  "500",
+					Code:  "400",
 					Data:  models.Product{},
-					Error: "internal error",
+					Error: "input param: ID must be an integer",
 				},
-				statusCode: 500,
+				statusCode: 400,
 			},
 			idUrlRequest: "ID",
 			postData:     prd1,
@@ -497,7 +497,7 @@ func TestService_Update(t *testing.T) {
 	}
 }
 
-func TestService_Delete(t *testing.T) {
+func TestServiceDelete(t *testing.T) {
 	type responseServiceMock struct {
 		err error
 	}
@@ -544,16 +544,16 @@ func TestService_Delete(t *testing.T) {
 			idUrlRequest: "3",
 		},
 		{
-			testName: "delete product id invalid type - http code 500",
+			testName: "delete product id invalid type - http code 400",
 			responseServiceMock: responseServiceMock{
 				err: errors.New("internal error"),
 			},
 			expectResult: expectResult{
 				data: responseWeb{
-					Code:  "500",
-					Error: "internal error",
+					Code:  "400",
+					Error: "input param: ID must be an integer",
 				},
-				statusCode: 500,
+				statusCode: 400,
 			},
 			idUrlRequest: "ID",
 		},
