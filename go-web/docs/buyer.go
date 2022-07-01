@@ -32,7 +32,7 @@ import (
 // swagger:route DELETE /buyers/{id} Buyer deleteBuyerID
 // Remove a corresponding ID object from db.
 // responses:
-//    204: description: OK
+//    204: 
 //    404: errorResponse
 //    500: errorServerResponse
 
