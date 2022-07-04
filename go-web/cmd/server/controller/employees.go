@@ -28,6 +28,10 @@ type RequestPatch struct {
 	WareHouseId  int    `json:"warehouse_id,omitempty"`
 }
 
+type ResponseGetAll struct {
+	Response []employees.Employee `json:"employees"`
+}
+
 func (c *EmployeeController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		e, err := c.service.GetAll()
@@ -38,8 +42,8 @@ func (c *EmployeeController) GetAll() gin.HandlerFunc {
 			ctx.JSON(status, res)
 			return
 		}
-
-		ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, e, ""))
+		response := ResponseGetAll{e}
+		ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, response, ""))
 	}
 }
 
