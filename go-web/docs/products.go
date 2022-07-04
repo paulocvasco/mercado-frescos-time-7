@@ -12,6 +12,7 @@ import (
 // Get a product from db.
 // responses:
 //    200: productIDResponse
+//    400: errorResponse
 //    404: errorResponse
 //    500: errorServerResponse
 
@@ -26,6 +27,8 @@ import (
 // Add a new object on db.
 // responses:
 //    201: productIDResponse
+//    400: errorResponse
+//    409: errorResponse
 //    422: errorResponse
 //    500: errorServerResponse
 
@@ -33,6 +36,7 @@ import (
 // Remove a corresponding ID object from db.
 // responses:
 //    204: 
+//    400: errorResponse
 //    404: errorResponse
 //    500: errorServerResponse
 
@@ -40,8 +44,9 @@ import (
 // Edit an object on db.
 // responses:
 //    200: productIDResponse
+//    400: errorResponse
 //    404: errorResponse
-//    422: errorResponse
+//    409: errorResponse
 //    500: errorServerResponse
 
 /////////////////////////////////////////////////////////////////////////////////////
