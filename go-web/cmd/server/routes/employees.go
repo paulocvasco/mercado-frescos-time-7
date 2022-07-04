@@ -13,9 +13,9 @@ func InstanceEmployee(e *gin.Engine) {
 	controller := controller.NewEmployee(service)
 
 	r := e.Group("api/v1/employees")
-	r.GET("", controller.GetAll())
+	r.GET("/", controller.GetAll())
 	r.GET("/:id", controller.GetByID())
-	r.POST("", controller.Create())
+	r.POST("/", controller.Create())
 	r.DELETE("/:id", controller.Delete())
 	r.PATCH("/:id", controller.Update())
 

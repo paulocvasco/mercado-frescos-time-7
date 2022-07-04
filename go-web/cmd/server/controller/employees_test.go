@@ -21,8 +21,8 @@ func TestGetAllEmployee(t *testing.T) {
 	}{
 		{
 			"EmptyList",
-			[]employees.Employee{}, nil,
-			"[]", http.StatusOK,
+			nil, nil,
+			`{"code":"200","data":{"employees":null}}`, http.StatusOK,
 		},
 		{
 			"FullList",
@@ -30,7 +30,7 @@ func TestGetAllEmployee(t *testing.T) {
 				{ID: 1, CardNumberId: "1", FirstName: "Foo", LastName: "Bar", WareHouseId: 1},
 				{ID: 2, CardNumberId: "23", FirstName: "Fbar", LastName: "Foo", WareHouseId: 45},
 			}, nil,
-			`[{"id":1,"card_number_id":"1","first_name":"Foo","last_name":"Bar","warehouse_id":1},{"id":2,"card_number_id":"23","first_name":"Fbar","last_name":"Foo","warehouse_id":45}]`,
+			`{"code":"200","data":{"employees":[{"id":1,"card_number_id":"1","first_name":"Foo","last_name":"Bar","warehouse_id":1},{"id":2,"card_number_id":"23","first_name":"Fbar","last_name":"Foo","warehouse_id":45}]}}`,
 			http.StatusOK,
 		},
 		{
@@ -95,7 +95,7 @@ func TestGetByIDEmployee(t *testing.T) {
 		{
 			"Success", "1",
 			employees.Employee{ID: 1, FirstName: "Foo", LastName: "Bar", CardNumberId: "1", WareHouseId: 2}, nil,
-			`{"id":1,"card_number_id":"1","first_name":"Foo","last_name":"Bar","warehouse_id":2}`, http.StatusOK,
+			`{"code":"200","data":{"id":1,"card_number_id":"1","first_name":"Foo","last_name":"Bar","warehouse_id":2}}`, http.StatusOK,
 		},
 	}
 
@@ -201,7 +201,7 @@ func TestCreateEmployee(t *testing.T) {
 		{
 			"Success", `{"card_number_id":"1", "first_name":"Foo", "last_name":"Bar", "warehouse_id":1}`,
 			nil,
-			`{"id":0,"card_number_id":"1","first_name":"Foo","last_name":"Bar","warehouse_id":1}`, http.StatusCreated,
+			`{"code":"201","data":{"id":0,"card_number_id":"1","first_name":"Foo","last_name":"Bar","warehouse_id":1}}`, http.StatusCreated,
 		},
 		{
 			"MissingBody", "{}",
@@ -280,7 +280,7 @@ func TestUpdateEmployee(t *testing.T) {
 			"Success",
 			"1", `{"card_number_id":"3", "first_name":"Foo", "last_name":"Foo"}`,
 			employees.Employee{ID: 1, CardNumberId: "3", FirstName: "Foo", LastName: "Foo", WareHouseId: 12}, nil,
-			`{"id":1,"card_number_id":"3","first_name":"Foo","last_name":"Foo","warehouse_id":12}`, http.StatusOK,
+			`{"code":"200","data":{"id":1,"card_number_id":"3","first_name":"Foo","last_name":"Foo","warehouse_id":12}}`, http.StatusOK,
 		},
 	}
 
