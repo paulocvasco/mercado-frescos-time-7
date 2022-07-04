@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func TestService_Create_Ok(t *testing.T) {
+func TestServiceCreateOk(t *testing.T) {
 	repository := mockRepository.NewRepository(t)
 	service := products.NewService(repository)
 	body := models.Product{
@@ -69,7 +69,7 @@ func TestService_Create_Ok(t *testing.T) {
 	assert.Equal(t, body, response)
 }
 
-func TestService_Create_Conflict(t *testing.T) {
+func TestServiceCreateConflict(t *testing.T) {
 	repository := mockRepository.NewRepository(t)
 	service := products.NewService(repository)
 	body := models.Product{
@@ -126,7 +126,7 @@ func TestService_Create_Conflict(t *testing.T) {
 	assert.Equal(t, customerrors.ErrorConflict, err)
 }
 
-func TestService_Find_All(t *testing.T) {
+func TestServiceFindAll(t *testing.T) {
 	type expectResult struct {
 		prd models.Products
 		err error
@@ -183,7 +183,7 @@ func TestService_Find_All(t *testing.T) {
 
 }
 
-func TestService_Find_By_Id_Non_Existent(t *testing.T) {
+func TestServiceFindByIdNonExistent(t *testing.T) {
 	repository := mockRepository.NewRepository(t)
 	service := products.NewService(repository)
 	body := models.Product{
@@ -206,7 +206,7 @@ func TestService_Find_By_Id_Non_Existent(t *testing.T) {
 	assert.Equal(t, customerrors.ErrorInvalidID, err)
 }
 
-func TestService_Find_By_Id_Existent(t *testing.T) {
+func TestServiceFindByIdExistent(t *testing.T) {
 	repository := mockRepository.NewRepository(t)
 	service := products.NewService(repository)
 	body := models.Product{
@@ -229,7 +229,7 @@ func TestService_Find_By_Id_Existent(t *testing.T) {
 	assert.Equal(t, body, product)
 }
 
-func TestService_Update_Ok(t *testing.T) {
+func TestServiceUpdateOk(t *testing.T) {
 	type mockResponse struct {
 		dataGetById models.Product
 		dataGetAll  models.Products
@@ -381,7 +381,7 @@ func TestService_Update_Ok(t *testing.T) {
 	}
 }
 
-func TestService_Update_Non_Existent(t *testing.T) {
+func TestServiceUpdateNonExistent(t *testing.T) {
 
 	repository := mockRepository.NewRepository(t)
 	service := products.NewService(repository)
@@ -407,7 +407,7 @@ func TestService_Update_Non_Existent(t *testing.T) {
 	assert.Equal(t, customerrors.ErrorInvalidID, err)
 }
 
-func TestService_Create_Error_Database_getall(t *testing.T) {
+func TestServiceCreateErrorDatabaseGetAll(t *testing.T) {
 
 	repository := mockRepository.NewRepository(t)
 	service := products.NewService(repository)
@@ -437,7 +437,7 @@ func TestService_Create_Error_Database_getall(t *testing.T) {
 	assert.Equal(t, erro, err)
 }
 
-func TestService_Create_Error_Database_update(t *testing.T) {
+func TestServiceCreateErrorDatabaseUpdate(t *testing.T) {
 
 	repository := mockRepository.NewRepository(t)
 	service := products.NewService(repository)
@@ -500,7 +500,7 @@ func TestService_Create_Error_Database_update(t *testing.T) {
 	assert.Equal(t, erro, err)
 }
 
-func TestService_Update_Error_Database(t *testing.T) {
+func TestServiceUpdateErrorDatabase(t *testing.T) {
 
 	repository := mockRepository.NewRepository(t)
 	service := products.NewService(repository)
@@ -530,7 +530,7 @@ func TestService_Update_Error_Database(t *testing.T) {
 	assert.Equal(t, erro, err)
 }
 
-func TestService_Delete_Ok(t *testing.T) {
+func TestServiceDeleteOk(t *testing.T) {
 	repository := mockRepository.NewRepository(t)
 	service := products.NewService(repository)
 	body := models.Product{
@@ -554,7 +554,7 @@ func TestService_Delete_Ok(t *testing.T) {
 	assert.Equal(t, nil, response)
 }
 
-func TestService_Delete_Non_Existent(t *testing.T) {
+func TestServiceDeleteNonExistent(t *testing.T) {
 	repository := mockRepository.NewRepository(t)
 	service := products.NewService(repository)
 	body := models.Product{
