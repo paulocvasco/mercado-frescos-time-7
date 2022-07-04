@@ -13,6 +13,7 @@ import (
 // Get a employee from db.
 // responses:
 //    200: employeeIDResponse
+//    400: errorResponse
 //    404: errorResponse
 //    500: errorServerResponse
 
@@ -26,14 +27,17 @@ import (
 // swagger:route POST /employees/ Employee createEmployee
 // Add a new object on db.
 // responses:
-//    201: warehouseIDResponse
+//    201: employeeIDResponse
+//    400: errorResponse
+//    409: errorResponse
 //    422: errorResponse
 //    500: errorServerResponse
 
 // swagger:route DELETE /employees/{id} Employee deleteEmployeeID
 // Remove a corresponding ID object from db.
 // responses:
-//    204: description: OK
+//    204:
+//    400: errorResponse
 //    404: errorResponse
 //    500: errorServerResponse
 
@@ -41,8 +45,9 @@ import (
 // Edit an object on db.
 // responses:
 //    200: employeeIDResponse
+//    400: errorResponse
 //    404: errorResponse
-//    422: errorResponse
+//    409: errorResponse
 //    500: errorServerResponse
 
 /////////////////////////////////////////////////////////////////////////////////////

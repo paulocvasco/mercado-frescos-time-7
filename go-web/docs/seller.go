@@ -10,6 +10,7 @@ import "mercado-frescos-time-7/go-web/internal/models"
 // Get a product from db.
 // responses:
 //    200: sellerResponse
+//    400: errorResponse
 //    404: errorSellerResponse
 //    500: errorServerSellerResponse
 
@@ -24,13 +25,16 @@ import "mercado-frescos-time-7/go-web/internal/models"
 // Add a new object on db.
 // responses:
 //    201: sellerResponse
+//    400: errorResponse
+//    409: errorResponse
 //    422: errorSellerResponse
 //    500: errorServerSellerResponse
 
 // swagger:route DELETE /sellers/{id} Seller DeleteSeller
 // Remove a corresponding ID object from db.
 // responses:
-//    204: 
+//    204:
+//    400: errorResponse
 //    404: errorSellerResponse
 //    500: errorServerSellerResponse
 
@@ -38,8 +42,9 @@ import "mercado-frescos-time-7/go-web/internal/models"
 // Edit an object on db.
 // responses:
 //    200: sellerResponse
+//    400: errorResponse
 //    404: errorSellerResponse
-//    422: errorSellerResponse
+//    409: errorResponse
 //    500: errorServerSellerResponse
 
 /////////////////////////////////////////////////////////////////////////////////////
