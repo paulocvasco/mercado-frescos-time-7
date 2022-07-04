@@ -144,6 +144,10 @@ func TestCreate(t *testing.T) {
 		data models.Warehouse
 		err  error
 	}
+	type mockGetAllResponse struct {
+		data models.Warehouses
+		err  error
+	}
 	type expectedResult struct {
 		data models.Warehouse
 		err  error
@@ -151,9 +155,13 @@ func TestCreate(t *testing.T) {
 	type testData struct {
 		testName string
 		mockCreateResponse
+		mockGetAllResponse
 		expectedResult
-		argModelCreate models.Warehouse
+		argModelCreate models.PostWarehouse
 	}
+
+	cap := 10
+	temp := 10
 
 	testsCases := []testData{
 		{
@@ -162,11 +170,15 @@ func TestCreate(t *testing.T) {
 				data: models.Warehouse{ID: 1, Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
 				err:  nil,
 			},
+			mockGetAllResponse: mockGetAllResponse{
+				data: models.Warehouses{},
+				err:  nil,
+			},
 			expectedResult: expectedResult{
 				data: models.Warehouse{ID: 1, Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
 				err:  nil,
 			},
-			argModelCreate: models.Warehouse{Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+			argModelCreate: models.PostWarehouse{Address: "foo", Telephone: "foo", MinimunCapacity: &cap, MinimunTemperature: &temp},
 		},
 		{
 			testName: "should return invalid id error",
@@ -174,11 +186,15 @@ func TestCreate(t *testing.T) {
 				data: models.Warehouse{},
 				err:  customerrors.ErrorInvalidID,
 			},
+			mockGetAllResponse: mockGetAllResponse{
+				data: models.Warehouses{},
+				err:  nil,
+			},
 			expectedResult: expectedResult{
 				data: models.Warehouse{},
 				err:  customerrors.ErrorInvalidID,
 			},
-			argModelCreate: models.Warehouse{Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+			argModelCreate: models.PostWarehouse{Address: "foo", Telephone: "foo", MinimunCapacity: &cap, MinimunTemperature: &temp},
 		},
 		{
 			testName: "should return invalid db error",
@@ -186,59 +202,47 @@ func TestCreate(t *testing.T) {
 				data: models.Warehouse{},
 				err:  customerrors.ErrorInvalidDB,
 			},
+			mockGetAllResponse: mockGetAllResponse{
+				data: models.Warehouses{},
+				err:  nil,
+			},
 			expectedResult: expectedResult{
 				data: models.Warehouse{},
 				err:  customerrors.ErrorInvalidDB,
 			},
-			argModelCreate: models.Warehouse{Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+			argModelCreate: models.PostWarehouse{Address: "foo", Telephone: "foo", MinimunCapacity: &cap, MinimunTemperature: &temp},
 		},
 		{
-			testName: "should return missing address error",
+			testName: "fail to get all models",
 			mockCreateResponse: mockCreateResponse{
 				data: models.Warehouse{},
 				err:  nil,
 			},
+			mockGetAllResponse: mockGetAllResponse{
+				data: models.Warehouses{},
+				err:  customerrors.ErrorInvalidDB,
+			},
 			expectedResult: expectedResult{
 				data: models.Warehouse{},
-				err:  customerrors.ErrorMissingAddres,
+				err:  customerrors.ErrorInvalidDB,
 			},
-			argModelCreate: models.Warehouse{Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
+			argModelCreate: models.PostWarehouse{Address: "foo", Telephone: "foo", MinimunCapacity: &cap, MinimunTemperature: &temp},
 		},
 		{
-			testName: "should return missing telephone error ",
+			testName: "conflict on warehouse code",
 			mockCreateResponse: mockCreateResponse{
 				data: models.Warehouse{},
 				err:  nil,
 			},
-			expectedResult: expectedResult{
-				data: models.Warehouse{},
-				err:  customerrors.ErrorMissingTelephone,
-			},
-			argModelCreate: models.Warehouse{Address: "foo", MinimunCapacity: 10, MinimunTemperature: 10},
-		},
-		{
-			testName: "should return missing capacity error ",
-			mockCreateResponse: mockCreateResponse{
-				data: models.Warehouse{},
+			mockGetAllResponse: mockGetAllResponse{
+				data: models.Warehouses{Warehouses: []models.Warehouse{{WarehouseCode: "foo"}}},
 				err:  nil,
 			},
 			expectedResult: expectedResult{
 				data: models.Warehouse{},
-				err:  customerrors.ErrorMissingCapacity,
+				err:  customerrors.ErrorWarehouseCodeConflict,
 			},
-			argModelCreate: models.Warehouse{Address: "foo", Telephone: "foo", MinimunCapacity: -10, MinimunTemperature: 10},
-		},
-		{
-			testName: "should return missing temperature error ",
-			mockCreateResponse: mockCreateResponse{
-				data: models.Warehouse{},
-				err:  nil,
-			},
-			expectedResult: expectedResult{
-				data: models.Warehouse{},
-				err:  customerrors.ErrorMissingTemperature,
-			},
-			argModelCreate: models.Warehouse{Address: "foo", Telephone: "foo", MinimunCapacity: 10, MinimunTemperature: 0},
+			argModelCreate: models.PostWarehouse{Address: "foo", Telephone: "foo", MinimunCapacity: &cap, MinimunTemperature: &temp, WarehouseCode: "foo"},
 		},
 	}
 	for _, test := range testsCases {
@@ -246,6 +250,7 @@ func TestCreate(t *testing.T) {
 		serv := warehouse.NewService(mockRepo)
 
 		mockRepo.On("Create", mock.Anything).Return(test.mockCreateResponse.data, test.mockCreateResponse.err).Maybe()
+		mockRepo.On("GetAll", mock.Anything).Return(test.mockGetAllResponse.data, test.mockGetAllResponse.err).Maybe()
 
 		response, err := serv.Create(test.argModelCreate)
 
@@ -265,7 +270,7 @@ func TestDelete(t *testing.T) {
 		testName string
 		mockDeleteResponse
 		expectedResult
-		serviceArg string
+		serviceArg int
 	}
 
 	testsCases := []testData{
@@ -277,7 +282,7 @@ func TestDelete(t *testing.T) {
 			expectedResult: expectedResult{
 				err: nil,
 			},
-			serviceArg: "1",
+			serviceArg: 1,
 		},
 		{
 			testName: "should return invalid id error",
@@ -287,7 +292,7 @@ func TestDelete(t *testing.T) {
 			expectedResult: expectedResult{
 				err: customerrors.ErrorInvalidID,
 			},
-			serviceArg: "1",
+			serviceArg: 1,
 		},
 		{
 			testName: "should return invalid db error",
@@ -297,17 +302,7 @@ func TestDelete(t *testing.T) {
 			expectedResult: expectedResult{
 				err: customerrors.ErrorInvalidDB,
 			},
-			serviceArg: "1",
-		},
-		{
-			testName: "should return syntax error",
-			mockDeleteResponse: mockDeleteResponse{
-				err: nil,
-			},
-			expectedResult: expectedResult{
-				err: strconv.ErrSyntax,
-			},
-			serviceArg: "A",
+			serviceArg: 1,
 		},
 	}
 	for _, test := range testsCases {
@@ -329,8 +324,10 @@ func TestUpdate(t *testing.T) {
 	type mockResponse struct {
 		dataGetById models.Warehouse
 		dataUpdate  models.Warehouse
+		dataGetAll  models.Warehouses
 		errGetById  error
 		errUpdate   error
+		errGetAll   error
 	}
 	type expectedResult struct {
 		data models.Warehouse
@@ -391,11 +388,80 @@ func TestUpdate(t *testing.T) {
 
 		mockRepo.On("GetByID", mock.Anything).Return(test.mockResponse.dataGetById, test.mockResponse.errGetById).Maybe()
 		mockRepo.On("Update", mock.Anything, mock.Anything).Return(test.mockResponse.errUpdate).Maybe()
+		mockRepo.On("GetAll").Return(test.mockResponse.dataGetAll, test.mockResponse.errGetAll).Maybe()
 
 		whBytes, _ := json.Marshal(test.serviceArg)
 		response, err := serv.Update(test.serviceArg.ID, whBytes)
 
-		assert.Equal(t, test.expectedResult.data, response, test.testName)
-		assert.Equal(t, test.expectedResult.err, err, test.testName)
+		assert.Equal(t, test.data, response, test.testName)
+		assert.Equal(t, test.err, err, test.testName)
+	}
+}
+
+func TestUpdateCodeVerification(t *testing.T) {
+	type mockResponse struct {
+		dataGetById models.Warehouse
+		dataUpdate  models.Warehouse
+		dataGetAll  models.Warehouses
+		errGetById  error
+		errUpdate   error
+		errGetAll   error
+	}
+	type expectedResult struct {
+		data models.Warehouse
+		err  error
+	}
+	type testData struct {
+		testName string
+		mockResponse
+		expectedResult
+		id         int
+		serviceArg string
+	}
+
+	testsCases := []testData{
+		{
+			testName:     "malformed json",
+			mockResponse: mockResponse{},
+			expectedResult: expectedResult{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorMarshallJson,
+			},
+			id:         1,
+			serviceArg: `"address": foo`,
+		},
+		{
+			testName:     "fail to get all",
+			mockResponse: mockResponse{errGetAll: customerrors.ErrorInvalidDB},
+			expectedResult: expectedResult{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorInvalidDB,
+			},
+			id:         1,
+			serviceArg: `{"address": "foo"}`,
+		},
+		{
+			testName:     "warehouse code conflict",
+			mockResponse: mockResponse{dataGetAll: models.Warehouses{Warehouses: []models.Warehouse{{WarehouseCode: "foo"}}}},
+			expectedResult: expectedResult{
+				data: models.Warehouse{},
+				err:  customerrors.ErrorWarehouseCodeConflict,
+			},
+			id:         1,
+			serviceArg: `{"warehouse_code": "foo"}`,
+		},
+	}
+	for _, test := range testsCases {
+		mockRepo := mockRepository.NewRepository(t)
+		serv := warehouse.NewService(mockRepo)
+
+		mockRepo.On("GetByID", mock.Anything).Return(test.mockResponse.dataGetById, test.mockResponse.errGetById).Maybe()
+		mockRepo.On("Update", mock.Anything, mock.Anything).Return(test.mockResponse.errUpdate).Maybe()
+		mockRepo.On("GetAll").Return(test.mockResponse.dataGetAll, test.mockResponse.errGetAll).Maybe()
+
+		response, err := serv.Update(test.id, []byte(test.serviceArg))
+
+		assert.Equal(t, test.data, response, test.testName)
+		assert.Equal(t, test.err, err, test.testName)
 	}
 }

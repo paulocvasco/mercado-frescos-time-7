@@ -7,12 +7,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"mercado-frescos-time-7/go-web/cmd/server/controller"
-	customErrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-
 	"mercado-frescos-time-7/go-web/internal/models"
-	"mercado-frescos-time-7/go-web/internal/sections"
-
 	"mercado-frescos-time-7/go-web/internal/sections/mock/mockService"
+	customErrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -23,11 +20,16 @@ import (
 )
 
 func TestControllerCreateOK(t *testing.T) {
+	type responseWeb struct {
+		Code  string         `json:"code"`
+		Data  models.Section `json:"data,omitempty"`
+		Error string         `json:"error,omitempty"`
+	}
 	serv := mockService.NewService(t)
 	contr := controller.NewController(serv)
 	r := gin.Default()
 	r.POST("/section", contr.Store)
-	mysec := sections.Section{
+	mysec := models.Section{
 		ID:                 2,
 		SectionNumber:      1,
 		CurrentTemperature: 1,
@@ -48,9 +50,11 @@ func TestControllerCreateOK(t *testing.T) {
 	serv.On("Store", mock.Anything).Return(mysec, nil)
 	r.ServeHTTP(w, req)
 	responseData, _ := ioutil.ReadAll(w.Body)
-	var result sections.Section
+
+	var result responseWeb
 	json.Unmarshal(responseData, &result)
-	assert.Equal(t, mysec, result)
+
+	assert.Equal(t, result.Data, mysec)
 	assert.Equal(t, 201, w.Code)
 }
 
@@ -59,7 +63,7 @@ func TestControllerCreateFail(t *testing.T) {
 	contr := controller.NewController(serv)
 	r := gin.Default()
 	r.POST("/section", contr.Store)
-	mysec := sections.Section{
+	mysec := models.Section{
 		ID:                 2,
 		CurrentTemperature: 1,
 		MinimumTemperature: 1,
@@ -85,7 +89,7 @@ func TestControllerCreateConflict(t *testing.T) {
 	contr := controller.NewController(serv)
 	r := gin.Default()
 	r.POST("/section", contr.Store)
-	mysec := sections.Section{
+	mysec := models.Section{
 		ID:                 2,
 		SectionNumber:      1,
 		CurrentTemperature: 1,
@@ -103,28 +107,37 @@ func TestControllerCreateConflict(t *testing.T) {
 		return
 	}
 	w := httptest.NewRecorder()
-	serv.On("Store", mock.Anything).Return(sections.Section{}, customErrors.ErrorConflict)
+	serv.On("Store", mock.Anything).Return(models.Section{}, customErrors.ErrorConflict)
 	r.ServeHTTP(w, req)
 	assert.Equal(t, 409, w.Code)
 }
 
 func TestControllerFindAll(t *testing.T) {
+	type responseWeb struct {
+		Code  string          `json:"code"`
+		Data  models.Sections `json:"data,omitempty"`
+		Error string          `json:"error,omitempty"`
+	}
 	serv := mockService.NewService(t)
 	contr := controller.NewController(serv)
 	r := gin.Default()
 	r.GET("/section", contr.GetAll)
-	mysec := []models.Section{{
-		ID:                 2,
-		SectionNumber:      1,
-		CurrentTemperature: 1,
-		MinimumTemperature: 1,
-		CurrentCapacity:    1,
-		MinimumCapacity:    1,
-		MaximumCapacity:    1,
-		WarehouseId:        1,
-		ProductTypeId:      1,
-	},
+	mysec := models.Sections{
+		SectionList: []models.Section{
+			{
+				ID:                 1,
+				SectionNumber:      1,
+				CurrentTemperature: 1,
+				MinimumTemperature: 1,
+				CurrentCapacity:    -1,
+				MinimumCapacity:    1,
+				MaximumCapacity:    1,
+				WarehouseId:        1,
+				ProductTypeId:      1,
+			},
+		},
 	}
+
 	req, err := http.NewRequest("GET", "/section", nil)
 	if err != nil {
 		fmt.Println(err)
@@ -134,9 +147,10 @@ func TestControllerFindAll(t *testing.T) {
 	serv.On("GetAll").Return(mysec, nil)
 	r.ServeHTTP(w, req)
 	responseData, _ := ioutil.ReadAll(w.Body)
-	var result []models.Section
+
+	var result responseWeb
 	json.Unmarshal(responseData, &result)
-	assert.Equal(t, mysec, result)
+	assert.Equal(t, mysec, result.Data)
 	assert.Equal(t, 200, w.Code)
 }
 
@@ -151,7 +165,7 @@ func TestControllerFindAllERROR(t *testing.T) {
 		return
 	}
 	w := httptest.NewRecorder()
-	serv.On("GetAll").Return(nil, errors.New("No results found"))
+	serv.On("GetAll").Return(models.Sections{}, errors.New("No results found"))
 	r.ServeHTTP(w, req)
 	assert.Equal(t, 500, w.Code)
 }
@@ -175,6 +189,11 @@ func TestControllerFindByIDNE(t *testing.T) {
 }
 
 func TestControllerFindByID(t *testing.T) {
+	type responseWeb struct {
+		Code  string         `json:"code"`
+		Data  models.Section `json:"data,omitempty"`
+		Error string         `json:"error,omitempty"`
+	}
 	serv := mockService.NewService(t)
 	contr := controller.NewController(serv)
 	r := gin.Default()
@@ -198,10 +217,10 @@ func TestControllerFindByID(t *testing.T) {
 	w := httptest.NewRecorder()
 	serv.On("GetById", mock.Anything).Return(mysec, nil)
 	r.ServeHTTP(w, req)
-	var result models.Section
+	var result responseWeb
 	responseData, _ := ioutil.ReadAll(w.Body)
 	json.Unmarshal(responseData, &result)
-	assert.Equal(t, mysec, result)
+	assert.Equal(t, mysec, result.Data)
 	assert.Equal(t, 200, w.Code)
 }
 
@@ -228,7 +247,7 @@ func TestControllerUpdateNE(t *testing.T) {
 		return
 	}
 	w := httptest.NewRecorder()
-	serv.On("Update", mock.Anything, mock.Anything).Return(sections.Section{}, customErrors.ErrorInvalidID)
+	serv.On("Update", mock.Anything, mock.Anything).Return(models.Section{}, customErrors.ErrorInvalidID)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 404, w.Code)
@@ -239,7 +258,7 @@ func TestControllerUpdateSucess(t *testing.T) {
 	contr := controller.NewController(serv)
 	r := gin.Default()
 	r.PATCH("/section/:id", contr.Update)
-	mysec := sections.Section{
+	mysec := models.Section{
 		ID:                 2,
 		SectionNumber:      1,
 		CurrentTemperature: 1,
@@ -260,7 +279,7 @@ func TestControllerUpdateSucess(t *testing.T) {
 	serv.On("Update", mock.Anything, mock.Anything).Return(mysec, nil)
 	r.ServeHTTP(w, req)
 
-	assert.Equal(t,http.StatusOK, w.Code)
+	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestControllerUpdateFailBindJSON(t *testing.T) {
@@ -275,8 +294,8 @@ func TestControllerUpdateFailBindJSON(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
-	
-	assert.Equal(t,http.StatusUnprocessableEntity, w.Code)
+
+	assert.Equal(t, http.StatusUnprocessableEntity, w.Code)
 }
 
 func TestControlleDeleteNE(t *testing.T) {

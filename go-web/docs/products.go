@@ -25,14 +25,14 @@ import (
 // swagger:route POST /products/ Product createProduct
 // Add a new object on db.
 // responses:
-//    201: warehouseIDResponse
+//    201: productIDResponse
 //    422: errorResponse
 //    500: errorServerResponse
 
 // swagger:route DELETE /products/{id} Product deleteProductID
 // Remove a corresponding ID object from db.
 // responses:
-//    204: description: OK
+//    204: 
 //    404: errorResponse
 //    500: errorServerResponse
 

@@ -4,7 +4,6 @@ package mockRepository
 
 import (
 	models "mercado-frescos-time-7/go-web/internal/models"
-	sections "mercado-frescos-time-7/go-web/internal/sections"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -29,16 +28,14 @@ func (_m *Repository) Delete(_a0 int) error {
 }
 
 // GetAll provides a mock function with given fields:
-func (_m *Repository) GetAll() ([]models.Section, error) {
+func (_m *Repository) GetAll() (models.Sections, error) {
 	ret := _m.Called()
 
-	var r0 []models.Section
-	if rf, ok := ret.Get(0).(func() []models.Section); ok {
+	var r0 models.Sections
+	if rf, ok := ret.Get(0).(func() models.Sections); ok {
 		r0 = rf()
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]models.Section)
-		}
+		r0 = ret.Get(0).(models.Sections)
 	}
 
 	var r1 error
@@ -73,18 +70,18 @@ func (_m *Repository) GetById(_a0 int) (models.Section, error) {
 }
 
 // Store provides a mock function with given fields: _a0
-func (_m *Repository) Store(_a0 sections.Section) (sections.Section, error) {
+func (_m *Repository) Store(_a0 models.Section) (models.Section, error) {
 	ret := _m.Called(_a0)
 
-	var r0 sections.Section
-	if rf, ok := ret.Get(0).(func(sections.Section) sections.Section); ok {
+	var r0 models.Section
+	if rf, ok := ret.Get(0).(func(models.Section) models.Section); ok {
 		r0 = rf(_a0)
 	} else {
-		r0 = ret.Get(0).(sections.Section)
+		r0 = ret.Get(0).(models.Section)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(sections.Section) error); ok {
+	if rf, ok := ret.Get(1).(func(models.Section) error); ok {
 		r1 = rf(_a0)
 	} else {
 		r1 = ret.Error(1)
@@ -94,11 +91,11 @@ func (_m *Repository) Store(_a0 sections.Section) (sections.Section, error) {
 }
 
 // Update provides a mock function with given fields: _a0, _a1
-func (_m *Repository) Update(_a0 int, _a1 sections.Section) error {
+func (_m *Repository) Update(_a0 int, _a1 models.Section) error {
 	ret := _m.Called(_a0, _a1)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(int, sections.Section) error); ok {
+	if rf, ok := ret.Get(0).(func(int, models.Section) error); ok {
 		r0 = rf(_a0, _a1)
 	} else {
 		r0 = ret.Error(0)

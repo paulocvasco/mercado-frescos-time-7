@@ -30,7 +30,7 @@ import "mercado-frescos-time-7/go-web/internal/models"
 // swagger:route DELETE /sellers/{id} Seller DeleteSeller
 // Remove a corresponding ID object from db.
 // responses:
-//    204: description: deleted
+//    204: 
 //    404: errorSellerResponse
 //    500: errorServerSellerResponse
 

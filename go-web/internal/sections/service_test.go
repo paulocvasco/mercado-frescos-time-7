@@ -16,7 +16,7 @@ import (
 func TestCreateOK(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
-	mysec := sections.Section{
+	mysec := models.Section{
 		ID:                 1,
 		SectionNumber:      1,
 		CurrentTemperature: 1,
@@ -39,7 +39,7 @@ func TestCreateOK(t *testing.T) {
 func TestErrorSectionNumber(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
-	mysec := sections.Section{
+	mysec := models.Section{
 		ID:                 1,
 		SectionNumber:      -1,
 		CurrentTemperature: 1,
@@ -61,7 +61,7 @@ func TestErrorSectionNumber(t *testing.T) {
 func TestErrorCurrentCapacity(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
-	mysec := sections.Section{
+	mysec := models.Section{
 		ID:                 1,
 		SectionNumber:      1,
 		CurrentTemperature: 1,
@@ -83,7 +83,7 @@ func TestErrorCurrentCapacity(t *testing.T) {
 func TestErrorMinimumCapacity(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
-	mysec := sections.Section{
+	mysec := models.Section{
 		ID:                 1,
 		SectionNumber:      1,
 		CurrentTemperature: 1,
@@ -105,7 +105,7 @@ func TestErrorMinimumCapacity(t *testing.T) {
 func TestErrorMaximumCapacity(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
-	mysec := sections.Section{
+	mysec := models.Section{
 		ID:                 1,
 		SectionNumber:      1,
 		CurrentTemperature: 1,
@@ -127,7 +127,7 @@ func TestErrorMaximumCapacity(t *testing.T) {
 func TestErrorWarehouseID(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
-	mysec := sections.Section{
+	mysec := models.Section{
 		ID:                 1,
 		SectionNumber:      1,
 		CurrentTemperature: 1,
@@ -149,7 +149,7 @@ func TestErrorWarehouseID(t *testing.T) {
 func TestErrorProductTypeID(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
-	mysec := sections.Section{
+	mysec := models.Section{
 		ID:                 1,
 		SectionNumber:      1,
 		CurrentTemperature: 1,
@@ -208,7 +208,7 @@ func TestCreateFailStore(t *testing.T) {
 	mbytes, _ := json.Marshal(mysec1)
 
 	repo.On("VerifySectionNumber", mock.Anything).Return(nil)
-	repo.On("Store", mock.Anything).Return(sections.Section{}, customErrors.ErrorStoreFailed)
+	repo.On("Store", mock.Anything).Return(models.Section{}, customErrors.ErrorStoreFailed)
 	_, err := serv.Store(mbytes)
 	assert.Equal(t, customErrors.ErrorStoreFailed, err)
 }
@@ -224,28 +224,30 @@ func TestCreateFailUnMarshal(t *testing.T) {
 func TestFindAll(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
-	stub := []models.Section{
-		{
-			ID:                 1,
-			SectionNumber:      1,
-			CurrentTemperature: 1,
-			MinimumTemperature: 1,
-			CurrentCapacity:    -1,
-			MinimumCapacity:    1,
-			MaximumCapacity:    1,
-			WarehouseId:        1,
-			ProductTypeId:      1,
-		},
-		{
-			ID:                 2,
-			SectionNumber:      1,
-			CurrentTemperature: 1,
-			MinimumTemperature: 1,
-			CurrentCapacity:    -1,
-			MinimumCapacity:    1,
-			MaximumCapacity:    1,
-			WarehouseId:        1,
-			ProductTypeId:      1,
+	stub := models.Sections{
+		SectionList: []models.Section{
+			{
+				ID:                 1,
+				SectionNumber:      1,
+				CurrentTemperature: 1,
+				MinimumTemperature: 1,
+				CurrentCapacity:    -1,
+				MinimumCapacity:    1,
+				MaximumCapacity:    1,
+				WarehouseId:        1,
+				ProductTypeId:      1,
+			},
+			{
+				ID:                 2,
+				SectionNumber:      1,
+				CurrentTemperature: 1,
+				MinimumTemperature: 1,
+				CurrentCapacity:    -1,
+				MinimumCapacity:    1,
+				MaximumCapacity:    1,
+				WarehouseId:        1,
+				ProductTypeId:      1,
+			},
 		},
 	}
 
@@ -258,9 +260,9 @@ func TestFindAllERROR(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
 
-	repo.On("GetAll", mock.Anything).Return(nil, errors.New("falha ao retornar dados"))
+	repo.On("GetAll", mock.Anything).Return(models.Sections{}, errors.New("falha ao retornar dados"))
 	result, errResult := serv.GetAll()
-	assert.Equal(t, nil, result)
+	assert.Equal(t, models.Sections{}, result)
 	assert.NotEqual(t, nil, errResult)
 }
 
@@ -320,7 +322,7 @@ func TestUpdate(t *testing.T) {
 		WarehouseId:        1,
 		ProductTypeId:      1,
 	}
-	umysec := sections.Section{
+	umysec := models.Section{
 		ID:                 1,
 		SectionNumber:      2,
 		CurrentTemperature: 1,
@@ -345,7 +347,7 @@ func TestUpdate(t *testing.T) {
 func TestUpdateErrorSectionNumber(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
-	umysec := sections.Section{
+	umysec := models.Section{
 		ID:                 1,
 		SectionNumber:      -2,
 		CurrentTemperature: 1,
@@ -362,14 +364,14 @@ func TestUpdateErrorSectionNumber(t *testing.T) {
 	repo.On("GetById", mock.Anything).Return(models.Section{}, nil)
 	repo.On("ValidateID", mock.Anything).Return(true)
 	mbytes, _ := json.Marshal(umysec)
-	_, err:= serv.Update("2", mbytes)
+	_, err := serv.Update("2", mbytes)
 	assert.Equal(t, customErrors.ErrorSectionNumber, err)
 }
 
 func TestUpdateErrorCurrentCapacity(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
-	umysec := sections.Section{
+	umysec := models.Section{
 		ID:                 1,
 		SectionNumber:      2,
 		CurrentTemperature: 1,
@@ -386,14 +388,14 @@ func TestUpdateErrorCurrentCapacity(t *testing.T) {
 	repo.On("GetById", mock.Anything).Return(models.Section{}, nil)
 	repo.On("ValidateID", mock.Anything).Return(true)
 	mbytes, _ := json.Marshal(umysec)
-	_, err:= serv.Update("2", mbytes)
+	_, err := serv.Update("2", mbytes)
 	assert.Equal(t, customErrors.ErrorCurrentCapacity, err)
 }
 
 func TestUpdateErrorMinimumCapacity(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
-	umysec := sections.Section{
+	umysec := models.Section{
 		ID:                 1,
 		SectionNumber:      2,
 		CurrentTemperature: 1,
@@ -410,14 +412,14 @@ func TestUpdateErrorMinimumCapacity(t *testing.T) {
 	repo.On("GetById", mock.Anything).Return(models.Section{}, nil)
 	repo.On("ValidateID", mock.Anything).Return(true)
 	mbytes, _ := json.Marshal(umysec)
-	_, err:= serv.Update("2", mbytes)
+	_, err := serv.Update("2", mbytes)
 	assert.Equal(t, customErrors.ErrorMinimumCapacity, err)
 }
 
 func TestUpdateErrorMaximumCapacity(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
-	umysec := sections.Section{
+	umysec := models.Section{
 		ID:                 1,
 		SectionNumber:      2,
 		CurrentTemperature: 1,
@@ -434,14 +436,14 @@ func TestUpdateErrorMaximumCapacity(t *testing.T) {
 	repo.On("GetById", mock.Anything).Return(models.Section{}, nil)
 	repo.On("ValidateID", mock.Anything).Return(true)
 	mbytes, _ := json.Marshal(umysec)
-	_, err:= serv.Update("2", mbytes)
+	_, err := serv.Update("2", mbytes)
 	assert.Equal(t, customErrors.ErrorMaximumCapacity, err)
 }
 
 func TestUpdateErrorWarehouseID(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
-	umysec := sections.Section{
+	umysec := models.Section{
 		ID:                 1,
 		SectionNumber:      2,
 		CurrentTemperature: 1,
@@ -458,14 +460,14 @@ func TestUpdateErrorWarehouseID(t *testing.T) {
 	repo.On("GetById", mock.Anything).Return(models.Section{}, nil)
 	repo.On("ValidateID", mock.Anything).Return(true)
 	mbytes, _ := json.Marshal(umysec)
-	_, err:= serv.Update("2", mbytes)
+	_, err := serv.Update("2", mbytes)
 	assert.Equal(t, customErrors.ErrorWarehouseID, err)
 }
 
 func TestUpdateErrorProductTypeID(t *testing.T) {
 	repo := mockRepository.NewRepository(t)
 	serv := sections.NewService(repo)
-	umysec := sections.Section{
+	umysec := models.Section{
 		ID:                 1,
 		SectionNumber:      2,
 		CurrentTemperature: 1,
@@ -482,7 +484,7 @@ func TestUpdateErrorProductTypeID(t *testing.T) {
 	repo.On("GetById", mock.Anything).Return(models.Section{}, nil)
 	repo.On("ValidateID", mock.Anything).Return(true)
 	mbytes, _ := json.Marshal(umysec)
-	_, err:= serv.Update("2", mbytes)
+	_, err := serv.Update("2", mbytes)
 	assert.Equal(t, customErrors.ErrorProductTypeID, err)
 }
 

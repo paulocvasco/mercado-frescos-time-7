@@ -14,18 +14,18 @@ type Service struct {
 }
 
 // Create provides a mock function with given fields: _a0
-func (_m *Service) Create(_a0 models.Warehouse) (models.Warehouse, error) {
+func (_m *Service) Create(_a0 models.PostWarehouse) (models.Warehouse, error) {
 	ret := _m.Called(_a0)
 
 	var r0 models.Warehouse
-	if rf, ok := ret.Get(0).(func(models.Warehouse) models.Warehouse); ok {
+	if rf, ok := ret.Get(0).(func(models.PostWarehouse) models.Warehouse); ok {
 		r0 = rf(_a0)
 	} else {
 		r0 = ret.Get(0).(models.Warehouse)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(models.Warehouse) error); ok {
+	if rf, ok := ret.Get(1).(func(models.PostWarehouse) error); ok {
 		r1 = rf(_a0)
 	} else {
 		r1 = ret.Error(1)
@@ -35,11 +35,11 @@ func (_m *Service) Create(_a0 models.Warehouse) (models.Warehouse, error) {
 }
 
 // Delete provides a mock function with given fields: _a0
-func (_m *Service) Delete(_a0 string) error {
+func (_m *Service) Delete(_a0 int) error {
 	ret := _m.Called(_a0)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string) error); ok {
+	if rf, ok := ret.Get(0).(func(int) error); ok {
 		r0 = rf(_a0)
 	} else {
 		r0 = ret.Error(0)

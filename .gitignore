@@ -3,4 +3,7 @@
 *.orig
 *.json
 .DS_Store
+coverage.out
+cover.out
+swagger.yaml
 vendor
