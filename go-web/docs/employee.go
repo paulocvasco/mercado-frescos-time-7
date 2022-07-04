@@ -1,6 +1,7 @@
 package docs
 
 import (
+	"mercado-frescos-time-7/go-web/cmd/server/controller"
 	"mercado-frescos-time-7/go-web/internal/models"
 )
 
@@ -63,8 +64,8 @@ type employeeIDResponse struct {
 type employeeAllResponse struct {
 	//in: body
 	data struct {
-		Code string          `json:"code"`
-		Data models.Employee `json:"data"`
+		Code string                    `json:"code"`
+		Data controller.ResponseGetAll `json:"data"`
 	}
 }
 
