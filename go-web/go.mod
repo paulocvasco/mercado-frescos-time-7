@@ -12,6 +12,8 @@ require (
 	golang.org/x/exp v0.0.0-20220602145555-4a0574d9293f
 )
 
+require github.com/go-sql-driver/mysql v1.6.0
+
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
