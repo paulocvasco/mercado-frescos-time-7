@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	buyer "mercado-frescos-time-7/go-web/internal/buyer"
+	"mercado-frescos-time-7/go-web/internal/buyer/repository"
 
 	mock "github.com/stretchr/testify/mock"
 
@@ -93,18 +93,18 @@ func (_m *Service) GetId(id int) (models.Buyer, error) {
 }
 
 // Update provides a mock function with given fields: id, body
-func (_m *Service) Update(id int, body buyer.RequestPatch) (models.Buyer, error) {
+func (_m *Service) Update(id int, body repository.RequestPatch) (models.Buyer, error) {
 	ret := _m.Called(id, body)
 
 	var r0 models.Buyer
-	if rf, ok := ret.Get(0).(func(int, buyer.RequestPatch) models.Buyer); ok {
+	if rf, ok := ret.Get(0).(func(int, repository.RequestPatch) models.Buyer); ok {
 		r0 = rf(id, body)
 	} else {
 		r0 = ret.Get(0).(models.Buyer)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int, buyer.RequestPatch) error); ok {
+	if rf, ok := ret.Get(1).(func(int, repository.RequestPatch) error); ok {
 		r1 = rf(id, body)
 	} else {
 		r1 = ret.Error(1)

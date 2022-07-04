@@ -3,6 +3,7 @@ package routes
 import (
 	"mercado-frescos-time-7/go-web/cmd/server/controller"
 	"mercado-frescos-time-7/go-web/internal/buyer"
+	"mercado-frescos-time-7/go-web/internal/buyer/repository"
 	"mercado-frescos-time-7/go-web/pkg/db"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +11,7 @@ import (
 
 func InstanceBuyer(r *gin.Engine) {
 	database := db.NewDatabase()
-	repo := buyer.NewRepository(database)
+	repo := repository.NewRepository(database)
 	service := buyer.NewService(repo)
 	c := controller.BuyerNewController(service)
 

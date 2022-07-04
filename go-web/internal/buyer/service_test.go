@@ -2,14 +2,16 @@ package buyer_test
 
 import (
 	"fmt"
-	"github.com/go-playground/assert/v2"
-	assert2 "github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"mercado-frescos-time-7/go-web/internal/buyer"
 	"mercado-frescos-time-7/go-web/internal/buyer/mocks"
+	r "mercado-frescos-time-7/go-web/internal/buyer/repository"
 	model "mercado-frescos-time-7/go-web/internal/models"
 	customErrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"testing"
+
+	"github.com/go-playground/assert/v2"
+	assert2 "github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 var expectBuyer = model.Buyer{
@@ -171,7 +173,7 @@ func TestService_Update(t *testing.T) {
 			Return(expectBuyer, nil).Once()
 
 		service := buyer.NewService(repository)
-		buyer2, err := service.Update(1, buyer.RequestPatch{CardNumberID: "Upd1234", FirstName: "Alice",
+		buyer2, err := service.Update(1, r.RequestPatch{CardNumberID: "Upd1234", FirstName: "Alice",
 			LastName: "Souza"})
 
 		assert.Equal(t, expectBuyer, buyer2)
@@ -187,7 +189,7 @@ func TestService_Update(t *testing.T) {
 			Return(model.Buyer{}, customErrors.ErrorInvalidID).Maybe()
 
 		service := buyer.NewService(repository)
-		_, err := service.Update(8, buyer.RequestPatch{CardNumberID: "Upd1234", FirstName: "Alice",
+		_, err := service.Update(8, r.RequestPatch{CardNumberID: "Upd1234", FirstName: "Alice",
 			LastName: "Souza"})
 
 		assert.Equal(t, customErrors.ErrorInvalidID, err)
@@ -202,7 +204,7 @@ func TestService_Update(t *testing.T) {
 			Return(model.Buyer{}, customErrors.ErrorCardIdAlreadyExists).Maybe()
 
 		service := buyer.NewService(repository)
-		_, err := service.Update(8, buyer.RequestPatch{CardNumberID: "Upd1234", FirstName: "Alice",
+		_, err := service.Update(8, r.RequestPatch{CardNumberID: "Upd1234", FirstName: "Alice",
 			LastName: "Souza"})
 
 		assert.Equal(t, customErrors.ErrorCardIdAlreadyExists, err)
@@ -216,7 +218,7 @@ func TestService_Update(t *testing.T) {
 			Return(model.Buyer{}, customErrors.ErrorInvalidID).Maybe()
 
 		service := buyer.NewService(repository)
-		_, err := service.Update(1, buyer.RequestPatch{CardNumberID: "Upd1234", FirstName: "Alice",
+		_, err := service.Update(1, r.RequestPatch{CardNumberID: "Upd1234", FirstName: "Alice",
 			LastName: "Souza"})
 
 		assert.Equal(t, customErrors.ErrorInvalidID, err)
