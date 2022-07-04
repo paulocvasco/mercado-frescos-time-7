@@ -39,7 +39,7 @@ func (s *service) GetAll() (models.Sections, error) {
 func (s *service) GetById(id string) (models.Section, error) {
 	index, err := strconv.Atoi(id)
 	if err != nil {
-		return models.Section{}, customErrors.ErrorInvalidID
+		return models.Section{}, err
 	}
 	data, err := s.repository.GetById(index)
 
@@ -112,9 +112,13 @@ func (s *service) Update(id string, data []byte) (models.Section, error) {
 	var newSection models.Section
 	json.Unmarshal(patch, &newSection)
 
-	if newSection.SectionNumber < 0 {
-		return models.Section{}, customErrors.ErrorSectionNumber
+	if sectionFound.SectionNumber != newSection.SectionNumber {
+		err = s.repository.VerifySectionNumber(newSection.SectionNumber)
+		if err != nil {
+			return models.Section{}, customErrors.ErrorConflict
+		}
 	}
+
 	if newSection.CurrentCapacity < 0 {
 		return models.Section{}, customErrors.ErrorCurrentCapacity
 	}
