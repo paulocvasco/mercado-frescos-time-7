@@ -127,8 +127,11 @@ func TestService_Create_Conflict(t *testing.T) {
 }
 
 func TestService_Find_All(t *testing.T) {
-	repository := mockRepository.NewRepository(t)
-	service := products.NewService(repository)
+	type expectResult struct {
+		prd models.Products
+		err error
+	}
+
 	bodyList := models.Products{
 		Products: []models.Product{
 			{
@@ -162,9 +165,22 @@ func TestService_Find_All(t *testing.T) {
 		},
 	}
 
-	repository.On("GetAll").Return(bodyList, nil)
-	response, _ := service.GetAll()
-	assert.Equal(t, bodyList, response)
+	testes := []expectResult{
+		{bodyList, nil},
+		{models.Products{}, customerrors.ErrorInvalidDB},
+	}
+
+	for _, test := range testes {
+		repository := mockRepository.NewRepository(t)
+		service := products.NewService(repository)
+		repository.On("GetAll").Return(test.prd, test.err)
+
+		response, erro := service.GetAll()
+
+		assert.Equal(t, test.prd, response)
+		assert.Equal(t, test.err, erro)
+	}
+
 }
 
 func TestService_Find_By_Id_Non_Existent(t *testing.T) {
@@ -389,6 +405,129 @@ func TestService_Update_Non_Existent(t *testing.T) {
 
 	_, err := service.Update(body.Id, productByte)
 	assert.Equal(t, customerrors.ErrorInvalidID, err)
+}
+
+func TestService_Create_Error_Database_getall(t *testing.T) {
+
+	repository := mockRepository.NewRepository(t)
+	service := products.NewService(repository)
+	err := customerrors.ErrorInvalidDB
+
+	update := models.Product{
+		Id:                             3,
+		ProductCode:                    "codigo3",
+		Description:                    "test 2",
+		Width:                          1.2,
+		Height:                         6.4,
+		Length:                         4.5,
+		NetWeight:                      3.4,
+		ExpirationRate:                 3,
+		RecommendedFreezingTemperature: 1.3,
+		FreezingRate:                   2,
+		ProductTypeId:                  2,
+		SellerId:                       2,
+	}
+
+	repository.On("GetAll", mock.Anything).Return(models.Products{}, err)
+
+	productByte, _ := json.Marshal(update)
+
+	_, erro := service.Insert(productByte)
+
+	assert.Equal(t, erro, err)
+}
+
+func TestService_Create_Error_Database_update(t *testing.T) {
+
+	repository := mockRepository.NewRepository(t)
+	service := products.NewService(repository)
+	err := customerrors.ErrorInvalidDB
+
+	bodyList := models.Products{
+		Products: []models.Product{
+			{
+				Id:                             1,
+				ProductCode:                    "codigo1",
+				Description:                    "test 2",
+				Width:                          1.2,
+				Height:                         6.4,
+				Length:                         4.5,
+				NetWeight:                      3.4,
+				ExpirationRate:                 2,
+				RecommendedFreezingTemperature: 1.3,
+				FreezingRate:                   2,
+				ProductTypeId:                  2,
+				SellerId:                       2,
+			},
+			{
+				Id:                             2,
+				ProductCode:                    "codigo2",
+				Description:                    "test 2",
+				Width:                          1.2,
+				Height:                         6.4,
+				Length:                         4.5,
+				NetWeight:                      3.4,
+				ExpirationRate:                 2,
+				RecommendedFreezingTemperature: 1.3,
+				FreezingRate:                   2,
+				ProductTypeId:                  2,
+				SellerId:                       2,
+			},
+		},
+	}
+	update := models.Product{
+		Id:                             3,
+		ProductCode:                    "codigo3",
+		Description:                    "test 2",
+		Width:                          1.2,
+		Height:                         6.4,
+		Length:                         4.5,
+		NetWeight:                      3.4,
+		ExpirationRate:                 3,
+		RecommendedFreezingTemperature: 1.3,
+		FreezingRate:                   2,
+		ProductTypeId:                  2,
+		SellerId:                       2,
+	}
+
+	repository.On("GetAll", mock.Anything).Return(bodyList, nil)
+	repository.On("Insert", mock.Anything).Return(models.Product{}, err)
+
+	productByte, _ := json.Marshal(update)
+
+	_, erro := service.Insert(productByte)
+
+	assert.Equal(t, erro, err)
+}
+
+func TestService_Update_Error_Database(t *testing.T) {
+
+	repository := mockRepository.NewRepository(t)
+	service := products.NewService(repository)
+	err := customerrors.ErrorInvalidDB
+
+	dataGetById := models.Product{
+		Id:                             1,
+		ProductCode:                    "codigo",
+		Description:                    "test 2",
+		Width:                          1.2,
+		Height:                         6.4,
+		Length:                         4.5,
+		NetWeight:                      3.4,
+		ExpirationRate:                 3,
+		RecommendedFreezingTemperature: 1.3,
+		FreezingRate:                   2,
+		ProductTypeId:                  2,
+		SellerId:                       2,
+	}
+	repository.On("GetById", mock.Anything).Return(dataGetById, nil)
+	repository.On("Update", mock.Anything).Return(err)
+
+	productByte, _ := json.Marshal(dataGetById)
+
+	_, erro := service.Update(1, productByte)
+
+	assert.Equal(t, erro, err)
 }
 
 func TestService_Delete_Ok(t *testing.T) {
