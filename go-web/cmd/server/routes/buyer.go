@@ -11,7 +11,7 @@ import (
 
 func InstanceBuyer(r *gin.Engine) {
 	database := db.NewDatabase()
-	repo := repository.NewRepository(database)
+	repo := repository.NewRepositoryFile(database) //(database)
 	service := buyer.NewService(repo)
 	c := controller.BuyerNewController(service)
 

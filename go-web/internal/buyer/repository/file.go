@@ -13,7 +13,7 @@ type RequestPatch struct {
 	FirstName    string `json:"first_name,omitempty"`
 	LastName     string `json:"last_name,omitempty"`
 }
-type Repository interface {
+type RepositoryFile interface {
 	GetAll() (model.Buyers, error)
 	GetId(id int) (model.Buyer, error)
 	GetCardNumberId(id string) error
@@ -21,17 +21,17 @@ type Repository interface {
 	Update(id int, body model.Buyer) (model.Buyer, error)
 	Delete(id int) error
 }
-type repository struct {
+type repositoryFile struct {
 	data db.DB
 }
 
-func NewRepository(data db.DB) Repository {
-	return &repository{
+func NewRepositoryFile(data db.DB) RepositoryFile {
+	return &repositoryFile{
 		data: data,
 	}
 }
 
-func (r *repository) GetAll() (model.Buyers, error) {
+func (r *repositoryFile) GetAll() (model.Buyers, error) {
 	if cache.LastID == 0 {
 		err := r.data.Load(&cache)
 		if err != nil {
@@ -41,7 +41,7 @@ func (r *repository) GetAll() (model.Buyers, error) {
 	return cache.Content, nil
 }
 
-func (r *repository) GetId(id int) (model.Buyer, error) {
+func (r *repositoryFile) GetId(id int) (model.Buyer, error) {
 
 	if cache.LastID == 0 {
 		err := r.data.Load(&cache)
@@ -63,7 +63,7 @@ func (r *repository) GetId(id int) (model.Buyer, error) {
 	return getById, customerrors.ErrorInvalidID
 }
 
-func (r *repository) Create(cardNumberID string, firstName, lastName string) (model.Buyer, error) {
+func (r *repositoryFile) Create(cardNumberID string, firstName, lastName string) (model.Buyer, error) {
 	var buyers model.BuyersMetaData
 	err := r.data.Load(&buyers)
 	if err != nil {
@@ -83,7 +83,7 @@ func (r *repository) Create(cardNumberID string, firstName, lastName string) (mo
 	return newBuyer, nil
 }
 
-func (r *repository) Update(id int, newData model.Buyer) (model.Buyer, error) {
+func (r *repositoryFile) Update(id int, newData model.Buyer) (model.Buyer, error) {
 
 	if id < 0 || id > cache.LastID {
 		return model.Buyer{}, customerrors.ErrorInvalidID
@@ -105,7 +105,7 @@ func (r *repository) Update(id int, newData model.Buyer) (model.Buyer, error) {
 	return returnDB, nil
 }
 
-func (r *repository) Delete(id int) error {
+func (r *repositoryFile) Delete(id int) error {
 	var buyers model.BuyersMetaData
 	err := r.data.Load(&buyers)
 	if err != nil {
@@ -130,7 +130,7 @@ func (r *repository) Delete(id int) error {
 
 }
 
-func (r *repository) GetCardNumberId(cardId string) error {
+func (r *repositoryFile) GetCardNumberId(cardId string) error {
 	err := r.data.Load(&cache)
 	if err != nil {
 		return err
