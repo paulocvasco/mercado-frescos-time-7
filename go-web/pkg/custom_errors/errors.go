@@ -101,10 +101,13 @@ func ErrorHandleResponse(err error) (int, string) {
 		if errors.Is(err, ErrorWarehouseCodeConflict) {
 			return http.StatusConflict, err.Error()
 		}
+		if errors.Is(err, ErrorMarshallJson) {
+			return http.StatusBadRequest, err.Error()
+		}
 	}
 	{ // validate errors
 		var numError *strconv.NumError
-		if errors.As(err, &numError){
+		if errors.As(err, &numError) {
 			if numError.Func == "Atoi" {
 				return http.StatusBadRequest, fmt.Sprintf("input param: %v must be an integer", numError.Num)
 			} else {
