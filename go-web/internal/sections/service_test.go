@@ -304,7 +304,7 @@ func TestFindByIdERROR(t *testing.T) {
 	serv := sections.NewService(repo)
 
 	_, resultError := serv.GetById("a")
-	assert.Equal(t, customErrors.ErrorInvalidID, resultError)
+	assert.Equal(t, "strconv.Atoi: parsing \"a\": invalid syntax", resultError.Error())
 
 }
 
@@ -334,11 +334,10 @@ func TestUpdate(t *testing.T) {
 		ProductTypeId:      1,
 	}
 
-	//Existe uma conversão do objeto inicial models.Section para []bytes (ln. 105) e depois para sections.Section (ln. 112)
-
 	repo.On("Update", mock.Anything, mock.Anything).Return(nil)
 	repo.On("GetById", mock.Anything).Return(mysec, nil)
 	repo.On("ValidateID", mock.Anything).Return(true)
+	repo.On("VerifySectionNumber", mock.Anything).Return(nil)
 	mbytes, _ := json.Marshal(umysec)
 	result, _ := serv.Update("2", mbytes)
 	assert.Equal(t, umysec, result)
@@ -363,9 +362,11 @@ func TestUpdateErrorSectionNumber(t *testing.T) {
 
 	repo.On("GetById", mock.Anything).Return(models.Section{}, nil)
 	repo.On("ValidateID", mock.Anything).Return(true)
+	repo.On("VerifySectionNumber", mock.Anything).Return(customErrors.ErrorConflict)
+
 	mbytes, _ := json.Marshal(umysec)
 	_, err := serv.Update("2", mbytes)
-	assert.Equal(t, customErrors.ErrorSectionNumber, err)
+	assert.Equal(t, customErrors.ErrorConflict, err)
 }
 
 func TestUpdateErrorCurrentCapacity(t *testing.T) {
@@ -387,6 +388,8 @@ func TestUpdateErrorCurrentCapacity(t *testing.T) {
 
 	repo.On("GetById", mock.Anything).Return(models.Section{}, nil)
 	repo.On("ValidateID", mock.Anything).Return(true)
+	repo.On("VerifySectionNumber", mock.Anything).Return(nil)
+
 	mbytes, _ := json.Marshal(umysec)
 	_, err := serv.Update("2", mbytes)
 	assert.Equal(t, customErrors.ErrorCurrentCapacity, err)
@@ -411,6 +414,8 @@ func TestUpdateErrorMinimumCapacity(t *testing.T) {
 
 	repo.On("GetById", mock.Anything).Return(models.Section{}, nil)
 	repo.On("ValidateID", mock.Anything).Return(true)
+	repo.On("VerifySectionNumber", mock.Anything).Return(nil)
+
 	mbytes, _ := json.Marshal(umysec)
 	_, err := serv.Update("2", mbytes)
 	assert.Equal(t, customErrors.ErrorMinimumCapacity, err)
@@ -435,6 +440,8 @@ func TestUpdateErrorMaximumCapacity(t *testing.T) {
 
 	repo.On("GetById", mock.Anything).Return(models.Section{}, nil)
 	repo.On("ValidateID", mock.Anything).Return(true)
+	repo.On("VerifySectionNumber", mock.Anything).Return(nil)
+
 	mbytes, _ := json.Marshal(umysec)
 	_, err := serv.Update("2", mbytes)
 	assert.Equal(t, customErrors.ErrorMaximumCapacity, err)
@@ -455,10 +462,10 @@ func TestUpdateErrorWarehouseID(t *testing.T) {
 		ProductTypeId:      1,
 	}
 
-	//Existe uma conversão do objeto inicial models.Section para []bytes (ln. 105) e depois para sections.Section (ln. 112)
-
 	repo.On("GetById", mock.Anything).Return(models.Section{}, nil)
 	repo.On("ValidateID", mock.Anything).Return(true)
+	repo.On("VerifySectionNumber", mock.Anything).Return(nil)
+
 	mbytes, _ := json.Marshal(umysec)
 	_, err := serv.Update("2", mbytes)
 	assert.Equal(t, customErrors.ErrorWarehouseID, err)
@@ -483,6 +490,8 @@ func TestUpdateErrorProductTypeID(t *testing.T) {
 
 	repo.On("GetById", mock.Anything).Return(models.Section{}, nil)
 	repo.On("ValidateID", mock.Anything).Return(true)
+	repo.On("VerifySectionNumber", mock.Anything).Return(nil)
+
 	mbytes, _ := json.Marshal(umysec)
 	_, err := serv.Update("2", mbytes)
 	assert.Equal(t, customErrors.ErrorProductTypeID, err)
