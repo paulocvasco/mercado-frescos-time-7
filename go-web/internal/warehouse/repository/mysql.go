@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 	"mercado-frescos-time-7/go-web/internal/models"
 	"mercado-frescos-time-7/go-web/pkg/db/mysql"
 )
@@ -18,8 +17,8 @@ func NewSqlRepository() Repository {
 }
 
 func (m *mysqlDB) Create(new models.Warehouse) (models.Warehouse, error) {
-	arg := fmt.Sprintf("INSERT INTO warehouse(address, telephone, warehouse_code, minimum_capacity, minimum_temperature) VALUES ('%s', '%s', '%s', %d, %d)", new.Address, new.Telephone, new.WarehouseCode, new.MinimunCapacity, new.MinimunTemperature)
-	res, err := m.db.Exec(arg)
+	query := "INSERT INTO warehouse(address, telephone, warehouse_code, minimum_capacity, minimum_temperature) VALUES (? ? ? ? ?)"
+	res, err := m.db.Exec(query, new.Address, new.Telephone, new.WarehouseCode, new.MinimunCapacity, new.MinimunTemperature)
 	if err != nil {
 		return models.Warehouse{}, err
 	}
