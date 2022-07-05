@@ -1,6 +1,7 @@
 package customerrors
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/go-sql-driver/mysql"
 )
 
 var (
@@ -130,6 +132,18 @@ func ErrorHandleResponse(err error) (int, string) {
 		var jt *json.UnmarshalTypeError
 		if errors.As(err, &jt) {
 			return http.StatusBadRequest, fmt.Sprintf("type error in %v", jt.Field)
+		}
+	}
+	{ // MySqlErrors
+		var mysqlError *mysql.MySQLError
+		if errors.As(err, &mysqlError) {
+			switch mysqlError.Number {
+			case 1062:
+				return http.StatusConflict, "conflict error detected. please check your inputs"
+			}
+		}
+		if errors.Is(err, sql.ErrNoRows){
+			return http.StatusNotFound, ErrorInvalidID.Error()
 		}
 	}
 	return http.StatusInternalServerError, "internal error"
