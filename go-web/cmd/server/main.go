@@ -18,5 +18,6 @@ func main() {
 	routes.InstanceProducts(r)
 	routes.InstanceWarehouse(r)
 	routes.InstanceSection(r)
+	routes.InstanceProductBatch(r)
 	r.Run()
 }
