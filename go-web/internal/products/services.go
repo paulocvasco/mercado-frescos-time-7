@@ -3,6 +3,7 @@ package products
 import (
 	"encoding/json"
 	"mercado-frescos-time-7/go-web/internal/models"
+	"mercado-frescos-time-7/go-web/internal/products/repository"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 
 	jsonpatch "github.com/evanphx/json-patch/v5"
@@ -18,10 +19,10 @@ type Service interface {
 }
 
 type service struct {
-	repository Repository
+	repository repository.Repository
 }
 
-func NewService(r Repository) Service {
+func NewService(r repository.Repository) Service {
 	return &service{
 		repository: r,
 	}
