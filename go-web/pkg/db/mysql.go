@@ -15,7 +15,7 @@ func init() {
 	// portDB := os.Getenv("PORT")
 	// nameDB := os.Getenv("NAMEDB")
 	// dataSource := fmt.Sprint("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", user, password, portDB, nameDB)
-	dataSource := "root:12345678@tcp(localhost:3306)/bootcamp?parseTime=true"
+	dataSource := "root:12345678@tcp(localhost:3306)/mercado_fresco_db?parseTime=true"
 	var err error
 	StorageDB, err = sql.Open("mysql", dataSource)
 	if err != nil {
