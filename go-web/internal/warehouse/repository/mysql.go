@@ -32,7 +32,7 @@ func (m *mysqlDB) Create(new models.Warehouse) (models.Warehouse, error) {
 }
 
 func (m *mysqlDB) Update(id int, patchedWarehouse models.Warehouse) error {
-	query := "UPDATE warehouse SET address = ?, telephone = ?, warehouse_code = ?, minimum_capacity = ?, minimum_temperature = ?, where id = ?"
+	query := "UPDATE warehouse SET address = ?, telephone = ?, warehouse_code = ?, minimum_capacity = ?, minimum_temperature = ?, WHERE id = ?"
 	_, err := m.db.Exec(query, patchedWarehouse.Address, patchedWarehouse.Telephone, patchedWarehouse.WarehouseCode, patchedWarehouse.MinimunCapacity, patchedWarehouse.MinimunTemperature, id)
 	if err != nil {
 		return err
@@ -59,9 +59,26 @@ func (m *mysqlDB) GetAll() (models.Warehouses, error) {
 }
 
 func (m *mysqlDB) GetByID(id int) (models.Warehouse, error) {
-	return models.Warehouse{}, nil
+	query := "SELECT * FROM warehouse WHERE id = ?"
+	res, err := m.db.Query(query, id)
+	if err != nil {
+		return models.Warehouse{}, err
+	}
+	var w models.Warehouse
+	for res.Next() {
+		err := res.Scan(&w.ID, &w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimunCapacity, &w.MinimunTemperature)
+		if err != nil {
+			return models.Warehouse{}, err
+		}
+	}
+	return w, nil
 }
 
 func (m *mysqlDB) Delete(id int) error {
+	query := "DELETE FROM warehouse WHERE id = ?"
+	_, err := m.db.Exec(query, id)
+	if err != nil {
+		return err
+	}
 	return nil
 }
