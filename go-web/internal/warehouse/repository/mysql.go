@@ -32,6 +32,11 @@ func (m *mysqlDB) Create(new models.Warehouse) (models.Warehouse, error) {
 }
 
 func (m *mysqlDB) Update(id int, patchedWarehouse models.Warehouse) error {
+	query := "UPDATE warehouse SET address = ?, telephone = ?, warehouse_code = ?, minimum_capacity = ?, minimum_temperature = ?, where id = ?"
+	_, err := m.db.Exec(query, patchedWarehouse.Address, patchedWarehouse.Telephone, patchedWarehouse.WarehouseCode, patchedWarehouse.MinimunCapacity, patchedWarehouse.MinimunTemperature, id)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
