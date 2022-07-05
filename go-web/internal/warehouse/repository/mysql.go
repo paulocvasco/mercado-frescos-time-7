@@ -7,13 +7,13 @@ import (
 )
 
 type mysqlDB struct {
-	database sql.DB
+	db sql.DB
 }
 
 func NewSqlRepository() Repository {
-	db := mysql.Get()
+	database := mysql.Get()
 	return &mysqlDB{
-		database: db}
+		db: database}
 }
 
 func (m *mysqlDB) Create(new models.Warehouse) (models.Warehouse, error) {
@@ -25,7 +25,21 @@ func (m *mysqlDB) Update(id int, patchedWarehouse models.Warehouse) error {
 }
 
 func (m *mysqlDB) GetAll() (models.Warehouses, error) {
-	return models.Warehouses{}, nil
+	res, err := m.db.Query("SELECT * FROM warehouse")
+	if err != nil {
+		return models.Warehouses{}, err
+	}
+
+	var all models.Warehouses
+	for res.Next() {
+		var w models.Warehouse
+		err := res.Scan(&w.ID, &w.Address, &w.MinimunCapacity, &w.MinimunCapacity, &w.MinimunTemperature, &w.WarehouseCode)
+		if err != nil {
+			return models.Warehouses{}, err
+		}
+		all.Warehouses = append(all.Warehouses, w)
+	}
+	return all, nil
 }
 
 func (m *mysqlDB) GetByID(id int) (models.Warehouse, error) {
