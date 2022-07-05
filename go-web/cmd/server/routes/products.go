@@ -10,8 +10,7 @@ import (
 )
 
 func InstanceProducts(r *gin.Engine) {
-	db := db.NewDatabase()
-	repo := repository.NewRepository(db)
+	repo := repository.NewRepositoryMysql(db.StorageDB)
 	serv := products.NewService(repo)
 	pr := controller.NewProductHandler(serv)
 
