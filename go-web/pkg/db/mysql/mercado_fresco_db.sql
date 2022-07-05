@@ -1,4 +1,3 @@
-
 DROP DATABASE IF EXISTS mercado_fresco_db;
 CREATE DATABASE mercado_fresco_db;
 USE mercado_fresco_db;
@@ -287,6 +286,8 @@ CREATE TABLE `warehouse` (
   `address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `telephone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `warehouse_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `minimum_capacity` int(11) NOT NULL
+  `minimum_temperature` int(11) NOT NULL
   `locality_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
