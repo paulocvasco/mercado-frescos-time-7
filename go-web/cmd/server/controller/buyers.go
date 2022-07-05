@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log"
 	"mercado-frescos-time-7/go-web/internal/buyer"
 	"mercado-frescos-time-7/go-web/internal/buyer/repository"
 	"mercado-frescos-time-7/go-web/internal/models"
@@ -31,6 +32,7 @@ func (b *BuyerController) BuyerGetAll() gin.HandlerFunc {
 			context.JSON(status, res)
 			return
 		}
+		log.Println(all)
 		context.JSON(http.StatusOK, web.NewResponse(http.StatusOK, all, ""))
 	}
 }

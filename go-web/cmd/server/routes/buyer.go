@@ -10,8 +10,13 @@ import (
 )
 
 func InstanceBuyer(r *gin.Engine) {
-	database := db.NewDatabase()
-	repo := repository.NewRepositoryFile(database) //(database)
+	// database := db.NewDatabase()
+	// dataBase, err := db.ConectionDb()
+
+	// if err != nil {
+	// 	log.Fatal("failed to connect to mariadb")
+	// }
+	repo := repository.NewRepositoryMySql(db.StorageDB) //(database)
 	service := buyer.NewService(repo)
 	c := controller.BuyerNewController(service)
 

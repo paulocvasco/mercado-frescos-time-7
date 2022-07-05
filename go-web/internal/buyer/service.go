@@ -5,11 +5,11 @@ import (
 	"mercado-frescos-time-7/go-web/internal/buyer/repository"
 	model "mercado-frescos-time-7/go-web/internal/models"
 
-	jsonpatch "github.com/evanphx/json-patch/v5"
+	jsonpatch "github.com/evanphx/json-patch"
 )
 
 type Service interface {
-	GetAll() (model.Buyers, error)
+	GetAll() ([]model.Buyer, error)
 	GetId(id int) (model.Buyer, error)
 	Create(card_number_id string, first_name, last_name string) (model.Buyer, error)
 	Update(id int, body repository.RequestPatch) (model.Buyer, error)
@@ -17,22 +17,23 @@ type Service interface {
 }
 
 type service struct {
-	repository repository.RepositoryFile
+	repository repository.RepositoryMysql
 }
 
-func NewService(r repository.RepositoryFile) Service {
+func NewService(r repository.RepositoryMysql) Service {
 	return &service{
 		repository: r,
 	}
 }
 
-func (s *service) GetAll() (model.Buyers, error) {
+func (s *service) GetAll() ([]model.Buyer, error) {
 	response, err := s.repository.GetAll()
 	if err != nil {
-		return model.Buyers{}, err
+		return []model.Buyer{}, err
 	}
 	return response, nil
 }
+
 func (s *service) GetId(id int) (model.Buyer, error) {
 	response, err := s.repository.GetId(id)
 	if err != nil {
