@@ -1,9 +1,9 @@
-package warehouse
+package repository
 
 import (
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/db"
+	db "mercado-frescos-time-7/go-web/pkg/db/file"
 )
 
 type repository struct {
