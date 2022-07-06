@@ -17,8 +17,8 @@ func init() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	os.Getenv("USER_DB")
-	dataSource := fmt.Sprintf("%v:%v@tcp(%v)/%v?charset=utf8mb4&parseTime=True&loc=Local", os.Getenv("USER_DB"), os.Getenv("PASS_DB"), os.Getenv("PORT_DB"), os.Getenv("NAME_DB"))
+
+	dataSource := fmt.Sprintf("%v:%v@tcp(%v)/%v?charset=utf8mb4&parseTime=True&loc=Local", os.Getenv("USER_DB"), os.Getenv("PASS_DB"), os.Getenv("PATH_DB"), os.Getenv("NAME_DB"))
 	StorageDB, err = sql.Open("mysql", dataSource)
 	if err != nil {
 		panic(err)
