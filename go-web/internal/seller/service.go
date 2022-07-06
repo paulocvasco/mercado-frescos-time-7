@@ -13,7 +13,7 @@ type Service interface {
 	GetId(indice int) (models.Seller, error)
 	Update(s []byte, id int) (models.Seller, error)
 	Delete(id int) error
-	Store(cid int, company_name string, address string, telephone string) (models.Seller, error)
+	Store(sel models.Seller) (models.Seller, error)
 }
 
 type service struct {
@@ -77,13 +77,13 @@ func (s *service) Delete(id int) error {
 	return nil
 }
 
-func (s *service) Store(cid int, company_name string, address string, telephone string) (models.Seller, error) {
+func (s *service) Store(sel models.Seller) (models.Seller, error) {
 	lastID, err := s.repository.LastID()
 	if err != nil {
 		return models.Seller{}, err
 	}
 	lastID++
-	product, err := s.repository.Store(lastID, cid, company_name, address, telephone)
+	product, err := s.repository.Store(sel)
 	if err != nil {
 		return models.Seller{}, err
 	}

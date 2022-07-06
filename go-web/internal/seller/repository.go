@@ -18,7 +18,7 @@ type Repository interface {
 	CheckCid(cid int) (models.Seller, error)
 	Update(s Seller, id int) (models.Seller, error)
 	Delete(id int) error
-	Store(id int, cid int, company_name string, address string, telephone string) (models.Seller, error)
+	Store(sel models.Seller) (models.Seller, error)
 	LastID() (int, error)
 }
 
@@ -125,16 +125,16 @@ func (r *repository) LastID() (int, error) {
 	return lastID, nil
 }
 
-func (r *repository) Store(id int, cid int, company_name string, address string, telephone string) (models.Seller, error) {
+func (r *repository) Store(sel models.Seller) (models.Seller, error) {
 	err := r.database.Load(&storage)
 	if err != nil {
 		return models.Seller{}, err
 	}
-	_, err = r.CheckCid(cid)
+	_, err = r.CheckCid(sel.Cid)
 	if err != nil {
 		return models.Seller{}, err
 	}
-	p := models.Seller{ID:id,Cid:cid,Company_name:company_name,Address:address,Telephone:telephone}
+	p := models.Seller{ID:sel.ID,Cid:sel.Cid,Company_name:sel.Company_name,Address:sel.Address,Telephone:sel.Telephone}
 	storage.Seller = append(storage.Seller, p)
 	storage.LastID = storage.LastID + 1
 	err = r.database.Save(&storage)
