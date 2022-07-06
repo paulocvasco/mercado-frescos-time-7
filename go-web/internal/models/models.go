@@ -50,6 +50,7 @@ type Warehouse struct {
 	WarehouseCode      string `json:"warehouse_code"`
 	MinimunCapacity    int    `json:"minimun_capacity" binding:"required"`
 	MinimunTemperature int    `json:"minimun_temperature" binding:"required"`
+	LocalityID         int    `json:"locality_id"`
 }
 
 type Warehouses struct {
@@ -67,6 +68,7 @@ type PostWarehouse struct {
 	WarehouseCode      string `json:"warehouse_code" binding:"required"`
 	MinimunCapacity    *int   `json:"minimun_capacity" binding:"required"`
 	MinimunTemperature *int   `json:"minimun_temperature" binding:"required"`
+	LocalityID         int    `json:"locality_id"`
 }
 
 type Products struct {
