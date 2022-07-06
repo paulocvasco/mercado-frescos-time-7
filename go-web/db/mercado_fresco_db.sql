@@ -182,12 +182,12 @@ CREATE TABLE `product_records` (
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `provincies`
+-- Estrutura da tabela `provinces`
 --
 
-CREATE TABLE `provincies` (
+CREATE TABLE `provinces` (
   `id` int(11) NOT NULL,
-  `provincie_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `province_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `id_country_fk` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -380,11 +380,11 @@ ALTER TABLE `product_records`
   ADD KEY `fk_product_records_products` (`product_id`);
 
 --
--- Índices para tabela `provincies`
+-- Índices para tabela `provinces`
 --
-ALTER TABLE `provincies`
+ALTER TABLE `provinces`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_provincies_countrie` (`id_country_fk`);
+  ADD KEY `fk_provinces_countrie` (`id_country_fk`);
 
 --
 -- Índices para tabela `purchase_orders`
@@ -393,7 +393,7 @@ ALTER TABLE `purchase_orders`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_purchase_orders_buyer` (`buyer_id`),
   ADD KEY `fk_purchase_orders_carrier` (`carrier_id`),
-  ADD KEY `fk_purchase_orders_order_status` (`oreder_status_id`),
+  ADD KEY `fk_purchase_orders_order_status` (`order_status_id`),
   ADD KEY `fk_purchase_orders_wirehouse` (`warehouse_id`);
 
 --
@@ -514,9 +514,9 @@ ALTER TABLE `product_records`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de tabela `provincies`
+-- AUTO_INCREMENT de tabela `provinces`
 --
-ALTER TABLE `provincies`
+ALTER TABLE `provinces`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -583,7 +583,7 @@ ALTER TABLE `inbound_orders`
 -- Limitadores para a tabela `localities`
 --
 ALTER TABLE `localities`
-  ADD CONSTRAINT `fk_provincie` FOREIGN KEY (`province_id`) REFERENCES `provincies` (`id`);
+  ADD CONSTRAINT `fk_province` FOREIGN KEY (`province_id`) REFERENCES `provinces` (`id`);
 
 --
 -- Limitadores para a tabela `order_details`
@@ -613,10 +613,10 @@ ALTER TABLE `product_records`
   ADD CONSTRAINT `fk_product_records_products` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
 
 --
--- Limitadores para a tabela `provincies`
+-- Limitadores para a tabela `provinces`
 --
-ALTER TABLE `provincies`
-  ADD CONSTRAINT `fk_provincies_countrie` FOREIGN KEY (`id_country_fk`) REFERENCES `countries` (`Id`);
+ALTER TABLE `provinces`
+  ADD CONSTRAINT `fk_provinces_countrie` FOREIGN KEY (`id_country_fk`) REFERENCES `countries` (`Id`);
 
 --
 -- Limitadores para a tabela `purchase_orders`
@@ -624,7 +624,7 @@ ALTER TABLE `provincies`
 ALTER TABLE `purchase_orders`
   ADD CONSTRAINT `fk_purchase_orders_buyer` FOREIGN KEY (`buyer_id`) REFERENCES `buyers` (`id`),
   ADD CONSTRAINT `fk_purchase_orders_carrier` FOREIGN KEY (`carrier_id`) REFERENCES `carriers` (`id`),
-  ADD CONSTRAINT `fk_purchase_orders_order_status` FOREIGN KEY (`oreder_status_id`) REFERENCES `order_status` (`id`),
+  ADD CONSTRAINT `fk_purchase_orders_order_status` FOREIGN KEY (`order_status_id`) REFERENCES `order_status` (`id`),
   ADD CONSTRAINT `fk_purchase_orders_wirehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse` (`id`);
 
 --
@@ -654,6 +654,31 @@ ALTER TABLE `warehouse`
   ADD CONSTRAINT `fk_warehouse_locality` FOREIGN KEY (`locality_id`) REFERENCES `localities` (`id`);
 COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+INSERT INTO buyers(id_card_number,first_name,last_name) 
+	VALUES ('order#1', 'Pedro', 'Augusto');
+
+  INSERT INTO countries(country_name) 
+	VALUES ('Brasil') ; 
+
+INSERT INTO provinces(province_name,id_country_fk) 
+	VALUES ('São Paulo', 1) ; 
+    
+ INSERT INTO localities(locality_name,province_id) 
+	VALUES ('São Paulo',1) ; 
+
+INSERT INTO carriers(cid,company_name,address,telephone,locality_id) 
+ 	VALUES ('order#1', 'Meli01', 'Rua Meli 01','(11) 33333333',1) ; 
+
+INSERT INTO warehouse(address,telephone,warehouse_code,locality_id) 
+	VALUES ('Rua Melli', '(11) 3333-4444', 'Code#1', 1);
+
+INSERT INTO order_status(`description`) 
+	VALUES ('Done');
+
+
+INSERT INTO purchase_orders(order_number,order_date,tracking_code,buyer_id,carrier_id,order_status_id,warehouse_id) 
+	VALUES ('order#1', '2021-04-04', 'abscf123', 1, 1, 1, 1)
+
+
+
