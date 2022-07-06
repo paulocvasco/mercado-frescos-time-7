@@ -4,8 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
-	"path/filepath"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
@@ -14,18 +13,28 @@ import (
 var StorageDB *sql.DB
 
 func init() {
-	err := godotenv.Load(filepath.Join("/Users/sfortes/Projeto4/mercado-frescos-time-7/go-web", ".env"))
+	urlDB := "root:@tcp(localhost)/mercado_fresco_db?charset=utf8mb4&parseTime=True&loc=Local"
+	var err error
+
+	// open connection with db
+	db, err = sql.Open("mysql", urlDB)
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		panic(err)
 	}
 
-	dataSource := fmt.Sprintf("%v:%v@tcp(%v)/%v?charset=utf8mb4&parseTime=True&loc=Local", os.Getenv("USER_DB"), os.Getenv("PASS_DB"), os.Getenv("PATH_DB"), os.Getenv("NAME_DB"))
-	StorageDB, err = sql.Open("mysql", dataSource)
-	if err != nil {
+	// test connection
+	if err = db.Ping(); err != nil {
 		panic(err)
 	}
-	if err = StorageDB.Ping(); err != nil {
-		panic(err)
-	}
-	log.Println("database configured")
+
+	// set db options
+	db.SetConnMaxLifetime(time.Minute * 1)
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(10)
+
+	log.Println("Db connected")
+}
+
+func Get() *sql.DB {
+	return StorageDB
 }
