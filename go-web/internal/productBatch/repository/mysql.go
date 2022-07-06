@@ -1,4 +1,4 @@
-package productBatch
+package repository
 
 import (
 	"context"
@@ -40,7 +40,6 @@ func (r *repository) CreateProductBatch(ctx context.Context, productBatch *domai
 	if err != nil {
 		return &domain.ProductBatch{}, err
 	}
-
 	insertedId, _ := result.LastInsertId()
 	productBatch.Id = int(insertedId)
 

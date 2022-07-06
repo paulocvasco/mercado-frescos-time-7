@@ -3,6 +3,8 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"mercado-frescos-time-7/go-web/internal/productBatch/domain"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 )
 
@@ -26,10 +28,9 @@ func (c productBatchController) Store(ctx *gin.Context) {
 	var req storeProductBatch
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
-		})
-		return
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 	}
 
 	productBatch, err := c.service.Store(ctx, &domain.ProductBatch{
@@ -46,9 +47,9 @@ func (c productBatchController) Store(ctx *gin.Context) {
 	})
 
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-		})
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
 
