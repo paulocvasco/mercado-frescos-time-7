@@ -1,16 +1,14 @@
 package routes
 
 import (
+	"github.com/gin-gonic/gin"
 	"mercado-frescos-time-7/go-web/cmd/server/controller"
 	"mercado-frescos-time-7/go-web/internal/warehouse"
-	"mercado-frescos-time-7/go-web/pkg/db"
-
-	"github.com/gin-gonic/gin"
+	"mercado-frescos-time-7/go-web/internal/warehouse/repository"
 )
 
 func InstanceWarehouse(r *gin.Engine) {
-	database := db.NewDatabase()
-	repository := warehouse.NewRepository(database)
+	repository := repository.NewSqlRepository()
 	service := warehouse.NewService(repository)
 	controller := controller.NewControllerWarehouse(service)
 
