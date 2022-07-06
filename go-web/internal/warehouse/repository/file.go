@@ -3,7 +3,7 @@ package repository
 import (
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	db "mercado-frescos-time-7/go-web/pkg/db/file"
+	"mercado-frescos-time-7/go-web/pkg/db"
 )
 
 type repository struct {
