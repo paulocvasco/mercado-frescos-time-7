@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
@@ -13,7 +14,7 @@ import (
 var StorageDB *sql.DB
 
 func init() {
-	err := godotenv.Load()
+	err := godotenv.Load(filepath.Join("/Users/sfortes/Projeto4/mercado-frescos-time-7/go-web", ".env"))
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
