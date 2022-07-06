@@ -121,3 +121,27 @@ type Sellers struct {
 	Seller []Seller `json:"sellers"`
 	LastID int      `json:"lastid"`
 }
+
+type Locality struct {
+	ID         int    `json:"id"`
+	Name       string `json:"locality_name"`
+	ProvinceID int    `json:"province_id"`
+}
+
+type Carrier struct {
+	ID         int    `json:"id"`
+	Cid        int    `json:"cid"`
+	Company    string `json:"company_name"`
+	Address    string `json:"telephone"`
+	LocalityID int    `json:"locality_id"`
+}
+
+type CarrierInfo struct {
+	LocalityID    int    `json:"locality_id"`
+	LocalityName  string `json:"locality_name"`
+	CarriersCount int    `json:"carriers_count"`
+}
+
+type CarriersReport struct {
+	Data []CarrierInfo `json:"data"`
+}
