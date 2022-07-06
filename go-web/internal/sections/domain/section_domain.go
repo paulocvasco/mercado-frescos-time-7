@@ -15,7 +15,17 @@ type Section struct {
 }
 
 type Sections struct {
-	SectionList []Section `json:"sections"`
+	Sections []Section `json:"sections"`
+}
+
+type ProductReport struct {
+	SectionId     int `json:"section_id"`
+	SectionNumber int `json:"section_number"`
+	ProductsCount int `json:"products_count"`
+}
+
+type ProductReports struct {
+	ProductReports []ProductReport `json:"product_reports"`
 }
 
 type SectionRepository interface {
@@ -24,6 +34,8 @@ type SectionRepository interface {
 	Store(context.Context, *Section) (*Section, error)
 	Update(context.Context, *Section) error
 	Delete(context.Context, int) error
+
+	GetReportProductsById(context.Context, int) (*ProductReports, error)
 }
 
 type SectionService interface {
@@ -32,4 +44,6 @@ type SectionService interface {
 	Store(context.Context, *Section) (*Section, error)
 	Update(context.Context, *Section) error
 	Delete(context.Context, int) error
+
+	GetReportProductsById(context.Context, int) (*ProductReports, error)
 }
