@@ -83,6 +83,7 @@ func (s *service) Store(sel models.Seller) (models.Seller, error) {
 		return models.Seller{}, err
 	}
 	lastID++
+	sel.ID = lastID
 	product, err := s.repository.Store(sel)
 	if err != nil {
 		return models.Seller{}, err
