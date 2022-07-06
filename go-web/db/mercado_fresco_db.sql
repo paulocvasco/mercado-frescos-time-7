@@ -204,7 +204,7 @@ CREATE TABLE `purchase_orders` (
   `tracking_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `buyer_id` int(11) NOT NULL,
   `carrier_id` int(11) NOT NULL,
-  `oreder_status_id` int(11) NOT NULL,
+  `order_status_id` int(11) NOT NULL,
   `warehouse_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
