@@ -7,7 +7,7 @@ import (
 
 type Repository interface {
 	Insert(record models.ProductRecord) (models.ProductRecord, error)
-	GetByProductId(id int) (models.ProductRecords, error)
+	GetByProductId(id int) (models.ProductsRecordsResponse, error)
 }
 
 type repository struct {
@@ -38,21 +38,27 @@ func (r *repository) Insert(record models.ProductRecord) (models.ProductRecord, 
 	return record, nil
 }
 
-func (r *repository) GetByProductId(id int) (models.ProductRecords, error) {
-	stmt, err := r.db.Prepare(sqlGetRecordById)
+func (r *repository) GetByProductId(id int) (models.ProductsRecordsResponse, error) {
+	var query string
+	if id == 0 {
+		query = sqlGetAllRecords
+	} else {
+		query = sqlGetRecordById
+	}
+	stmt, err := r.db.Prepare(query)
 	if err != nil {
-		return models.ProductRecords{}, err
+		return models.ProductsRecordsResponse{}, err
 	}
 	rows, err := stmt.Query(id)
 	if err != nil {
-		return models.ProductRecords{}, err
+		return models.ProductsRecordsResponse{}, err
 	}
-	records := models.ProductRecords{Records: []models.ProductRecord{}}
+	records := models.ProductsRecordsResponse{Records: []models.ProductRecordsResponse{}}
 	for rows.Next() {
-		record := models.ProductRecord{}
-		err := rows.Scan(&record.Id, &record.LastUpdateDate, &record.PurchasePrince, &record.SalePrice, &record.ProductId)
+		record := models.ProductRecordsResponse{}
+		err := rows.Scan(&record.ProductId, &record.Description, &record.RecordsCount)
 		if err != nil {
-			return models.ProductRecords{}, err
+			return models.ProductsRecordsResponse{}, err
 		}
 		records.Records = append(records.Records, record)
 	}

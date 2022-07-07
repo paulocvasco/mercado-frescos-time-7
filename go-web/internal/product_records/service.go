@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"mercado-frescos-time-7/go-web/internal/models"
 	"mercado-frescos-time-7/go-web/internal/product_records/repository"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 
 	jsonpatch "github.com/evanphx/json-patch"
 )
 
 type Service interface {
 	Insert(record []byte) (models.ProductRecord, error)
-	GetByProductId(id int) (models.ProductRecords, error)
+	GetProductRecords(id int) (models.ProductsRecordsResponse, error)
 }
 
 type service struct {
@@ -47,10 +48,13 @@ func (s *service) Insert(recordBytes []byte) (models.ProductRecord, error) {
 	return insertedRecord, nil
 }
 
-func (s *service) GetByProductId(id int) (models.ProductRecords, error) {
+func (s *service) GetProductRecords(id int) (models.ProductsRecordsResponse, error) {
 	records, err := s.repository.GetByProductId(id)
 	if err != nil {
-		return models.ProductRecords{}, err
+		return models.ProductsRecordsResponse{}, err
+	}
+	if id != 0 && len(records.Records) == 0 {
+		return models.ProductsRecordsResponse{}, customerrors.ErrorInvalidID
 	}
 	return records, nil
 }

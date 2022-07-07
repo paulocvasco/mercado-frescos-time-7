@@ -29,14 +29,18 @@ func NewProductRecordsController(service productrecords.Service) ProductRecordsC
 
 func (prc *productRecordsController) GetProductRecordsById() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id, err := strconv.Atoi(c.Query("id"))
+		queryId := c.Query("id")
+		if queryId == "" {
+			queryId = "0"
+		}
+		id, err := strconv.Atoi(queryId)
 		if err != nil {
 			status, msg := customerrors.ErrorHandleResponse(err)
 			res := web.NewResponse(status, nil, msg)
 			c.JSON(status, res)
 			return
 		}
-		records, err := prc.service.GetByProductId(id)
+		records, err := prc.service.GetProductRecords(id)
 		if err != nil {
 			status, msg := customerrors.ErrorHandleResponse(err)
 			res := web.NewResponse(status, nil, msg)

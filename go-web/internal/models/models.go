@@ -103,8 +103,14 @@ type ProductRecord struct {
 	ProductId      int       `json:"product_id"`
 }
 
-type ProductRecords struct {
-	Records []ProductRecord `json:"records"`
+type ProductRecordsResponse struct {
+	ProductId    int    `json:"product_id"`
+	Description  string `json:"description"`
+	RecordsCount int    `json:"records_count"`
+}
+
+type ProductsRecordsResponse struct {
+	Records []ProductRecordsResponse `json:"records"`
 }
 
 type Seller struct {
