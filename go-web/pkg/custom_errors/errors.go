@@ -36,6 +36,7 @@ var (
 	ErrorSectionAlreadyExists  = errors.New("section number already exists")
 	ErrorWarehouseCodeConflict = errors.New("warehouse code already exist")
 	ErrorMarshallJson          = errors.New("malformed json")
+	ErrorInvalidDate           = errors.New("invalid date")
 )
 
 func ErrorHandleResponse(err error) (int, string) {
@@ -106,6 +107,9 @@ func ErrorHandleResponse(err error) (int, string) {
 		if errors.Is(err, ErrorMarshallJson) {
 			return http.StatusBadRequest, err.Error()
 		}
+		if errors.Is(err, ErrorInvalidDate) {
+			return http.StatusUnprocessableEntity, err.Error()
+		}
 	}
 	{ // validate errors
 		var numError *strconv.NumError
@@ -142,7 +146,7 @@ func ErrorHandleResponse(err error) (int, string) {
 				return http.StatusConflict, "conflict error detected. please check your inputs"
 			}
 		}
-		if errors.Is(err, sql.ErrNoRows){
+		if errors.Is(err, sql.ErrNoRows) {
 			return http.StatusNotFound, ErrorInvalidID.Error()
 		}
 	}
