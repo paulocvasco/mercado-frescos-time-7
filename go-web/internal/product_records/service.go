@@ -5,6 +5,7 @@ import (
 	"mercado-frescos-time-7/go-web/internal/models"
 	"mercado-frescos-time-7/go-web/internal/product_records/repository"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"time"
 
 	jsonpatch "github.com/evanphx/json-patch"
 )
@@ -39,6 +40,9 @@ func (s *service) Insert(recordBytes []byte) (models.ProductRecord, error) {
 	err = json.Unmarshal(recordJSON, &record)
 	if err != nil {
 		return models.ProductRecord{}, err
+	}
+	if record.LastUpdateDate.Before(time.Now().AddDate(0,0,-1)) {
+		return models.ProductRecord{}, customerrors.ErrorInvalidDate
 	}
 
 	insertedRecord, err := s.repository.Insert(record)
