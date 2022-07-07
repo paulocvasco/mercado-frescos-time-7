@@ -16,5 +16,5 @@ func InstanceReportSellers(e *gin.Engine) {
 
 	r := e.Group("api/v1") 
 
-	r.POST("/localities/reportSellers", p.ReportSellers())
+	r.GET("/localities/reportSellers", p.ReportSellers())
 }
