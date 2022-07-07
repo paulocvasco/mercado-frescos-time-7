@@ -132,8 +132,17 @@ type Carrier struct {
 	ID         int    `json:"id"`
 	Cid        int    `json:"cid"`
 	Company    string `json:"company_name"`
-	Address    string `json:"telephone"`
+	Address    string `json:"address"`
+	Telephone  string `json:"telephone"`
 	LocalityID int    `json:"locality_id"`
+}
+
+type CarrierRequest struct {
+	Cid        *int    `json:"cid"`
+	Company    *string `json:"company_name"`
+	Address    *string `json:"address"`
+	Telephone  string  `json:"telephone"`
+	LocalityID *int    `json:"locality_id"`
 }
 
 type CarrierInfo struct {
