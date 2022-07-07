@@ -16,7 +16,7 @@ import (
 //    404: errorResponse
 //    500: errorServerResponse
 
-// swagger:route GET /products/ ProductRecords ProductRecordAll
+// swagger:route GET /products/reportRecords ProductRecords ProductRecordAll
 // Get all objects stored on db.
 // responses:
 //    200: productRecordsIDResponse
@@ -37,7 +37,7 @@ import (
 
 // Corresponding object from db on json format.
 // swagger:response productRecordsIDResponse
-type productIDResponse struct {
+type productRecordsIDResponse struct {
 	//in: body
 	data struct {
 		Code string                         `json:"code"`
@@ -47,7 +47,7 @@ type productIDResponse struct {
 
 // Corresponding object from db on json format.
 // swagger:response ProductRecordAll
-type productAllResponse struct {
+type productRecordsAllResponse struct {
 	//in: body
 	data struct {
 		Code string                         `json:"code"`
@@ -57,7 +57,7 @@ type productAllResponse struct {
 
 // Error message has the returned code and a descripton to help understand the cause.
 // swagger:response errorResponse
-type errorResponseProduct struct {
+type errorResponseProductRecords struct {
 	// in: body
 	data struct {
 		Code    string `json:"code"`
@@ -67,7 +67,7 @@ type errorResponseProduct struct {
 
 // Error has the returned when exists a server error.
 // swagger:response errorServerResponse
-type errorServerResponseProduct struct {
+type errorServerResponseProductRecords struct {
 	// in: body
 	data struct {
 		Code    string `json:"code"`
@@ -80,7 +80,7 @@ type errorServerResponseProduct struct {
 /////////////////////////////////////////////////////////////////////////////////////
 
 // swagger:parameters getProductRecordID
-type productRequestID struct {
+type productRecordsRequestID struct {
 	// Value corresponding to object ID on db.
 	// in: query
 	// required: true
@@ -88,12 +88,12 @@ type productRequestID struct {
 }
 
 // swagger:parameters createProductRecord
-type productNewResquest struct {
+type productRecordsNewResquest struct {
 	//in: body
-	NewProduct updateProduct
+	NewProduct createProductRecords
 }
 
-type updateProduct struct {
+type createProductRecords struct {
 	LastUpdateDate string  `json:"last_update_date"`
 	PurchasePrince float64 `json:"purchase_prince"`
 	SalePrice      float64 `json:"sale_price"`
