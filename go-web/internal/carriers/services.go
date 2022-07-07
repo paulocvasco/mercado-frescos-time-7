@@ -1,6 +1,7 @@
 package carriers
 
 import (
+	"encoding/json"
 	"mercado-frescos-time-7/go-web/internal/carriers/repository"
 	"mercado-frescos-time-7/go-web/internal/models"
 )
@@ -22,7 +23,16 @@ func NewService(r repository.Repository) Service {
 }
 
 func (s *service) Create(new models.CarrierRequest) (models.Carrier, error) {
-	return models.Carrier{}, nil
+	rawCarrier, _ := json.Marshal(new)
+	var storeCarrier models.Carrier
+	json.Unmarshal(rawCarrier, &storeCarrier)
+
+	storedCarrier, err := s.repository.Create(storeCarrier)
+	if err != nil {
+		return models.Carrier{}, err
+	}
+
+	return storedCarrier, nil
 }
 
 func (s *service) Get(id int) (models.CarriersReport, error) {
