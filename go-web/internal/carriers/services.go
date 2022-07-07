@@ -36,5 +36,9 @@ func (s *service) Create(new models.CarrierRequest) (models.Carrier, error) {
 }
 
 func (s *service) Get(id int) (models.CarriersReport, error) {
-	return models.CarriersReport{}, nil
+	report, err := s.repository.Get(id)
+	if err != nil {
+		return models.CarriersReport{}, err
+	}
+	return report, nil
 }
