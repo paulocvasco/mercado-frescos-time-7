@@ -31,7 +31,8 @@ func (r *SQLrepository) Store(loc models.Locality) (models.Locality, error) {
 	}
 	var exists int
 	db1 := db.StorageDB
-	result := db1.QueryRow("SELECT id FROM `provincies` WHERE `provincie_name` LIKE ?;", loc.Province_name)
+	sqlquery := "SELECT a.id FROM provincies a INNER JOIN countries b ON a.id_country_fk = b.Id AND b.country_name = ? AND a.provincie_name = ?;"
+	result := db1.QueryRow(sqlquery, loc.Country_name, loc.Province_name)
 	if result.Err() != nil {
 		log.Println(result.Err())
 		return models.Locality{}, result.Err()

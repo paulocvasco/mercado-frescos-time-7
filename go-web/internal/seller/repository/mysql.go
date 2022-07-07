@@ -57,20 +57,27 @@ func (r *SQLrepository) LocalityStore(id string, locality_name string, province_
 
 
 func (r *SQLrepository) Store(sel models.Seller) (models.Seller, error) {
-
+	log.Println("iniciando Checkid")
 	_, err := r.CheckCid(sel.Cid)
 	if err != nil {
 		return models.Seller{}, err
 	}
-
+	log.Println("preparando consulta")
 	db := db.StorageDB
 	stmt, err := db.Prepare("INSERT INTO mercado_db.sellers (`cid`, `company_name`, `address`, `telephone`, `locality_id`) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
+	log.Println("iniciando consulta")
 	var result sql.Result
-	result, err = stmt.Exec(sel.Cid, sel.Company_name, sel.Address, sel.Telephone, sel.LocalityID)
+	log.Println(sel)
+	localityINT, err := strconv.Atoi(sel.LocalityID)
+	if err != nil {
+		log.Println(err)
+		return models.Seller{}, err
+	}
+	result, err = stmt.Exec(sel.Cid, sel.Company_name, sel.Address, sel.Telephone, localityINT)
 	if err != nil {
 		log.Println(err)
 		return models.Seller{}, err
