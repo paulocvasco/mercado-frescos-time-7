@@ -36,12 +36,21 @@ func (m *mysqlDB) Create(new models.Warehouse) (models.Warehouse, error) {
 }
 
 func (m *mysqlDB) Update(id int, w models.Warehouse) error {
-	query := "UPDATE warehouse SET address = ?, telephone = ?, warehouse_code = ?, minimum_capacity = ?, minimum_temperature = ?, locality_id = ?, WHERE id = ?"
-	_, err := m.db.Exec(query, w.Address, w.Telephone, w.WarehouseCode, w.MinimunCapacity, w.MinimunTemperature, w.LocalityID, id)
+	query := "UPDATE warehouse SET address = ?, telephone = ?, warehouse_code = ?, minimum_capacity = ?, minimum_temperature = ?, locality_id = ? WHERE id = ?"
+	stmt, err := m.db.Prepare(query)
 	if err != nil {
 		log.Println(err)
 		return err
 	}
+	res, err := stmt.Exec(w.Address, w.Telephone, w.WarehouseCode, w.MinimunCapacity, w.MinimunTemperature, w.LocalityID, id)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	if ra, _ := res.RowsAffected(); ra == 0 {
+		return customerrors.ErrorItemNotFound
+	}
+
 	return nil
 }
 
@@ -55,9 +64,8 @@ func (m *mysqlDB) GetAll() (models.Warehouses, error) {
 	var all models.Warehouses
 	for res.Next() {
 		var w models.Warehouse
-		err := res.Scan(&w.ID, &w.Address, &w.MinimunCapacity, &w.MinimunCapacity, &w.MinimunTemperature, &w.WarehouseCode)
+		err := res.Scan(&w.ID, &w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimunCapacity, &w.MinimunTemperature, &w.LocalityID)
 		if err != nil {
-			log.Println(err)
 			return models.Warehouses{}, err
 		}
 		all.Warehouses = append(all.Warehouses, w)
@@ -68,8 +76,9 @@ func (m *mysqlDB) GetAll() (models.Warehouses, error) {
 func (m *mysqlDB) GetByID(id int) (models.Warehouse, error) {
 	query := "SELECT * FROM warehouse WHERE id = ?"
 	var w models.Warehouse
-	err := m.db.QueryRow(query, id).Scan(&w.ID, &w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimunCapacity, &w.MinimunTemperature)
+	err := m.db.QueryRow(query, id).Scan(&w.ID, &w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimunCapacity, &w.MinimunTemperature, &w.LocalityID)
 	if err != nil {
+		log.Println(err)
 		return models.Warehouse{}, customerrors.ErrorItemNotFound
 	}
 
@@ -78,9 +87,17 @@ func (m *mysqlDB) GetByID(id int) (models.Warehouse, error) {
 
 func (m *mysqlDB) Delete(id int) error {
 	query := "DELETE FROM warehouse WHERE id = ?"
-	err := m.db.QueryRow(query, id).Scan()
+	stmt, err := m.db.Prepare(query)
 	if err != nil {
+		return err
+	}
+	res, err := stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+	if ra, _ := res.RowsAffected(); ra == 0 {
 		return customerrors.ErrorItemNotFound
 	}
+
 	return nil
 }
