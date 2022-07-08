@@ -15,7 +15,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `buyers` (
   `id` int(11) NOT NULL,
-  `id_card_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id_card_number` varchar(255) UNIQUE COLLATE utf8mb4_unicode_ci NOT NULL,
   `first_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `last_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -199,9 +199,9 @@ CREATE TABLE `provinces` (
 
 CREATE TABLE `purchase_orders` (
   `id` int(11) NOT NULL,
-  `order_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `order_number` varchar(255) UNIQUE COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `order_date` datetime(6) DEFAULT NULL,
-  `tracking_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tracking_code` varchar(255) UNIQUE COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `buyer_id` int(11) NOT NULL,
   `carrier_id` int(11) NOT NULL,
   `order_status_id` int(11) NOT NULL,
