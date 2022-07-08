@@ -23,7 +23,7 @@ func TestProductRecordsInsertErrorPrepare(t *testing.T) {
 	prep := mock.ExpectPrepare(query)
 	prep.WillReturnError(sqlmock.ErrCancelled)
 
-	_, err = repository.Insert(record)
+	_, err = repository.InsertProductRecords(record)
 
 	assert.Equal(t, sqlmock.ErrCancelled, err)
 }
@@ -40,7 +40,7 @@ func TestProductRecordsInsertSuccess(t *testing.T) {
 	prep := mock.ExpectPrepare(query)
 	prep.ExpectExec().WithArgs(record.LastUpdateDate, record.PurchasePrince, record.SalePrice, record.ProductId).WillReturnResult(sqlmock.NewResult(1, 1))
 
-	_, err = repository.Insert(record)
+	_, err = repository.InsertProductRecords(record)
 
 	assert.Equal(t, nil, err)
 }
@@ -57,7 +57,7 @@ func TestProductRecordsInsertErrorExec(t *testing.T) {
 	prep := mock.ExpectPrepare(query)
 	prep.ExpectExec().WithArgs(record.LastUpdateDate, record.PurchasePrince, record.SalePrice, record.ProductId).WillReturnError(sqlmock.ErrCancelled)
 
-	_, err = repository.Insert(record)
+	_, err = repository.InsertProductRecords(record)
 
 	assert.Equal(t, sqlmock.ErrCancelled, err)
 }
@@ -74,7 +74,7 @@ func TestProductRecordsInsertErrorLastId(t *testing.T) {
 	prep := mock.ExpectPrepare(query)
 	prep.ExpectExec().WithArgs(record.LastUpdateDate, record.PurchasePrince, record.SalePrice, record.ProductId).WillReturnResult(driver.ResultNoRows)
 
-	_, err = repository.Insert(record)
+	_, err = repository.InsertProductRecords(record)
 
 	assert.NotNil(t, err)
 }
@@ -92,7 +92,7 @@ func TestProductRecordsGetErrorPrepare(t *testing.T) {
 	repository := repository.NewRepositoryProductRecord(db)
 	mock.ExpectPrepare(query).WillReturnError(sqlmock.ErrCancelled)
 
-	_, err = repository.GetByProductId(0)
+	_, err = repository.GetProductRecords(0)
 
 	assert.Equal(t, sqlmock.ErrCancelled, err)
 }
@@ -115,7 +115,7 @@ func TestProductRecordsGetAllSuccess(t *testing.T) {
 	prep := mock.ExpectPrepare(query)
 	prep.ExpectQuery().WithArgs(0).WillReturnRows(mockRes)
 
-	res, err := repository.GetByProductId(0)
+	res, err := repository.GetProductRecords(0)
 
 	assert.Equal(t, expectRes, res)
 	assert.Equal(t, nil, err)
@@ -136,7 +136,7 @@ func TestProductRecordsGetAllScanError(t *testing.T) {
 	prep := mock.ExpectPrepare(query)
 	prep.ExpectQuery().WithArgs(0).WillReturnRows(mockRes)
 
-	res, err := repository.GetByProductId(0)
+	res, err := repository.GetProductRecords(0)
 
 	assert.Equal(t, expectRes, res)
 	assert.Equal(t, "sql: expected 4 destination arguments in Scan, not 3", err.Error())
@@ -154,7 +154,7 @@ func TestProductRecordsGetAllQueryError(t *testing.T) {
 	prep := mock.ExpectPrepare(query)
 	prep.ExpectQuery().WithArgs(0).WillReturnError(customerrors.ErrorInvalidDB)
 
-	res, err := repository.GetByProductId(0)
+	res, err := repository.GetProductRecords(0)
 
 	assert.Equal(t, expectRes, res)
 	assert.Equal(t, customerrors.ErrorInvalidDB, err)
@@ -176,7 +176,7 @@ func TestProductRecordsGetIdSuccess(t *testing.T) {
 	prep := mock.ExpectPrepare(query)
 	prep.ExpectQuery().WithArgs(1).WillReturnRows(mockRes)
 
-	res, err := repository.GetByProductId(1)
+	res, err := repository.GetProductRecords(1)
 
 	assert.Equal(t, expectRes, res)
 	assert.Equal(t, nil, err)

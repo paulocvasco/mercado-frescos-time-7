@@ -6,8 +6,8 @@ import (
 )
 
 type Repository interface {
-	Insert(record models.ProductRecord) (models.ProductRecord, error)
-	GetByProductId(id int) (models.ProductsRecordsResponse, error)
+	InsertProductRecords(record models.ProductRecord) (models.ProductRecord, error)
+	GetProductRecords(id int) (models.ProductsRecordsResponse, error)
 }
 
 type repository struct {
@@ -20,7 +20,7 @@ func NewRepositoryProductRecord(db *sql.DB) Repository {
 	}
 }
 
-func (r *repository) Insert(record models.ProductRecord) (models.ProductRecord, error) {
+func (r *repository) InsertProductRecords(record models.ProductRecord) (models.ProductRecord, error) {
 	stmt, err := r.db.Prepare(sqlStoreRecord)
 	if err != nil {
 		return models.ProductRecord{}, err
@@ -38,7 +38,7 @@ func (r *repository) Insert(record models.ProductRecord) (models.ProductRecord, 
 	return record, nil
 }
 
-func (r *repository) GetByProductId(id int) (models.ProductsRecordsResponse, error) {
+func (r *repository) GetProductRecords(id int) (models.ProductsRecordsResponse, error) {
 	var query string
 	if id == 0 {
 		query = sqlGetAllRecords

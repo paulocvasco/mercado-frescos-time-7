@@ -41,11 +41,11 @@ func (s *service) Insert(recordBytes []byte) (models.ProductRecord, error) {
 	if err != nil {
 		return models.ProductRecord{}, err
 	}
-	if record.LastUpdateDate.Before(time.Now().AddDate(0,0,-1)) {
+	if record.LastUpdateDate.Before(time.Now().AddDate(0, 0, -1)) {
 		return models.ProductRecord{}, customerrors.ErrorInvalidDate
 	}
 
-	insertedRecord, err := s.repository.Insert(record)
+	insertedRecord, err := s.repository.InsertProductRecords(record)
 	if err != nil {
 		return models.ProductRecord{}, err
 	}
@@ -53,7 +53,7 @@ func (s *service) Insert(recordBytes []byte) (models.ProductRecord, error) {
 }
 
 func (s *service) GetProductRecords(id int) (models.ProductsRecordsResponse, error) {
-	records, err := s.repository.GetByProductId(id)
+	records, err := s.repository.GetProductRecords(id)
 	if err != nil {
 		return models.ProductsRecordsResponse{}, err
 	}
