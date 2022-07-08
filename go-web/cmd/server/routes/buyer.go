@@ -27,4 +27,5 @@ func InstanceBuyer(r *gin.Engine) {
 	routes.POST("/", c.BuyerCreate())
 	routes.PATCH("/:id", c.BuyerUpdate())
 	routes.DELETE("/:id", c.BuyerDelete())
+	routes.GET("/reportPurchaseOrders", c.GetPurchaseOrder())
 }

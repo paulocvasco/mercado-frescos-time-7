@@ -14,6 +14,7 @@ type Service interface {
 	Create(card_number_id string, first_name, last_name string) (model.Buyer, error)
 	Update(id int, body repository.RequestPatch) (model.Buyer, error)
 	Delete(id int) error
+	GetPurchaseOrder(id int) ([]model.ResponsePurchaseByBuyer, error)
 }
 
 type service struct {
@@ -98,4 +99,19 @@ func (s service) Delete(id int) error {
 		return err
 	}
 	return nil
+}
+
+func (s *service) GetPurchaseOrder(id int) ([]model.ResponsePurchaseByBuyer, error) {
+	if id == 0 {
+		response, err := s.repository.GetAllPurchaseOrder()
+		if err != nil {
+			return []model.ResponsePurchaseByBuyer{}, err
+		}
+		return response, nil
+	}
+	response, err := s.repository.GetIdPurchaseOrder(id)
+	if err != nil {
+		return []model.ResponsePurchaseByBuyer{}, err
+	}
+	return response, nil
 }

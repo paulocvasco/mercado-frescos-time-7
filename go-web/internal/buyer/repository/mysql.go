@@ -15,6 +15,8 @@ type RepositoryMysql interface {
 	GetCardNumberId(id string) error
 	Update(id int, body model.Buyer) (model.Buyer, error)
 	Delete(id int) error
+	GetAllPurchaseOrder() ([]model.ResponsePurchaseByBuyer, error)
+	GetIdPurchaseOrder(id int) ([]model.ResponsePurchaseByBuyer, error)
 }
 
 type repositoryDb struct {
@@ -49,6 +51,7 @@ func (r repositoryDb) GetAll() ([]model.Buyer, error) {
 	}
 	return allBuyers, nil
 }
+
 func (r repositoryDb) GetId(id int) (model.Buyer, error) {
 	var section model.Buyer
 	rows := r.db.QueryRow("SELECT * FROM buyers WHERE ID = ? ", id)
@@ -59,7 +62,7 @@ func (r repositoryDb) GetId(id int) (model.Buyer, error) {
 		&section.LastName,
 	)
 	if errors.Is(err, sql.ErrNoRows) {
-		return model.Buyer{}, errors.New("id Not exist")
+		return model.Buyer{}, customerrors.ErrorInvalidID
 	}
 
 	if err != nil {
@@ -82,7 +85,6 @@ func (r repositoryDb) Create(CardNumberID string, FirstName, LastName string) (m
 		FirstName:    FirstName,
 		LastName:     LastName,
 	}
-	log.Println(section)
 
 	result, err := stmt.Exec(
 		&section.CardNumberID,
@@ -169,5 +171,65 @@ func (r repositoryDb) Update(id int, body model.Buyer) (model.Buyer, error) {
 		log.Fatal(err)
 	}
 	return section, nil
+
+}
+
+func (r repositoryDb) GetAllPurchaseOrder() ([]model.ResponsePurchaseByBuyer, error) {
+	var allBuyers []model.ResponsePurchaseByBuyer
+	rows, err := r.db.Query(`Select b.id,b.id_card_number, b.first_name,b.last_name,
+	count(b.id)  as purchase_orders_count 
+	from purchase_orders as p 
+	inner JOIN  buyers as b on  p.buyer_id = b.id
+	Group BY b.id ;`)
+	if err != nil {
+		log.Print(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+
+		var section model.ResponsePurchaseByBuyer
+		err := rows.Scan(
+			&section.ID,
+			&section.CardNumberID,
+			&section.FirstName,
+			&section.LastName,
+			&section.PurchaseOrdersCount,
+		)
+		if err != nil {
+			log.Print("erro2", err)
+			return []model.ResponsePurchaseByBuyer{}, err
+		}
+
+		allBuyers = append(allBuyers, section)
+	}
+	return allBuyers, nil
+}
+
+func (r repositoryDb) GetIdPurchaseOrder(id int) ([]model.ResponsePurchaseByBuyer, error) {
+	var section model.ResponsePurchaseByBuyer
+	var result []model.ResponsePurchaseByBuyer
+	rows := r.db.QueryRow(`Select b.id,b.id_card_number, b.first_name,b.last_name,
+	count(b.id)  as purchase_orders_count 
+	from purchase_orders as p 
+	inner JOIN  buyers as b on  p.buyer_id = b.id
+	WHERE b.id = ?
+	Group BY b.id ;`, id)
+	err := rows.Scan(
+		&section.ID,
+		&section.CardNumberID,
+		&section.FirstName,
+		&section.LastName,
+		&section.PurchaseOrdersCount,
+	)
+	if errors.Is(err, sql.ErrNoRows) {
+		return []model.ResponsePurchaseByBuyer{}, customerrors.ErrorInvalidID
+	}
+
+	if err != nil {
+		return []model.ResponsePurchaseByBuyer{}, err
+	}
+	result = append(result, section)
+	return result, nil
 
 }
