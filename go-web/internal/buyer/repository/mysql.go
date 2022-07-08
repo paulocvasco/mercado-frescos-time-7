@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"errors"
-	"log"
 	model "mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 )
@@ -12,7 +11,7 @@ type RepositoryMysql interface {
 	GetAll() ([]model.Buyer, error)
 	GetId(id int) (model.Buyer, error)
 	Create(CardNumberID string, FirstName, LastName string) (model.Buyer, error)
-	GetCardNumberId(id string) error
+	// GetCardNumberId(id string) error
 	Update(id int, body model.Buyer) (model.Buyer, error)
 	Delete(id int) error
 	GetAllPurchaseOrder() ([]model.ResponsePurchaseByBuyer, error)
@@ -30,8 +29,9 @@ func NewRepositoryMySql(db *sql.DB) RepositoryMysql {
 func (r repositoryDb) GetAll() ([]model.Buyer, error) {
 	var allBuyers []model.Buyer
 	rows, err := r.db.Query("SELECT * FROM buyers")
+
 	if err != nil {
-		panic(err)
+		return []model.Buyer{}, err
 	}
 	defer rows.Close()
 
@@ -74,7 +74,7 @@ func (r repositoryDb) GetId(id int) (model.Buyer, error) {
 func (r repositoryDb) Create(CardNumberID string, FirstName, LastName string) (model.Buyer, error) {
 
 	query := `INSERT INTO buyers(id_card_number,first_name,last_name) 
-	VALUES (?, ?, ?)	`
+	VALUES (?, ?, ?)`
 
 	stmt, _ := r.db.Prepare(query)
 
@@ -97,49 +97,48 @@ func (r repositoryDb) Create(CardNumberID string, FirstName, LastName string) (m
 	lastId, err := result.LastInsertId()
 
 	if err != nil {
-		log.Fatal(err)
+		return model.Buyer{}, err
 	}
 	section.ID = int(lastId)
 	return section, nil
 
 }
-func (r repositoryDb) GetCardNumberId(cardId string) error {
 
-	var section model.Buyer
-	rows := r.db.QueryRow("SELECT * FROM buyers where id_card_number = ? ", cardId)
-	err := rows.Scan(
-		&section.ID,
-		&section.CardNumberID,
-		&section.FirstName,
-		&section.LastName,
-	)
+// func (r repositoryDb) GetCardNumberId(cardId string) error {
 
-	if err == nil {
-		return customerrors.ErrorConflict
-	}
+// 	var section model.Buyer
+// 	rows := r.db.QueryRow("SELECT * FROM buyers where id_card_number = ? ", cardId)
+// 	err := rows.Scan(
+// 		&section.ID,
+// 		&section.CardNumberID,
+// 		&section.FirstName,
+// 		&section.LastName,
+// 	)
 
-	return nil
-}
+// 	if err == nil {
+// 		return customerrors.ErrorConflict
+// 	}
+
+// 	return nil
+// }
 func (r repositoryDb) Delete(id int) error {
 	query := `DELETE FROM buyers where id_card_number = ?`
 
-	stmt, _ := r.db.Prepare(query)
-
-	result, err := stmt.Exec(id)
-
+	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return err
 	}
 
+	result, _ := stmt.Exec(id)
+
 	affectedRows, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
 
 	if affectedRows == 0 {
 		return customerrors.ErrorInvalidID
 	}
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -167,23 +166,22 @@ func (r repositoryDb) Update(id int, body model.Buyer) (model.Buyer, error) {
 		return model.Buyer{}, err
 	}
 
-	if err != nil {
-		log.Fatal(err)
-	}
 	return section, nil
 
 }
 
 func (r repositoryDb) GetAllPurchaseOrder() ([]model.ResponsePurchaseByBuyer, error) {
 	var allBuyers []model.ResponsePurchaseByBuyer
-	rows, err := r.db.Query(`Select b.id,b.id_card_number, b.first_name,b.last_name,
+	query := `Select b.id,b.id_card_number, b.first_name,b.last_name,
 	count(b.id)  as purchase_orders_count 
 	from purchase_orders as p 
 	inner JOIN  buyers as b on  p.buyer_id = b.id
-	Group BY b.id ;`)
+	Group BY b.id ;`
+	rows, err := r.db.Query(query)
 	if err != nil {
-		log.Print(err)
+		return []model.ResponsePurchaseByBuyer{}, err
 	}
+
 	defer rows.Close()
 
 	for rows.Next() {
@@ -197,7 +195,6 @@ func (r repositoryDb) GetAllPurchaseOrder() ([]model.ResponsePurchaseByBuyer, er
 			&section.PurchaseOrdersCount,
 		)
 		if err != nil {
-			log.Print("erro2", err)
 			return []model.ResponsePurchaseByBuyer{}, err
 		}
 
@@ -209,12 +206,13 @@ func (r repositoryDb) GetAllPurchaseOrder() ([]model.ResponsePurchaseByBuyer, er
 func (r repositoryDb) GetIdPurchaseOrder(id int) ([]model.ResponsePurchaseByBuyer, error) {
 	var section model.ResponsePurchaseByBuyer
 	var result []model.ResponsePurchaseByBuyer
-	rows := r.db.QueryRow(`Select b.id,b.id_card_number, b.first_name,b.last_name,
+	query := `Select b.id,b.id_card_number, b.first_name,b.last_name,
 	count(b.id)  as purchase_orders_count 
 	from purchase_orders as p 
 	inner JOIN  buyers as b on  p.buyer_id = b.id
 	WHERE b.id = ?
-	Group BY b.id ;`, id)
+	Group BY b.id ;`
+	rows := r.db.QueryRow(query, id)
 	err := rows.Scan(
 		&section.ID,
 		&section.CardNumberID,
