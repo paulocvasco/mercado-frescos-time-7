@@ -57,16 +57,11 @@ func (r *SQLrepository) LocalityStore(id string, locality_name string, province_
 
 
 func (r *SQLrepository) Store(sel models.Seller) (models.Seller, error) {
-	log.Println("iniciando Checkid")
-	_, err := r.CheckCid(sel.Cid)
+
+	log.Println("preparando consulta")
+	stmt, err := r.db.Prepare("INSERT INTO mercado_db.sellers (`cid`, `company_name`, `address`, `telephone`, `locality_id`) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
 		return models.Seller{}, err
-	}
-	log.Println("preparando consulta")
-	db := db.StorageDB
-	stmt, err := db.Prepare("INSERT INTO mercado_db.sellers (`cid`, `company_name`, `address`, `telephone`, `locality_id`) VALUES (?, ?, ?, ?, ?)")
-	if err != nil {
-		log.Fatal(err)
 	}
 	defer stmt.Close()
 	log.Println("iniciando consulta")
@@ -170,6 +165,7 @@ func (r *SQLrepository) CheckCid(cid int) (models.Seller, error) {
 	var exists int
 	db := db.StorageDB
 	result := db.QueryRow("SELECT exists (SELECT * FROM `sellers` WHERE `cid` = ?)", cid)
+	log.Println(result)
 	if result.Err() != nil {
 		return seller, result.Err()
 	}
@@ -177,6 +173,7 @@ func (r *SQLrepository) CheckCid(cid int) (models.Seller, error) {
 	if err != nil {
 		return seller, result.Err()
 	}
+	log.Println(exists)
 	if exists == 1 {
 		return seller, customerrors.ErrorConflict
 	}
