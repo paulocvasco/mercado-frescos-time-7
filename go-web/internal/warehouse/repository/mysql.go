@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"log"
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/pkg/db"
@@ -22,12 +21,10 @@ func (m *mysqlDB) Create(new models.Warehouse) (models.Warehouse, error) {
 	query := "INSERT INTO warehouse(address, telephone, warehouse_code, minimum_capacity, minimum_temperature, locality_id) VALUES (?, ?, ?, ?, ?, ?)"
 	res, err := m.db.Exec(query, new.Address, new.Telephone, new.WarehouseCode, new.MinimunCapacity, new.MinimunTemperature, new.LocalityID)
 	if err != nil {
-		log.Println(err)
 		return models.Warehouse{}, err
 	}
 	lastID, err := res.LastInsertId()
 	if err != nil {
-		log.Println(err)
 		return models.Warehouse{}, err
 	}
 	newWarehouse := new
@@ -39,12 +36,10 @@ func (m *mysqlDB) Update(id int, w models.Warehouse) error {
 	query := "UPDATE warehouse SET address = ?, telephone = ?, warehouse_code = ?, minimum_capacity = ?, minimum_temperature = ?, locality_id = ? WHERE id = ?"
 	stmt, err := m.db.Prepare(query)
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 	res, err := stmt.Exec(w.Address, w.Telephone, w.WarehouseCode, w.MinimunCapacity, w.MinimunTemperature, w.LocalityID, id)
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 	if ra, _ := res.RowsAffected(); ra == 0 {
@@ -57,7 +52,6 @@ func (m *mysqlDB) Update(id int, w models.Warehouse) error {
 func (m *mysqlDB) GetAll() (models.Warehouses, error) {
 	res, err := m.db.Query("SELECT * FROM warehouse")
 	if err != nil {
-		log.Println(err)
 		return models.Warehouses{}, err
 	}
 
@@ -78,7 +72,6 @@ func (m *mysqlDB) GetByID(id int) (models.Warehouse, error) {
 	var w models.Warehouse
 	err := m.db.QueryRow(query, id).Scan(&w.ID, &w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimunCapacity, &w.MinimunTemperature, &w.LocalityID)
 	if err != nil {
-		log.Println(err)
 		return models.Warehouse{}, customerrors.ErrorItemNotFound
 	}
 
