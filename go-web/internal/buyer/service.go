@@ -45,10 +45,10 @@ func (s *service) GetId(id int) (model.Buyer, error) {
 
 func (s *service) Create(cardNumberID string, firstName, lastName string) (model.Buyer, error) {
 
-	err := s.repository.GetCardNumberId(cardNumberID)
-	if err != nil {
-		return model.Buyer{}, err
-	}
+	// err := s.repository.GetCardNumberId(cardNumberID)
+	// if err != nil {
+	// 	return model.Buyer{}, err
+	// }
 	response, err := s.repository.Create(cardNumberID, firstName, lastName)
 	if err != nil {
 		return model.Buyer{}, err
@@ -57,10 +57,10 @@ func (s *service) Create(cardNumberID string, firstName, lastName string) (model
 }
 
 func (s *service) Update(id int, newData repository.RequestPatch) (model.Buyer, error) {
-	err := s.repository.GetCardNumberId(newData.CardNumberID)
-	if err != nil {
-		return model.Buyer{}, err
-	}
+	// err := s.repository.GetCardNumberId(newData.CardNumberID)
+	// if err != nil {
+	// 	return model.Buyer{}, err
+	// }
 	getById, err := s.repository.GetId(id)
 	var emptyBuyer model.Buyer
 
