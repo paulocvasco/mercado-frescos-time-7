@@ -20,5 +20,6 @@ func main() {
 	routes.InstanceSection(r)
 	routes.InstanceLocality(r)
 	routes.InstanceReportSellers(r)
+	routes.InstanceCarriers(r)
 	r.Run()
 }
