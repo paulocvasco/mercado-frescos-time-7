@@ -14,7 +14,7 @@ require (
 
 require github.com/go-sql-driver/mysql v1.6.0
 
-require github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
+require github.com/DATA-DOG/go-sqlmock v1.5.0
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
