@@ -2,6 +2,9 @@ package controller
 
 import (
 	"mercado-frescos-time-7/go-web/internal/carriers"
+	"mercado-frescos-time-7/go-web/internal/models"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,7 +27,23 @@ func NewControllerCarriers(s carriers.Service) CarriersController {
 }
 
 func (ctrl *carriersController) CreateCarrier(c *gin.Context) {
-	c.JSON(http.StatusOK, nil)
+	var newCarrier models.CarrierRequest
+	err := c.ShouldBindJSON(&newCarrier)
+	if err != nil {
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
+		return
+	}
+	nc, err := ctrl.service.Create(newCarrier)
+	if err != nil {
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
+		return
+	}
+	res := web.NewResponse(http.StatusCreated, nc, "")
+	c.JSON(http.StatusCreated, res)
 }
 
 func (ctrl *carriersController) GetCarriers(c *gin.Context) {
