@@ -152,5 +152,5 @@ type CarrierInfo struct {
 }
 
 type CarriersReport struct {
-	Data []CarrierInfo `json:"data"`
+	Data []CarrierInfo `json:"reports"`
 }
