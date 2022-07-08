@@ -62,7 +62,7 @@ func (m *mysqlDB) Get(id int) (models.CarriersReport, error) {
 }
 
 func (m *mysqlDB) getById(id int) (models.CarriersReport, error) {
-	query := "SELECT * FROM carriers WHERE locality_id = ?"
+	query := "SELECT c.locality_id, l.locality_name, COUNT(*) AS carriers_count FROM carriers c INNER JOIN localities l ON c.locality_id = l.id WHERE c.locality_id = ? GROUP BY c.locality_id"
 	res, err := m.db.Query(query, id)
 	if err != nil {
 		return models.CarriersReport{}, err
@@ -81,10 +81,7 @@ func (m *mysqlDB) getById(id int) (models.CarriersReport, error) {
 }
 
 func (m *mysqlDB) getAll() (models.CarriersReport, error) {
-	query := `SELECT c.locality_id, l.locality_name, COUNT(*) AS carriers_count FROM carrier c
-INNER JOIN locality l
-ON c.locality_id = l.id
-GROUP BY c.locality_id;`
+	query := "SELECT c.locality_id, l.locality_name, COUNT(*) AS carriers_count FROM carriers c INNER JOIN localities l ON c.locality_id = l.id GROUP BY c.locality_id"
 
 	res, err := m.db.Query(query)
 	if err != nil {
