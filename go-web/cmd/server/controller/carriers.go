@@ -6,6 +6,7 @@ import (
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -47,5 +48,25 @@ func (ctrl *carriersController) CreateCarrier(c *gin.Context) {
 }
 
 func (ctrl *carriersController) GetCarriers(c *gin.Context) {
-	c.JSON(http.StatusOK, nil)
+	var id int
+	qp := c.Query("id")
+	if qp != "" {
+		var err error
+		id, err = strconv.Atoi(qp)
+		if err != nil {
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			c.JSON(status, res)
+			return
+		}
+	}
+	rep, err := ctrl.service.Get(id)
+	if err != nil {
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		c.JSON(status, res)
+		return
+	}
+	res := web.NewResponse(http.StatusOK, rep, "")
+	c.JSON(http.StatusOK, res)
 }
