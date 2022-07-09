@@ -6,7 +6,7 @@ import (
 )
 
 type Service interface {
-	ReportSellers(id int) (models.ReportSeller, error)
+	ReportSellers(id int) ([]models.ReportSeller, error)
 }
 
 type service struct {
@@ -19,10 +19,10 @@ func NewService(r repository.Repository) Service {
 	}
 }
 
-func (s *service) ReportSellers(id int) (models.ReportSeller, error) {
+func (s *service) ReportSellers(id int) ([]models.ReportSeller, error) {
 	product, err := s.repository.ReportSellers(id)
 	if err != nil {
-		return models.ReportSeller{}, err
+		return []models.ReportSeller{}, err
 	}
 	return product, nil
 }

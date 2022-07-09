@@ -5,12 +5,10 @@ import (
 	"log"
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/db"
-	"strconv"
 )
 
 type Repository interface {
-	CheckId(cid string) (models.Locality, error)
+	/*CheckId(cid string) (models.Locality, error)*/
 	Store(loc models.Locality) (models.Locality, error)
 }
 
@@ -25,12 +23,12 @@ func NewSQLrepository(db *sql.DB) Repository {
 }
 
 func (r *SQLrepository) Store(loc models.Locality) (models.Locality, error) {
-	_, err := r.CheckId(loc.Id)
+	/*_, err := r.CheckId(loc.Id)
 	if err != nil {
 		return models.Locality{}, err
-	}
+	}*/
 	var exists int
-	db1 := db.StorageDB
+	db1 := r.db
 	sqlquery := "SELECT a.id FROM provincies a INNER JOIN countries b ON a.id_country_fk = b.Id AND b.country_name = ? AND a.provincie_name = ?;"
 	result := db1.QueryRow(sqlquery, loc.Country_name, loc.Province_name)
 	if result.Err() != nil {
@@ -38,16 +36,15 @@ func (r *SQLrepository) Store(loc models.Locality) (models.Locality, error) {
 		return models.Locality{}, result.Err()
 	}
 
-	err = result.Scan(&exists)
+	err := result.Scan(&exists)
 	if err != nil {
 		log.Println(err)
 		return models.Locality{}, customerrors.ErrorConflict
 	}
-
-	db := db.StorageDB
+	db := r.db
 	stmt, err := db.Prepare("INSERT INTO `localities` (`id`, `locality_name`, `province_id`) VALUES (?, ?, ?)")
 	if err != nil {
-		log.Println(err)
+		return models.Locality{}, err
 	}
 	defer stmt.Close()
 	_, err = stmt.Exec(loc.Id, loc.Locality_name, exists)
@@ -60,7 +57,7 @@ func (r *SQLrepository) Store(loc models.Locality) (models.Locality, error) {
 	return localityResult, nil
 }
 
-func (r *SQLrepository) CheckId(cid string) (models.Locality, error) {
+/*func (r *SQLrepository) CheckId(cid string) (models.Locality, error) {
 	seller := models.Locality{}
 	var exists int
 	db := db.StorageDB
@@ -114,4 +111,4 @@ func (r *SQLrepository) ReportSellers(id int) (models.ReportSeller, error) {
 	sellers.SellerCount = contagem
 	sellers.Locality_name = nome
 	return sellers, nil
-}
+}*/

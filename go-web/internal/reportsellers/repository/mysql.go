@@ -4,16 +4,14 @@ import (
 	"database/sql"
 	"log"
 	"mercado-frescos-time-7/go-web/internal/models"
-	"mercado-frescos-time-7/go-web/pkg/db"
-	"strconv"
 )
 
 type Repository interface {
-    ReportSellers(id int) (models.ReportSeller, error)     
+	ReportSellers(id int) ([]models.ReportSeller, error)
 }
 
 type SQLrepository struct {
-    db *sql.DB
+	db *sql.DB
 }
 
 func NewSQLrepository(db *sql.DB) Repository {
@@ -22,35 +20,29 @@ func NewSQLrepository(db *sql.DB) Repository {
 	}
 }
 
-func (r *SQLrepository) ReportSellers(id int) (models.ReportSeller, error) {
-    var sellers models.ReportSeller
-    db := db.StorageDB
-    rows := db.QueryRow("SELECT COUNT(id) FROM `sellers` WHERE `locality_id` = ?", id)
-    if rows.Err() != nil {
-        log.Println(rows.Err())
-        return models.ReportSeller{}, rows.Err()
-    }
-    var contagem string
-    err := rows.Scan(&contagem)
-    if err != nil {
-        log.Println(err)
-        return models.ReportSeller{}, err
-    }
+func (r *SQLrepository) ReportSellers(id int) ([]models.ReportSeller, error) {
+	var query string
+	if id == 0 {
+		query = "SELECT l.id, l.locality_name, COUNT(*) FROM sellers s INNER JOIN localities l ON s.locality_id = l.id WHERE s.locality_id > ? GROUP BY s.locality_id;"
+	} else {
+		query = "SELECT l.id, l.locality_name, COUNT(*) FROM sellers s INNER JOIN localities l ON s.locality_id = l.id WHERE s.locality_id = ? GROUP BY s.locality_id;"
+	}
+	var reporters []models.ReportSeller
+	db := r.db
+	rows, err := db.Query(query, id)
+	if err != nil {
+		log.Println(err)
+		return []models.ReportSeller{}, err
+	}
 
-    rows = db.QueryRow("SELECT locality_name FROM `localities` WHERE id = ?", id)
-    if rows.Err() != nil {
-        log.Println(rows.Err())
-        return models.ReportSeller{}, rows.Err()
-    }
-    var nome string
-    err = rows.Scan(&nome)
-    if err != nil {
-        log.Println(err)
-        return models.ReportSeller{}, err
-    }
+	for rows.Next() {
+		var rapp models.ReportSeller
+		if err := rows.Scan(&rapp.LocalityID, &rapp.Locality_name, &rapp.SellerCount); err != nil {
+			log.Println(err)
+			return []models.ReportSeller{}, err
+		}
+		reporters = append(reporters, rapp)
+	}
+	return reporters, nil
 
-    sellers.LocalityID = strconv.Itoa(id)
-    sellers.SellerCount = contagem
-    sellers.Locality_name = nome
-    return sellers, nil
 }

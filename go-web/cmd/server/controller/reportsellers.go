@@ -16,13 +16,26 @@ type ReportSellers struct {
 
 func (c *ReportSellers) ReportSellers() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		id, err := strconv.Atoi(ctx.Query("id"))
+		/*id, err := strconv.Atoi(ctx.Query("id"))
+		if err != nil {
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			ctx.JSON(status, res)
+			return
+		}*/
+
+		queryId := ctx.Query("id")
+		if queryId == "" {
+			queryId = "0"
+		}
+		id, err := strconv.Atoi(queryId)
 		if err != nil {
 			status, msg := customerrors.ErrorHandleResponse(err)
 			res := web.NewResponse(status, nil, msg)
 			ctx.JSON(status, res)
 			return
 		}
+
 		p, err := c.service.ReportSellers(id)
 		if err != nil {
 			status, msg := customerrors.ErrorHandleResponse(err)
