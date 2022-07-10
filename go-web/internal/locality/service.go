@@ -5,6 +5,7 @@ import (
 	"mercado-frescos-time-7/go-web/internal/models"
 )
 
+//go:generate mockery --name=Service --output=../mocks --outpkg=mockService
 type Service interface {
 	Store(loc models.Locality) (models.Locality, error)
 }

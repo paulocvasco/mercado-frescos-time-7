@@ -63,11 +63,11 @@ func TestStoreLocalityErrorQuery(t *testing.T) {
 	u := models.Locality{Id:"1",Locality_name: "Buritizeiro",Province_name: "Minas Gerais", Country_name: "Brazil"}
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	assert.NoError(t, err)
-	mock.ExpectQuery("SELECT a.id FROM provincies a INNER JOIN countries b ON a.id_country_fk = b.Id AND b.country_name = ? AND a.provincie_name = ?;").WillReturnError(customerrors.ErrorInvalidDB)
+	mock.ExpectQuery("SELECT a.id FROM provincies a INNER JOIN countries b ON a.id_country_fk = b.Id AND b.country_name = ? AND a.provincie_name = ?;").WillReturnError(customerrors.ErrorConflict)
 
 	repo := repository.NewSQLrepository(db)
 
 	result, err := repo.Store(u)
-	assert.Equal(t, err, customerrors.ErrorInvalidDB)
+	assert.Equal(t, err, customerrors.ErrorConflict)
 	assert.NotNil(t, result)
 }

@@ -15,7 +15,7 @@ type Repository interface {
 type SQLrepository struct {
 	db *sql.DB
 }
-
+//go:generate mockery --name=Repository --output=../mocks --outpkg=mockRepository
 func NewSQLrepository(db *sql.DB) Repository {
 	return &SQLrepository{
 		db: db,
