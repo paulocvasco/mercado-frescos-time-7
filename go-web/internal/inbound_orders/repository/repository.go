@@ -25,7 +25,7 @@ func (r *repository) Create(order_date string, order_number string, employee_id 
 		return InboundOrders{}, customErrors.ErrorInvalidOrderNumber
 	}
 
-	query := "INSERT INTO mercado_fresco.inbound_orders (`order_date`, `order_number`, `employee_id`, `product_batch_id`, `warehouse_id`) VALUES (?, ?, ?, ?, ?)"
+	query := "INSERT INTO inbound_orders (`order_date`, `order_number`, `employee_id`, `product_batch_id`, `warehouse_id`) VALUES (?, ?, ?, ?, ?)"
 	inboudOrdersQuery, err := data.Prepare(query)
 	if err != nil {
 		log.Println(err)

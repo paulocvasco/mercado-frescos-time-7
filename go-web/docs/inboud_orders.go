@@ -8,19 +8,13 @@ import (
 //////////////////               END POINTS               ///////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-// swagger:route GET /employees/inboundOrders InboundOrders getReportInboundOrders
+// swagger:route GET /employees/reportInboundOrders InboundOrders getInboundOrdersID
 // Get a inbound from db.
 // responses:
 //    200: getReportInboundOrders
 //    500: errorServerResponse
-
-// swagger:route GET /employees/inboundOrders?id="id" InboundOrders getInboundOrders
-// Get all objects stored on db.
-// responses:
-//    200: getInboundOrders
-//    400: errorResponse
 //    404: errorResponse
-//    500: errorServerResponse
+//    400: errorResponse
 
 // swagger:route POST /inboundOrders/ InboundOrders createInboundOrders
 // Add a new object on db.
@@ -82,8 +76,7 @@ type errorServerResponse struct {
 // swagger:parameters getInboundOrdersID
 type inboundOrderRequestID struct {
 	// Value corresponding to object ID on db.
-	// in: path
-	// required: true
+	// in: query
 	Id string `json:"id"`
 }
 
@@ -94,6 +87,7 @@ type inboundOrdersNewResquest struct {
 }
 
 type createInboundOrders struct {
+	//swagger:strfmt date
 	OrderDate      string `json:"order_date"`
 	OrderNumber    string `json:"order_number"`
 	EmployeeId     int    `json:"employee_id"`
