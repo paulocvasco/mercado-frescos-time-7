@@ -35,8 +35,7 @@ type SectionRepository interface {
 	Update(context.Context, *Section) (*Section, error)
 	Delete(context.Context, int) error
 
-	GetReportProductsById(context.Context, int) (*ProductReport, error)
-	GetAllProductReports(ctx context.Context) (*ProductReports, error)
+	GetReportProducts(context.Context, int) (*ProductReports, error)
 }
 
 type SectionService interface {
@@ -46,6 +45,5 @@ type SectionService interface {
 	Update(context.Context, *Section) (*Section, error)
 	Delete(context.Context, int) error
 
-	GetReportProductsById(context.Context, int) (*ProductReport, error)
-	GetAllProductReports(ctx context.Context) (*ProductReports, error)
+	GetReportProducts(context.Context, int) (*ProductReports, error)
 }
