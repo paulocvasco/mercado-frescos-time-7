@@ -35,7 +35,7 @@ import (
 // swagger:route DELETE /products/{id} Product deleteProductID
 // Remove a corresponding ID object from db.
 // responses:
-//    204: 
+//    204:
 //    400: errorResponse
 //    404: errorResponse
 //    500: errorServerResponse
@@ -122,15 +122,15 @@ type patchProduct struct {
 }
 
 type updateProduct struct {
-	Product_code                     *string  `json:"product_code,omitempty"`
-	Description                      *string  `json:"description,omitempty"`
-	Width                            *float64 `json:"width,omitempty"`
-	Height                           *float64 `json:"height,omitempty"`
-	Length                           *float64 `json:"length,omitempty"`
-	Net_weight                       *float64 `json:"netweight,omitempty"`
-	Expiration_rate                  *int     `json:"expiration_rate,omitempty"`
-	Recommended_freezing_temperature *float64 `json:"recommended_freezing_temperature,omitempty"`
-	Freezing_rate                    *float64 `json:"freezing_rate,omitempty"`
-	Product_type_id                  *int     `json:"product_type_id,omitempty"`
-	Seller_id                        *int     `json:"seller_id,omitempty"`
+	ProductCode                    *string  `json:"product_code,omitempty"`
+	Description                    *string  `json:"description,omitempty"`
+	Width                          *float64 `json:"width,omitempty"`
+	Height                         *float64 `json:"height,omitempty"`
+	Length                         *float64 `json:"length,omitempty"`
+	NetWeight                      *float64 `json:"net_weight,omitempty"`
+	ExpirationRate                 *int     `json:"expiration_rate,omitempty"`
+	RecommendedFreezingTemperature *float64 `json:"recommended_freezing_temperature,omitempty"`
+	FreezingRate                   *float64 `json:"freezing_rate,omitempty"`
+	ProductTypeId                  *int     `json:"product_type_id,omitempty"`
+	SellerId                       *int     `json:"seller_id,omitempty"`
 }
