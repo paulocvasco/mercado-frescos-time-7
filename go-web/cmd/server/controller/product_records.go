@@ -64,7 +64,7 @@ func (prc *productRecordsController) InsertProductRecord() gin.HandlerFunc {
 
 		date, err := time.Parse("2006-01-02", newRecord.LastUpdateDate)
 		if err != nil {
-			status, msg := customerrors.ErrorHandleResponse(err)
+			status, msg := customerrors.ErrorHandleResponse(customerrors.ErrorInvalidDate)
 			res := web.NewResponse(status, nil, msg)
 			c.JSON(status, res)
 			return
