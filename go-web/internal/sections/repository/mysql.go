@@ -116,7 +116,7 @@ func (r *repositorySql) Store(ctx context.Context, section *domain.Section) (*do
 	return section, nil
 
 }
-func (r *repositorySql) Update(ctx context.Context, section *domain.Section) error {
+func (r *repositorySql) Update(ctx context.Context, section *domain.Section) (*domain.Section, error) {
 	result, err := r.db.ExecContext(
 		ctx,
 		queryUpdate,
@@ -131,14 +131,15 @@ func (r *repositorySql) Update(ctx context.Context, section *domain.Section) err
 		&section.Id,
 	)
 	if err != nil {
-		return err
+		return &domain.Section{}, err
 	}
 	if rowsAffected, err := result.RowsAffected(); rowsAffected == 0 {
-		return customerrors.ErrorInvalidID
+		return &domain.Section{}, customerrors.ErrorInvalidID
 	} else if err != nil {
-		return customerrors.ErrorInvalidDB
+		return &domain.Section{}, customerrors.ErrorInvalidDB
 	}
-	return nil
+
+	return section, nil
 }
 func (r *repositorySql) Delete(ctx context.Context, id int) error {
 	stmt, err := r.db.Prepare(queryDelete)
@@ -156,7 +157,48 @@ func (r *repositorySql) Delete(ctx context.Context, id int) error {
 	}
 	return nil
 }
+func (r *repositorySql) GetReportProductsById(ctx context.Context, id int) (*domain.ProductReport, error) {
+	row := r.db.QueryRowContext(ctx, queryReportProductsById, id)
 
-func (r *repositorySql) GetReportProductsById(ctx context.Context, id int) (*domain.ProductReports, error) {
-	return &domain.ProductReports{}, nil
+	productReport := domain.ProductReport{}
+
+	err := row.Scan(
+		&productReport.SectionId,
+		&productReport.SectionNumber,
+		&productReport.ProductsCount,
+	)
+
+	// ID not found
+	if errors.Is(err, sql.ErrNoRows) {
+		return &productReport, err
+	}
+
+	// Other errors
+	if err != nil {
+		return &productReport, err
+	}
+
+	return &productReport, nil
+}
+func (r *repositorySql) GetAllProductReports(ctx context.Context) (*domain.ProductReports, error) {
+	var productReports domain.ProductReports
+
+	rows, err := r.db.QueryContext(ctx, queryGetAllReportProducts)
+	if err != nil {
+		return &domain.ProductReports{}, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var productReport domain.ProductReport
+
+		if err := rows.Scan(
+			&productReport.SectionId,
+			&productReport.SectionNumber,
+			&productReport.ProductsCount,
+		); err != nil {
+			return &productReports, err
+		}
+		productReports.ProductReports = append(productReports.ProductReports, productReport)
+	}
+	return &productReports, nil
 }
