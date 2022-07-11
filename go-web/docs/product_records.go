@@ -8,18 +8,12 @@ import (
 //////////////////               END POINTS               ///////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-// swagger:route GET /products/reportRecords?id={id} ProductRecords getProductRecordID
+// swagger:route GET /products/reportRecords ProductRecords getProductRecordID
 // Get a product from db.
 // responses:
 //    200: productRecordsIDResponse
 //    400: errorResponse
 //    404: errorResponse
-//    500: errorServerResponse
-
-// swagger:route GET /products/reportRecords ProductRecords ProductRecordAll
-// Get all objects stored on db.
-// responses:
-//    200: productRecordsIDResponse
 //    500: errorServerResponse
 
 // swagger:route POST /productRecords ProductRecords createProductRecord
@@ -83,7 +77,6 @@ type errorServerResponseProductRecords struct {
 type productRecordsRequestID struct {
 	// Value corresponding to object ID on db.
 	// in: query
-	// required: true
 	Id string `json:"id"`
 }
 
@@ -94,6 +87,7 @@ type productRecordsNewResquest struct {
 }
 
 type createProductRecords struct {
+	//swagger:strfmt date
 	LastUpdateDate string  `json:"last_update_date"`
 	PurchasePrince float64 `json:"purchase_prince"`
 	SalePrice      float64 `json:"sale_price"`
