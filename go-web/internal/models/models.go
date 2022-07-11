@@ -138,11 +138,11 @@ type Carrier struct {
 }
 
 type CarrierRequest struct {
-	Cid        *int    `json:"cid"`
-	Company    *string `json:"company_name"`
-	Address    *string `json:"address"`
-	Telephone  string  `json:"telephone"`
-	LocalityID *int    `json:"locality_id"`
+	Cid        *int    `json:"cid" binding:"required"`
+	Company    *string `json:"company_name" binding:"required"`
+	Address    *string `json:"address" binding:"required"`
+	Telephone  string  `json:"telephone" binding:"required"`
+	LocalityID *int    `json:"locality_id" binding:"required"`
 }
 
 type CarrierInfo struct {
