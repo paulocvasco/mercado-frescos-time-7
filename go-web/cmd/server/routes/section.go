@@ -18,7 +18,6 @@ func InstanceSection(eng *gin.Engine) {
 	sec.POST("/", controller.Store)
 	sec.PATCH("/:id", controller.Update)
 	sec.DELETE("/:id", controller.Delete)
-	sec.GET("/reportProducts", controller.GetAllReportProducts)
-	sec.GET("/reportProducts/:id", controller.GetReportProductsById)
+	sec.GET("/reportProducts", controller.GetReportProducts)
 
 }
