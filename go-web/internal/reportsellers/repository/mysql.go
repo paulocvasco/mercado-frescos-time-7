@@ -5,7 +5,7 @@ import (
 	"log"
 	"mercado-frescos-time-7/go-web/internal/models"
 )
-//go:generate mockery --name=Repository --output=../mocks --outpkg=mockRepository
+
 type Repository interface {
 	ReportSellers(id int) ([]models.ReportSeller, error)
 }
