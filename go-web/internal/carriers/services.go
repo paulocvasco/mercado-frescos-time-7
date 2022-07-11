@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"mercado-frescos-time-7/go-web/internal/carriers/repository"
 	"mercado-frescos-time-7/go-web/internal/models"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 )
 
 type Service interface {
@@ -36,6 +37,9 @@ func (s *service) Create(new models.CarrierRequest) (models.Carrier, error) {
 }
 
 func (s *service) Get(id int) (models.CarriersReport, error) {
+	if id < 0 {
+		return models.CarriersReport{}, customerrors.ErrorInvalidID
+	}
 	report, err := s.repository.Get(id)
 	if err != nil {
 		return models.CarriersReport{}, err
