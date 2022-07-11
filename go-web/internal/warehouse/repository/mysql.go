@@ -4,17 +4,15 @@ import (
 	"database/sql"
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/db"
 )
 
 type mysqlDB struct {
 	db *sql.DB
 }
 
-func NewSqlRepository() Repository {
-	database := db.Get()
+func NewSqlRepository(db *sql.DB) Repository {
 	return &mysqlDB{
-		db: database}
+		db: db}
 }
 
 func (m *mysqlDB) Create(new models.Warehouse) (models.Warehouse, error) {

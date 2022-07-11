@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/db"
 )
 
 type Repository interface {
@@ -17,10 +16,9 @@ type mysqlDB struct {
 	db *sql.DB
 }
 
-func NewRepository() Repository {
-	database := db.Get()
+func NewRepository(db *sql.DB) Repository {
 	return &mysqlDB{
-		db: database,
+		db: db,
 	}
 }
 
