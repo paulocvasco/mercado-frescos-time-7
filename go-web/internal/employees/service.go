@@ -2,7 +2,6 @@ package employees
 
 import (
 	"encoding/json"
-
 	jsonpatch "github.com/evanphx/json-patch/v5"
 )
 
