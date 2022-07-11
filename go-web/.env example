@@ -1,0 +1,4 @@
+USER_DB="youruser"
+PASS_DB="yourpassword"
+PATH_DB="addressdb:port"
+NAME_DB="tablename"

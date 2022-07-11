@@ -158,22 +158,14 @@ func TestStore(t *testing.T) {
 		mockRepository := mocks.NewRepository(t)
 		service := seller.NewService(mockRepository)
 
-		mockRepository.On("LastID").Return((response.ID - 1), value.errorLastID).Maybe()
+		mockRepository.On("LastID").Return((value.mockResponse.ID - 1), value.errorLastID).Maybe()
 
 		mockRepository.On("Store",
-			response.ID,
-			value.mockResponse.Cid,
-			value.mockResponse.Company_name,
-			value.mockResponse.Address,
-			value.mockResponse.Telephone).
+			value.mockResponse).
 			Return(value.mockResponse, value.expectError).Maybe()
 
 		resp, err := service.
-			Store(value.mockResponse.Cid,
-				value.mockResponse.Company_name,
-				value.mockResponse.Address,
-				value.mockResponse.Telephone,
-			)
+			Store(value.mockResponse)
 		assert.Equal(t, value.expectResponse, resp, value.message)
 		assert.Equal(t, value.expectError, err, value.message)
 

@@ -71,20 +71,20 @@ func (_m *Service) GetId(indice int) (models.Seller, error) {
 	return r0, r1
 }
 
-// Store provides a mock function with given fields: cid, company_name, address, telephone
-func (_m *Service) Store(cid int, company_name string, address string, telephone string) (models.Seller, error) {
-	ret := _m.Called(cid, company_name, address, telephone)
+// Store provides a mock function with given fields: sel
+func (_m *Service) Store(sel models.Seller) (models.Seller, error) {
+	ret := _m.Called(sel)
 
 	var r0 models.Seller
-	if rf, ok := ret.Get(0).(func(int, string, string, string) models.Seller); ok {
-		r0 = rf(cid, company_name, address, telephone)
+	if rf, ok := ret.Get(0).(func(models.Seller) models.Seller); ok {
+		r0 = rf(sel)
 	} else {
 		r0 = ret.Get(0).(models.Seller)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int, string, string, string) error); ok {
-		r1 = rf(cid, company_name, address, telephone)
+	if rf, ok := ret.Get(1).(func(models.Seller) error); ok {
+		r1 = rf(sel)
 	} else {
 		r1 = ret.Error(1)
 	}
