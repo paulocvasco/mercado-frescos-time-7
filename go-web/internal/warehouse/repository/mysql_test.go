@@ -68,7 +68,7 @@ func TestCreate(t *testing.T) {
 		exec.WillReturnResult(v.mockResponse)
 		exec.WillReturnError(v.mockError)
 
-		repo := mysqlDB{db: db}
+		repo := NewSqlRepository(db)
 		new, err := repo.Create(v.storeModel)
 		if v.expectedError != err {
 			t.Errorf("Create test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
@@ -138,7 +138,7 @@ func TestGetAll(t *testing.T) {
 		exec.WillReturnRows(rows)
 		exec.WillReturnError(v.queryError)
 
-		repo := mysqlDB{db: db}
+		repo := NewSqlRepository(db)
 		all, err := repo.GetAll()
 		if v.expectedError != err {
 			t.Errorf("GetAll test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
@@ -204,7 +204,7 @@ func TestGetByID(t *testing.T) {
 		exec.WillReturnRows(rows)
 		exec.WillReturnError(v.queryError)
 
-		repo := mysqlDB{db: db}
+		repo := NewSqlRepository(db)
 		w, err := repo.GetByID(v.id)
 		if v.expectedError != err {
 			t.Errorf("GetById test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
@@ -261,7 +261,7 @@ func TestDelete(t *testing.T) {
 		exec.WillReturnResult(v.mockResponse)
 		exec.WillReturnError(v.mockError)
 
-		repo := mysqlDB{db: db}
+		repo := NewSqlRepository(db)
 		err = repo.Delete(v.id)
 		if v.expectedError != err {
 			t.Errorf("Delete test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
@@ -315,7 +315,7 @@ func TestUpdate(t *testing.T) {
 		exec.WillReturnResult(v.mockResponse)
 		exec.WillReturnError(v.mockError)
 
-		repo := mysqlDB{db: db}
+		repo := NewSqlRepository(db)
 		err = repo.Update(v.id, v.updatedModel)
 		if v.expectedError != err {
 			t.Errorf("Update test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
