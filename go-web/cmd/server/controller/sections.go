@@ -1,11 +1,9 @@
 package controller
 
 import (
-	"encoding/json"
-	"mercado-frescos-time-7/go-web/internal/sections"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/web"
+	"mercado-frescos-time-7/go-web/internal/sections/domain"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,13 +14,15 @@ type SectionsController interface {
 	Store(*gin.Context)
 	Update(*gin.Context)
 	Delete(*gin.Context)
+	GetAllReportProducts(ctx *gin.Context)
+	GetReportProductsById(ctx *gin.Context)
 }
 
 type sectionsController struct {
-	service sections.Service
+	service domain.SectionService
 }
 
-func NewController(s sections.Service) SectionsController {
+func NewController(s domain.SectionService) SectionsController {
 	newController := &sectionsController{
 		service: s,
 	}
@@ -30,98 +30,175 @@ func NewController(s sections.Service) SectionsController {
 }
 
 func (controller *sectionsController) GetAll(ctx *gin.Context) {
-	sections, err := controller.service.GetAll()
+	sections, err := controller.service.GetAll(ctx.Request.Context())
+
 	if err != nil {
-		status, msg := customerrors.ErrorHandleResponse(err)
-		res := web.NewResponse(status, nil, msg)
-		ctx.JSON(status, res)
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
 		return
 	}
-	response := web.NewResponse(http.StatusOK, sections, "")
-	ctx.JSON(http.StatusOK, response)
+
+	ctx.JSON(http.StatusOK, sections)
 }
 
 func (controller *sectionsController) GetById(ctx *gin.Context) {
-	id := ctx.Param("id")
-	section, err := controller.service.GetById(id)
+	id, err := strconv.Atoi(ctx.Param("id"))
+
 	if err != nil {
-		status, msg := customerrors.ErrorHandleResponse(err)
-		res := web.NewResponse(status, nil, msg)
-		ctx.JSON(status, res)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
 		return
 	}
-	response := web.NewResponse(http.StatusOK, section, "")
-	ctx.JSON(http.StatusOK, response)
+
+	section, err := controller.service.GetById(ctx, id)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, section)
 }
 
 func (controller *sectionsController) Store(ctx *gin.Context) {
-	newSection := storeSection{}
-	err := ctx.ShouldBindJSON(&newSection)
-	if err != nil {
-		status, msg := customerrors.ErrorHandleResponse(err)
-		res := web.NewResponse(status, nil, msg)
-		ctx.JSON(status, res)
+	var req storeSection
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
 		return
 	}
-	sectionToJson, err := json.Marshal(newSection)
+
+	section, err := controller.service.Store(ctx, &domain.Section{
+		SectionNumber:      req.SectionNumber,
+		CurrentTemperature: req.CurrentTemperature,
+		MinimumTemperature: req.MinimumTemperature,
+		CurrentCapacity:    req.CurrentCapacity,
+		MinimumCapacity:    req.MinimumCapacity,
+		MaximumCapacity:    req.MaximumCapacity,
+		WarehouseId:        req.WarehouseId,
+		ProductTypeId:      req.ProductTypeId,
+	})
 	if err != nil {
-		status, msg := customerrors.ErrorHandleResponse(err)
-		res := web.NewResponse(status, nil, msg)
-		ctx.JSON(status, res)
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
 		return
 	}
-	section, err := controller.service.Store(sectionToJson)
-	if err != nil {
-		status, msg := customerrors.ErrorHandleResponse(err)
-		res := web.NewResponse(status, nil, msg)
-		ctx.JSON(status, res)
-		return
-	}
-	response := web.NewResponse(http.StatusCreated, section, "")
-	ctx.JSON(http.StatusCreated, response)
+
+	ctx.JSON(http.StatusCreated, section)
 }
 
 func (controller *sectionsController) Update(ctx *gin.Context) {
-	newSection := updateSection{}
-	err := ctx.ShouldBindJSON(&newSection)
+	id, err := strconv.Atoi(ctx.Param("id"))
+
 	if err != nil {
-		_, msg := customerrors.ErrorHandleResponse(err)
-		res := web.NewResponse(http.StatusUnprocessableEntity, nil, msg)
-		ctx.JSON(http.StatusUnprocessableEntity, res)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
 		return
 	}
-	section, err := json.Marshal(newSection)
-	if err != nil {
-		status, msg := customerrors.ErrorHandleResponse(err)
-		res := web.NewResponse(status, nil, msg)
-		ctx.JSON(status, res)
+
+	var req updateSection
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
-	id := ctx.Param("id")
-	data, err := controller.service.Update(id, section)
+
+	section, err := controller.service.Update(ctx, &domain.Section{
+		Id:                 id,
+		SectionNumber:      req.SectionNumber,
+		CurrentTemperature: req.CurrentTemperature,
+		MinimumTemperature: req.MinimumTemperature,
+		CurrentCapacity:    req.CurrentCapacity,
+		MinimumCapacity:    req.MinimumCapacity,
+		MaximumCapacity:    req.MaximumCapacity,
+		WarehouseId:        req.WarehouseId,
+		ProductTypeId:      req.ProductTypeId,
+	})
 	if err != nil {
-		status, msg := customerrors.ErrorHandleResponse(err)
-		res := web.NewResponse(status, nil, msg)
-		ctx.JSON(status, res)
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": err.Error(),
+		})
 		return
 	}
-	response := web.NewResponse(http.StatusOK, data, "")
-	ctx.JSON(http.StatusOK, response)
+
+	ctx.JSON(http.StatusOK, section)
 }
 
 func (controller *sectionsController) Delete(ctx *gin.Context) {
-	id := ctx.Param("id")
-
-	err := controller.service.Delete(id)
-
+	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		status, msg := customerrors.ErrorHandleResponse(err)
-		res := web.NewResponse(status, nil, msg)
-		ctx.JSON(status, res)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
 		return
 	}
-	response := web.NewResponse(http.StatusNoContent, nil, "")
-	ctx.JSON(http.StatusNoContent, response)
+
+	err = controller.service.Delete(ctx, id)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, nil)
+}
+
+func (controller *sectionsController) GetAllReportProducts(ctx *gin.Context) {
+
+	section, err := controller.service.GetAllProductReports(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, section)
+	return
+
+}
+
+func (controller *sectionsController) GetReportProductsById(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if id == 0 {
+		section, err := controller.service.GetAllProductReports(ctx)
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, section)
+		return
+	} else {
+		section, err := controller.service.GetById(ctx, id)
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, section)
+		return
+	}
 }
 
 type storeSection struct {
@@ -136,12 +213,12 @@ type storeSection struct {
 }
 
 type updateSection struct {
-	SectionNumber      *int `json:"section_number,omitempty"`
-	CurrentTemperature *int `json:"current_temperature,omitempty"`
-	MinimumTemperature *int `json:"minimum_temperature,omitempty"`
-	CurrentCapacity    *int `json:"current_capacity,omitempty"`
-	MinimumCapacity    *int `json:"minimum_capacity,omitempty"`
-	MaximumCapacity    *int `json:"maximum_capacity,omitempty"`
-	WarehouseId        *int `json:"warehouse_id,omitempty"`
-	ProductTypeId      *int `json:"product_type_id,omitempty"`
+	SectionNumber      int `json:"section_number,omitempty"`
+	CurrentTemperature int `json:"current_temperature,omitempty"`
+	MinimumTemperature int `json:"minimum_temperature,omitempty"`
+	CurrentCapacity    int `json:"current_capacity,omitempty"`
+	MinimumCapacity    int `json:"minimum_capacity,omitempty"`
+	MaximumCapacity    int `json:"maximum_capacity,omitempty"`
+	WarehouseId        int `json:"warehouse_id,omitempty"`
+	ProductTypeId      int `json:"product_type_id,omitempty"`
 }
