@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"log"
 	"mercado-frescos-time-7/go-web/internal/sections/domain"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 )
@@ -65,12 +64,10 @@ func (r *repositorySql) GetById(ctx context.Context, id int) (*domain.Section, e
 		&section.ProductTypeId,
 	)
 
-	// ID not found
 	if errors.Is(err, sql.ErrNoRows) {
 		return &section, err
 	}
 
-	// Other errors
 	if err != nil {
 		return &section, err
 	}
@@ -82,7 +79,7 @@ func (r *repositorySql) Store(ctx context.Context, section *domain.Section) (*do
 	stmt, err := r.db.Prepare(queryStore)
 
 	if err != nil {
-		log.Fatal(err)
+		return &domain.Section{}, err
 	}
 	defer stmt.Close()
 
@@ -117,9 +114,13 @@ func (r *repositorySql) Store(ctx context.Context, section *domain.Section) (*do
 
 }
 func (r *repositorySql) Update(ctx context.Context, section *domain.Section) (*domain.Section, error) {
-	result, err := r.db.ExecContext(
+	stmt, err := r.db.Prepare(queryUpdate)
+	if err != nil {
+		return &domain.Section{}, err
+	}
+
+	result, err := stmt.ExecContext(
 		ctx,
-		queryUpdate,
 		&section.SectionNumber,
 		&section.CurrentTemperature,
 		&section.MinimumTemperature,
@@ -157,48 +158,31 @@ func (r *repositorySql) Delete(ctx context.Context, id int) error {
 	}
 	return nil
 }
-func (r *repositorySql) GetReportProductsById(ctx context.Context, id int) (*domain.ProductReport, error) {
-	row := r.db.QueryRowContext(ctx, queryReportProductsById, id)
 
-	productReport := domain.ProductReport{}
-
-	err := row.Scan(
-		&productReport.SectionId,
-		&productReport.SectionNumber,
-		&productReport.ProductsCount,
-	)
-
-	// ID not found
-	if errors.Is(err, sql.ErrNoRows) {
-		return &productReport, err
+func (r *repositorySql) GetReportProducts(ctx context.Context, id int) (*domain.ProductReports, error) {
+	var query string
+	if id == 0 {
+		query = queryGetAllReportProducts
+	} else {
+		query = queryReportProductsById
 	}
 
-	// Other errors
-	if err != nil {
-		return &productReport, err
-	}
-
-	return &productReport, nil
-}
-func (r *repositorySql) GetAllProductReports(ctx context.Context) (*domain.ProductReports, error) {
-	var productReports domain.ProductReports
-
-	rows, err := r.db.QueryContext(ctx, queryGetAllReportProducts)
+	stmt, err := r.db.PrepareContext(ctx, query)
 	if err != nil {
 		return &domain.ProductReports{}, err
 	}
-	defer rows.Close()
-	for rows.Next() {
-		var productReport domain.ProductReport
-
-		if err := rows.Scan(
-			&productReport.SectionId,
-			&productReport.SectionNumber,
-			&productReport.ProductsCount,
-		); err != nil {
-			return &productReports, err
-		}
-		productReports.ProductReports = append(productReports.ProductReports, productReport)
+	rows, err := stmt.Query(id)
+	if err != nil {
+		return &domain.ProductReports{}, err
 	}
-	return &productReports, nil
+	reports := domain.ProductReports{ProductReports: []domain.ProductReport{}}
+	for rows.Next() {
+		report := domain.ProductReport{}
+		err := rows.Scan(&report.SectionId, &report.SectionNumber, &report.ProductsCount)
+		if err != nil {
+			return &domain.ProductReports{}, err
+		}
+		reports.ProductReports = append(reports.ProductReports, report)
+	}
+	return &reports, nil
 }
