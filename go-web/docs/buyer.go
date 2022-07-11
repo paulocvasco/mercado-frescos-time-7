@@ -49,35 +49,9 @@ import (
 //    409: errorResponse
 //    500: errorServerResponse
 
-// swagger:route // swagger:route GET /buyers/reportPurchaseOrders?id={id} PurchaseOrder GetIdPurchaseOrders
-// Get a PurchaseOrders from db. If id there isn`t get all PurchaseOrders.
-// responses:
-//    200: PurchaseOrdersIDResponse
-//    400: errorResponse
-//    404: errorResponse
-//    500: errorServerResponse
-
-// swagger:route // swagger:route GET /buyers/reportPurchaseOrders PurchaseOrder GetAllPurchaseOrders
-// Get all PurchaseOrders from db.
-// responses:
-//    200: PurchaseOrdersAllResponse
-//    400: errorResponse
-//    404: errorResponse
-//    500: errorServerResponse
-
 /////////////////////////////////////////////////////////////////////////////////////
 //////////////////                  RESPONSES               /////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
-
-// Corresponding object from db on json format.
-// swagger:response PurchaseOrdersIDResponse
-type PurchaseOrdersIDResponse struct {
-	//in: body
-	data struct {
-		Code string                         `json:"code"`
-		Data models.ResponsePurchaseByBuyer `json:"data"`
-	}
-}
 
 // Corresponding object from db on json format.
 // swagger:response buyerIDResponse
@@ -96,16 +70,6 @@ type buyerAllResponse struct {
 	data struct {
 		Code string        `json:"code"`
 		Data models.Buyers `json:"data"`
-	}
-}
-
-// Corresponding object from db on json format.
-// swagger:response PurchaseOrdersAllResponse
-type PurchaseOrdersAllResponse struct {
-	//in: body
-	data struct {
-		Code string                           `json:"code"`
-		Data []models.ResponsePurchaseByBuyer `json:"data"`
 	}
 }
 

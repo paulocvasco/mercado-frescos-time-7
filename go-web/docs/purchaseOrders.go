@@ -12,10 +12,18 @@ import (
 // swagger:route POST /PurchaseOrder/ PurchaseOrder createPurchaseOrder
 // Add a new object on db.
 // responses:
-//    201: PurchaseOrderIDResponse
+//    201: PurchaseOrderResponse
 //    400: errorResponse
 //    409: errorResponse
 //    422: errorResponse
+//    500: errorServerResponse
+
+// swagger:route // swagger:route GET /buyers/reportPurchaseOrders PurchaseOrder GetAllPurchaseOrders
+// Get all PurchaseOrders from db.
+// responses:
+//    200: PurchaseOrderAllResponse
+//    400: errorResponse
+//    404: errorResponse
 //    500: errorServerResponse
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -23,8 +31,18 @@ import (
 /////////////////////////////////////////////////////////////////////////////////////
 
 // Corresponding object from db on json format.
-// swagger:response PurchaseOrderIDResponse
-type PurchaseOrderIDResponse struct {
+// swagger:response PurchaseOrderAllResponse
+type PurchaseOrderAllResponse struct {
+	//in: body
+	data struct {
+		Code string                           `json:"code"`
+		Data []models.ResponsePurchaseByBuyer `json:"data"`
+	}
+}
+
+// Corresponding object from db on json format.
+// swagger:response PurchaseOrderResponse
+type PurchaseOrderResponse struct {
 	//in: body
 	data struct {
 		Code string                `json:"code"`
@@ -60,4 +78,10 @@ type errorServerResponsePurchaseOrder struct {
 type PurchaseOrderNewResquest struct {
 	//in: body
 	NewPurchaseOrder models.PurchaseOrders
+}
+
+//swagger:parameters GetAllPurchaseOrders
+type PurchaseOrderAllRequest struct {
+	//in: query
+	Id int `json:"id"`
 }
