@@ -144,9 +144,11 @@ func ErrorHandleResponse(err error) (int, string) {
 			switch mysqlError.Number {
 			case 1062:
 				return http.StatusConflict, "conflict error detected. please check your inputs"
+			case 1452:
+				return http.StatusNotFound, "entity not found"
 			}
 		}
-		if errors.Is(err, sql.ErrNoRows){
+		if errors.Is(err, sql.ErrNoRows) {
 			return http.StatusNotFound, ErrorInvalidID.Error()
 		}
 	}
