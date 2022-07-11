@@ -31,6 +31,7 @@ func (c productBatchController) Store(ctx *gin.Context) {
 		status, msg := customerrors.ErrorHandleResponse(err)
 		res := web.NewResponse(status, nil, msg)
 		ctx.JSON(status, res)
+		return
 	}
 
 	productBatch, err := c.service.Store(ctx, &domain.ProductBatch{
@@ -54,7 +55,7 @@ func (c productBatchController) Store(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, productBatch)
-
+	return
 }
 
 type storeProductBatch struct {
