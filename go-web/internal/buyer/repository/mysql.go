@@ -11,7 +11,6 @@ type RepositoryMysql interface {
 	GetAll() ([]model.Buyer, error)
 	GetId(id int) (model.Buyer, error)
 	Create(CardNumberID string, FirstName, LastName string) (model.Buyer, error)
-	// GetCardNumberId(id string) error
 	Update(id int, body model.Buyer) (model.Buyer, error)
 	Delete(id int) error
 	GetAllPurchaseOrder() ([]model.ResponsePurchaseByBuyer, error)
@@ -104,23 +103,6 @@ func (r repositoryDb) Create(CardNumberID string, FirstName, LastName string) (m
 
 }
 
-// func (r repositoryDb) GetCardNumberId(cardId string) error {
-
-// 	var section model.Buyer
-// 	rows := r.db.QueryRow("SELECT * FROM buyers where id_card_number = ? ", cardId)
-// 	err := rows.Scan(
-// 		&section.ID,
-// 		&section.CardNumberID,
-// 		&section.FirstName,
-// 		&section.LastName,
-// 	)
-
-// 	if err == nil {
-// 		return customerrors.ErrorConflict
-// 	}
-
-// 	return nil
-// }
 func (r repositoryDb) Delete(id int) error {
 	query := `DELETE FROM buyers where id_card_number = ?`
 
@@ -181,7 +163,6 @@ func (r repositoryDb) GetAllPurchaseOrder() ([]model.ResponsePurchaseByBuyer, er
 	if err != nil {
 		return []model.ResponsePurchaseByBuyer{}, err
 	}
-
 	defer rows.Close()
 
 	for rows.Next() {
