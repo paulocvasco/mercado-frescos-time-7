@@ -3,16 +3,14 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"log"
 	"mercado-frescos-time-7/go-web/internal/productBatch/domain"
-	db2 "mercado-frescos-time-7/go-web/pkg/db"
 )
 
 type repository struct {
 	db *sql.DB
 }
 
-func NewRepository(db *sql.DB) domain.ProductBatchRepository {
+func NewRepositoryProductBatch(db *sql.DB) domain.ProductBatchRepository {
 	return &repository{
 		db: db,
 	}
@@ -20,13 +18,11 @@ func NewRepository(db *sql.DB) domain.ProductBatchRepository {
 
 func (r *repository) CreateProductBatch(ctx context.Context, productBatch *domain.ProductBatch) (*domain.ProductBatch, error) {
 
-	db := db2.StorageDB
-
-	stmt, err := db.Prepare(`INSERT INTO products_batches (batch_number, current_quantity, current_tempertature, 
+	stmt, err := r.db.Prepare(`INSERT INTO products_batches (batch_number, current_quantity, current_tempertature, 
                               due_date, initial_quantity, manufacturing_date, manufacturing_hour, minimum_temperature, product_id, section_id) 
 								 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
-		log.Fatal(err)
+		return &domain.ProductBatch{}, err
 	}
 
 	defer stmt.Close()
@@ -40,6 +36,7 @@ func (r *repository) CreateProductBatch(ctx context.Context, productBatch *domai
 	if err != nil {
 		return &domain.ProductBatch{}, err
 	}
+
 	insertedId, _ := result.LastInsertId()
 	productBatch.Id = int(insertedId)
 
