@@ -10,10 +10,12 @@ const (
 		"minimum_capacity, maximum_capacity, warehouse_id, product_type_id)" +
 		"VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
 
-	queryUpdate = "UPDATE sections SET" +
+	queryUpdate = "UPDATE sections SET " +
 		"section_number=?, current_temperature=?, minimum_temperature=?, current_capacity=?," +
-		"minimum_capacity=?, maximum_capacity=?, warehouse_id=?, product_type_id=?" +
-		" WHERE id=?;"
+		"minimum_capacity=?, maximum_capacity=?, warehouse_id=?, product_type_id=? WHERE id=?;"
 
-	queryDelete = "DELETE FROM sections WHERE id=?; "
+	queryDelete = "DELETE FROM sections WHERE id=?;"
+
+	queryReportProductsById   = "SELECT s.id, s.section_number, pb.current_quantity as products_count from sections s INNER JOIN products_batches pb ON s.id = pb.section_id WHERE s.id =?;"
+	queryGetAllReportProducts = "SELECT s.id, s.section_number, COUNT(p.section_id) as products_count from sections s Inner join products_batches p on s.id = p.section_id GROUP BY(s.id);"
 )
