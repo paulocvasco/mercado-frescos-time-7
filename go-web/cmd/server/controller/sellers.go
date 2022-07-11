@@ -39,7 +39,7 @@ func (c *Sellers) SellersStore() gin.HandlerFunc  {
 		ctx.JSON(status, res)
 		return
 		}
-		p, err := c.service.Store(req.Cid, req.CompanyName, req.Address, req.Telephone)
+		p, err := c.service.Store(models.Seller{Cid:req.Cid, Company_name:req.CompanyName, Address:req.Address, Telephone:req.Telephone})
 		if err != nil {
 			status, msg := customerrors.ErrorHandleResponse(err)
 			res := web.NewResponse(status, nil, msg)
