@@ -96,8 +96,8 @@ func (s *serviceSection) Delete(ctx context.Context, id int) error {
 	return nil
 }
 
-func (s *serviceSection) GetReportProductsById(ctx context.Context, id int) (*domain.ProductReport, error) {
-	productBatch, err := s.repository.GetReportProductsById(ctx, id)
+func (s *serviceSection) GetReportProducts(ctx context.Context, id int) (*domain.ProductReports, error) {
+	productBatch, err := s.repository.GetReportProducts(ctx, id)
 
 	if err != nil {
 		return productBatch, err
@@ -105,14 +105,4 @@ func (s *serviceSection) GetReportProductsById(ctx context.Context, id int) (*do
 
 	return productBatch, nil
 
-}
-
-func (s *serviceSection) GetAllProductReports(ctx context.Context) (*domain.ProductReports, error) {
-	productBatch, err := s.repository.GetAllProductReports(ctx)
-
-	if err != nil {
-		return productBatch, err
-	}
-
-	return productBatch, nil
 }
