@@ -36,6 +36,7 @@ var (
 	ErrorSectionAlreadyExists  = errors.New("section number already exists")
 	ErrorWarehouseCodeConflict = errors.New("warehouse code already exist")
 	ErrorMarshallJson          = errors.New("malformed json")
+	ErrorStoreDataDB           = errors.New("failed to store data on database")
 )
 
 func ErrorHandleResponse(err error) (int, string) {
@@ -105,6 +106,9 @@ func ErrorHandleResponse(err error) (int, string) {
 		}
 		if errors.Is(err, ErrorMarshallJson) {
 			return http.StatusBadRequest, err.Error()
+		}
+		if errors.Is(err, ErrorStoreDataDB) {
+			return http.StatusInternalServerError, err.Error()
 		}
 	}
 	{ // validate errors
