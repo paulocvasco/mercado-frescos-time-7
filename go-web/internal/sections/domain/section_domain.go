@@ -32,18 +32,20 @@ type SectionRepository interface {
 	GetAll(context.Context) (*Sections, error)
 	GetById(context.Context, int) (*Section, error)
 	Store(context.Context, *Section) (*Section, error)
-	Update(context.Context, *Section) error
+	Update(context.Context, *Section) (*Section, error)
 	Delete(context.Context, int) error
 
-	GetReportProductsById(context.Context, int) (*ProductReports, error)
+	GetReportProductsById(context.Context, int) (*ProductReport, error)
+	GetAllProductReports(ctx context.Context) (*ProductReports, error)
 }
 
 type SectionService interface {
 	GetAll(context.Context) (*Sections, error)
 	GetById(context.Context, int) (*Section, error)
 	Store(context.Context, *Section) (*Section, error)
-	Update(context.Context, *Section) error
+	Update(context.Context, *Section) (*Section, error)
 	Delete(context.Context, int) error
 
-	GetReportProductsById(context.Context, int) (*ProductReports, error)
+	GetReportProductsById(context.Context, int) (*ProductReport, error)
+	GetAllProductReports(ctx context.Context) (*ProductReports, error)
 }
