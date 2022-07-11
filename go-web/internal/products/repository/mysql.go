@@ -26,9 +26,6 @@ func (r *repositoryMysql) Insert(product models.Product) (models.Product, error)
 	if err != nil {
 		return models.Product{}, err
 	}
-	if rowsAffected, err := res.RowsAffected(); rowsAffected == 0 || err != nil {
-		return models.Product{}, customerrors.ErrorInvalidDB
-	}
 	lastId, err := res.LastInsertId()
 	if err != nil {
 		return models.Product{}, err
@@ -80,7 +77,7 @@ func (r *repositoryMysql) Update(product models.Product) error {
 	if err != nil {
 		return err
 	}
-	if rowsAffected, err := res.RowsAffected(); rowsAffected == 0 {
+	if rowsAffected, err := res.RowsAffected(); err == nil && rowsAffected == 0 {
 		return customerrors.ErrorInvalidID
 	} else if err != nil {
 		return customerrors.ErrorInvalidDB
@@ -97,7 +94,7 @@ func (r *repositoryMysql) Delete(id int) error {
 	if err != nil {
 		return err
 	}
-	if rowsAffected, err := res.RowsAffected(); rowsAffected == 0 {
+	if rowsAffected, err := res.RowsAffected(); err == nil && rowsAffected == 0 {
 		return customerrors.ErrorInvalidID
 	} else if err != nil {
 		return customerrors.ErrorInvalidDB
