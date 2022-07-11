@@ -21,7 +21,7 @@ func TestInsertProductRecords(t *testing.T) {
 		defer db.Close()
 		repository := repository.NewRepositoryProductRecord(db)
 		record := models.ProductRecord{}
-		query := "INSERT INTO product_records (last_update_date, purchase_prince, sale_price, product_id) VALUES (?, ?, ?, ?)"
+		query := "INSERT INTO product_records (last_update_date, purchase_price, sale_price, product_id) VALUES (?, ?, ?, ?)"
 		prep := mock.ExpectPrepare(query)
 		prep.WillReturnError(sqlmock.ErrCancelled)
 
@@ -38,9 +38,9 @@ func TestInsertProductRecords(t *testing.T) {
 		defer db.Close()
 		repository := repository.NewRepositoryProductRecord(db)
 		record := models.ProductRecord{}
-		query := "INSERT INTO product_records (last_update_date, purchase_prince, sale_price, product_id) VALUES (?, ?, ?, ?)"
+		query := "INSERT INTO product_records (last_update_date, purchase_price, sale_price, product_id) VALUES (?, ?, ?, ?)"
 		prep := mock.ExpectPrepare(query)
-		prep.ExpectExec().WithArgs(record.LastUpdateDate, record.PurchasePrince, record.SalePrice, record.ProductId).WillReturnResult(sqlmock.NewResult(1, 1))
+		prep.ExpectExec().WithArgs(record.LastUpdateDate, record.PurchasePrice, record.SalePrice, record.ProductId).WillReturnResult(sqlmock.NewResult(1, 1))
 
 		res, err := repository.InsertProductRecords(record)
 		assert.Equal(t, 1, res.Id)
@@ -55,9 +55,9 @@ func TestInsertProductRecords(t *testing.T) {
 		defer db.Close()
 		repository := repository.NewRepositoryProductRecord(db)
 		record := models.ProductRecord{}
-		query := "INSERT INTO product_records (last_update_date, purchase_prince, sale_price, product_id) VALUES (?, ?, ?, ?)"
+		query := "INSERT INTO product_records (last_update_date, purchase_price, sale_price, product_id) VALUES (?, ?, ?, ?)"
 		prep := mock.ExpectPrepare(query)
-		prep.ExpectExec().WithArgs(record.LastUpdateDate, record.PurchasePrince, record.SalePrice, record.ProductId).WillReturnError(sqlmock.ErrCancelled)
+		prep.ExpectExec().WithArgs(record.LastUpdateDate, record.PurchasePrice, record.SalePrice, record.ProductId).WillReturnError(sqlmock.ErrCancelled)
 
 		_, err = repository.InsertProductRecords(record)
 
@@ -72,9 +72,9 @@ func TestInsertProductRecords(t *testing.T) {
 		defer db.Close()
 		repository := repository.NewRepositoryProductRecord(db)
 		record := models.ProductRecord{}
-		query := "INSERT INTO product_records (last_update_date, purchase_prince, sale_price, product_id) VALUES (?, ?, ?, ?)"
+		query := "INSERT INTO product_records (last_update_date, purchase_price, sale_price, product_id) VALUES (?, ?, ?, ?)"
 		prep := mock.ExpectPrepare(query)
-		prep.ExpectExec().WithArgs(record.LastUpdateDate, record.PurchasePrince, record.SalePrice, record.ProductId).WillReturnResult(driver.ResultNoRows)
+		prep.ExpectExec().WithArgs(record.LastUpdateDate, record.PurchasePrice, record.SalePrice, record.ProductId).WillReturnResult(driver.ResultNoRows)
 
 		_, err = repository.InsertProductRecords(record)
 

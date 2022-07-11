@@ -79,7 +79,7 @@ type productRecordsNewResquest struct {
 type createProductRecords struct {
 	//swagger:strfmt date
 	LastUpdateDate string  `json:"last_update_date"`
-	PurchasePrince float64 `json:"purchase_prince"`
+	PurchasePrice  float64 `json:"purchase_price"`
 	SalePrice      float64 `json:"sale_price"`
 	ProductId      int     `json:"product_id"`
 }

@@ -25,7 +25,7 @@ func (r *repository) InsertProductRecords(record models.ProductRecord) (models.P
 	if err != nil {
 		return models.ProductRecord{}, err
 	}
-	res, err := stmt.Exec(&record.LastUpdateDate, &record.PurchasePrince, &record.SalePrice, &record.ProductId)
+	res, err := stmt.Exec(&record.LastUpdateDate, &record.PurchasePrice, &record.SalePrice, &record.ProductId)
 	if err != nil {
 		return models.ProductRecord{}, err
 	}
