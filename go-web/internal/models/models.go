@@ -121,5 +121,5 @@ type ResponsePurchaseByBuyer struct {
 	CardNumberID        string `json:"card_number_id" binding:"required"`
 	FirstName           string `json:"first_name" binding:"required"`
 	LastName            string `json:"last_name" binding:"required"`
-	PurchaseOrdersCount string `json:"purchase_orders_count" binding:"required"`
+	PurchaseOrdersCount int    `json:"purchase_orders_count" binding:"required"`
 }
