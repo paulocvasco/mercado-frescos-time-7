@@ -282,14 +282,14 @@ func TestGetAllPurchaseOrder(t *testing.T) {
 	Group BY b.id ;`
 
 	mockSection := []models.ResponsePurchaseByBuyer{
-		{ID: 1, CardNumberID: "#card1", FirstName: "Daniel", LastName: "Silva", PurchaseOrdersCount: "2"},
-		{ID: 2, CardNumberID: "#card2", FirstName: "Hulk", LastName: "Gol", PurchaseOrdersCount: "4"},
+		{ID: 1, CardNumberID: "#card1", FirstName: "Daniel", LastName: "Silva", PurchaseOrdersCount: 2},
+		{ID: 2, CardNumberID: "#card2", FirstName: "Hulk", LastName: "Gol", PurchaseOrdersCount: 4},
 	}
 
 	t.Run("Success Test GetAll PurchaseOrder", func(t *testing.T) {
 		mockRes := sqlmock.NewRows([]string{"id", "card_number_id", "first_name", "last_name", "purchase_orders_count"}).
-			AddRow(1, "#card1", "Daniel", "Silva", "2").
-			AddRow(2, "#card2", "Hulk", "Gol", "4")
+			AddRow(1, "#card1", "Daniel", "Silva", 2).
+			AddRow(2, "#card2", "Hulk", "Gol", 4)
 		db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 		assert.NoError(t, err)
 		defer db.Close()
@@ -341,7 +341,7 @@ func TestGetIdPurchaseOrder(t *testing.T) {
 	Group BY b.id ;`
 
 	mockSection := []models.ResponsePurchaseByBuyer{
-		{ID: 1, CardNumberID: "#card1", FirstName: "Daniel", LastName: "Silva", PurchaseOrdersCount: "2"},
+		{ID: 1, CardNumberID: "#card1", FirstName: "Daniel", LastName: "Silva", PurchaseOrdersCount: 2},
 	}
 
 	t.Run("Success Test GetId PurchaseOrder", func(t *testing.T) {
@@ -352,7 +352,7 @@ func TestGetIdPurchaseOrder(t *testing.T) {
 	WHERE b.id = ?
 	Group BY b.id ;`
 		mockRes := sqlmock.NewRows([]string{"id", "card_number_id", "first_name", "last_name", "purchase_orders_count"}).
-			AddRow(1, "#card1", "Daniel", "Silva", "2")
+			AddRow(1, "#card1", "Daniel", "Silva", 2)
 		db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 		assert.NoError(t, err)
 		defer db.Close()
