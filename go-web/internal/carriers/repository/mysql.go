@@ -51,19 +51,6 @@ func (m *mysqlDB) Create(new models.Carrier) (models.Carrier, error) {
 
 func (m *mysqlDB) Get(id int) (models.CarriersReport, error) {
 	var query string
-	var localityExisits bool
-
-	if id != 0 {
-		query = "SELECT EXISTS (SELECT * FROM localities WHERE id = ?)"
-		err := m.db.QueryRow(query, id).Scan(&localityExisits)
-		if err != nil {
-			return models.CarriersReport{}, err
-		}
-		if !localityExisits {
-			return models.CarriersReport{}, customerrors.ErrorItemNotFound
-		}
-	}
-
 	if id == 0 {
 		query = "SELECT c.locality_id, l.locality_name, COUNT(*) AS carriers_count FROM carriers c INNER JOIN localities l ON c.locality_id = l.id GROUP BY c.locality_id"
 	} else {
