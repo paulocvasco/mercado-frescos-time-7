@@ -2,7 +2,9 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 	"mercado-frescos-time-7/go-web/internal/models"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 )
 
 type ResultPost struct {
@@ -18,6 +20,8 @@ type ResultPost struct {
 
 type RepositoryMysql interface {
 	Create(data models.PurchaseOrders) (ResultPost, error)
+	GetAllPurchaseOrder() ([]models.ResponsePurchaseByBuyer, error)
+	GetIdPurchaseOrder(id int) ([]models.ResponsePurchaseByBuyer, error)
 }
 
 type repositoryDb struct {
@@ -76,6 +80,66 @@ func (r repositoryDb) Create(data models.PurchaseOrders) (ResultPost, error) {
 		section.OrderStatusId,
 		section.WareHouseID,
 	}
+	return result, nil
+
+}
+func (r repositoryDb) GetAllPurchaseOrder() ([]models.ResponsePurchaseByBuyer, error) {
+	var allBuyers []models.ResponsePurchaseByBuyer
+	query := `Select b.id,b.id_card_number, b.first_name,b.last_name,
+	count(b.id)  as purchase_orders_count 
+	from purchase_orders as p 
+	inner JOIN  buyers as b on  p.buyer_id = b.id
+	Group BY b.id ;`
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return []models.ResponsePurchaseByBuyer{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+
+		var section models.ResponsePurchaseByBuyer
+		err := rows.Scan(
+			&section.ID,
+			&section.CardNumberID,
+			&section.FirstName,
+			&section.LastName,
+			&section.PurchaseOrdersCount,
+		)
+		if err != nil {
+			return []models.ResponsePurchaseByBuyer{}, err
+		}
+
+		allBuyers = append(allBuyers, section)
+	}
+	return allBuyers, nil
+}
+
+func (r repositoryDb) GetIdPurchaseOrder(id int) ([]models.ResponsePurchaseByBuyer, error) {
+	var section models.ResponsePurchaseByBuyer
+	var result []models.ResponsePurchaseByBuyer
+	query := `Select b.id,b.id_card_number, b.first_name,b.last_name,
+	count(b.id)  as purchase_orders_count 
+	from purchase_orders as p 
+	inner JOIN  buyers as b on  p.buyer_id = b.id
+	WHERE b.id = ?
+	Group BY b.id ;`
+	rows := r.db.QueryRow(query, id)
+	err := rows.Scan(
+		&section.ID,
+		&section.CardNumberID,
+		&section.FirstName,
+		&section.LastName,
+		&section.PurchaseOrdersCount,
+	)
+	if errors.Is(err, sql.ErrNoRows) {
+		return []models.ResponsePurchaseByBuyer{}, customerrors.ErrorInvalidID
+	}
+
+	if err != nil {
+		return []models.ResponsePurchaseByBuyer{}, err
+	}
+	result = append(result, section)
 	return result, nil
 
 }

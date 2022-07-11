@@ -13,8 +13,6 @@ type RepositoryMysql interface {
 	Create(CardNumberID string, FirstName, LastName string) (model.Buyer, error)
 	Update(id int, body model.Buyer) (model.Buyer, error)
 	Delete(id int) error
-	GetAllPurchaseOrder() ([]model.ResponsePurchaseByBuyer, error)
-	GetIdPurchaseOrder(id int) ([]model.ResponsePurchaseByBuyer, error)
 }
 
 type repositoryDb struct {
@@ -149,66 +147,5 @@ func (r repositoryDb) Update(id int, body model.Buyer) (model.Buyer, error) {
 	}
 
 	return section, nil
-
-}
-
-func (r repositoryDb) GetAllPurchaseOrder() ([]model.ResponsePurchaseByBuyer, error) {
-	var allBuyers []model.ResponsePurchaseByBuyer
-	query := `Select b.id,b.id_card_number, b.first_name,b.last_name,
-	count(b.id)  as purchase_orders_count 
-	from purchase_orders as p 
-	inner JOIN  buyers as b on  p.buyer_id = b.id
-	Group BY b.id ;`
-	rows, err := r.db.Query(query)
-	if err != nil {
-		return []model.ResponsePurchaseByBuyer{}, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-
-		var section model.ResponsePurchaseByBuyer
-		err := rows.Scan(
-			&section.ID,
-			&section.CardNumberID,
-			&section.FirstName,
-			&section.LastName,
-			&section.PurchaseOrdersCount,
-		)
-		if err != nil {
-			return []model.ResponsePurchaseByBuyer{}, err
-		}
-
-		allBuyers = append(allBuyers, section)
-	}
-	return allBuyers, nil
-}
-
-func (r repositoryDb) GetIdPurchaseOrder(id int) ([]model.ResponsePurchaseByBuyer, error) {
-	var section model.ResponsePurchaseByBuyer
-	var result []model.ResponsePurchaseByBuyer
-	query := `Select b.id,b.id_card_number, b.first_name,b.last_name,
-	count(b.id)  as purchase_orders_count 
-	from purchase_orders as p 
-	inner JOIN  buyers as b on  p.buyer_id = b.id
-	WHERE b.id = ?
-	Group BY b.id ;`
-	rows := r.db.QueryRow(query, id)
-	err := rows.Scan(
-		&section.ID,
-		&section.CardNumberID,
-		&section.FirstName,
-		&section.LastName,
-		&section.PurchaseOrdersCount,
-	)
-	if errors.Is(err, sql.ErrNoRows) {
-		return []model.ResponsePurchaseByBuyer{}, customerrors.ErrorInvalidID
-	}
-
-	if err != nil {
-		return []model.ResponsePurchaseByBuyer{}, err
-	}
-	result = append(result, section)
-	return result, nil
 
 }

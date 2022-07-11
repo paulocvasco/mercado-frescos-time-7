@@ -16,7 +16,7 @@ func InstancePurchaseOrders(r *gin.Engine) {
 	c := controller.PurchaseOrdersNewController(service)
 
 	routes := r.Group("/api/v1/purchaseOrders")
-
+	r.GET("/api/v1/buyers/reportPurchaseOrders", c.GetPurchaseOrder())
 	routes.POST("/", c.CreatePurchaseOrders())
 
 }

@@ -135,22 +135,3 @@ func (b *BuyerController) BuyerDelete() gin.HandlerFunc {
 		context.JSON(http.StatusNoContent, web.NewResponse(http.StatusNoContent, nil, ""))
 	}
 }
-
-func (b *BuyerController) GetPurchaseOrder() gin.HandlerFunc {
-	return func(context *gin.Context) {
-		id := context.Query("id")
-		intId, err := strconv.Atoi(id)
-		if err != nil {
-			intId = 0
-		}
-		all, err := b.service.GetPurchaseOrder(intId)
-		if err != nil {
-			status, msg := customerrors.ErrorHandleResponse(err)
-			res := web.NewResponse(status, nil, msg)
-			context.JSON(status, res)
-			return
-		}
-		log.Println(all)
-		context.JSON(http.StatusOK, web.NewResponse(http.StatusOK, all, ""))
-	}
-}
