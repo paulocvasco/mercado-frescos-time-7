@@ -14,7 +14,7 @@ type RequestPatch struct {
 	LastName     string `json:"last_name,omitempty"`
 }
 type RepositoryFile interface {
-	GetAll() (model.Buyers, error)
+	GetAll() ([]model.Buyer, error)
 	GetId(id int) (model.Buyer, error)
 	GetCardNumberId(id string) error
 	Create(CardNumberID string, FirstName, LastName string) (model.Buyer, error)
@@ -31,14 +31,14 @@ func NewRepositoryFile(data db.DB) RepositoryFile {
 	}
 }
 
-func (r *repositoryFile) GetAll() (model.Buyers, error) {
+func (r *repositoryFile) GetAll() ([]model.Buyer, error) {
 	if cache.LastID == 0 {
 		err := r.data.Load(&cache)
 		if err != nil {
-			return model.Buyers{}, err
+			return []model.Buyer{}, err
 		}
 	}
-	return cache.Content, nil
+	return cache.Content.Buyer, nil
 }
 
 func (r *repositoryFile) GetId(id int) (model.Buyer, error) {
