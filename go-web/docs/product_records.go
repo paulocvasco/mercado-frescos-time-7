@@ -39,16 +39,6 @@ type productRecordsIDResponse struct {
 	}
 }
 
-// Corresponding object from db on json format.
-// swagger:response ProductRecordAll
-type productRecordsAllResponse struct {
-	//in: body
-	data struct {
-		Code string                         `json:"code"`
-		Data models.ProductsRecordsResponse `json:"data"`
-	}
-}
-
 // Error message has the returned code and a descripton to help understand the cause.
 // swagger:response errorResponse
 type errorResponseProductRecords struct {
