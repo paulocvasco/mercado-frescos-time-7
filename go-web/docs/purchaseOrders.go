@@ -2,6 +2,7 @@ package docs
 
 import (
 	"mercado-frescos-time-7/go-web/internal/models"
+	"mercado-frescos-time-7/go-web/internal/purchaseOrders/repository"
 )
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -26,8 +27,8 @@ import (
 type PurchaseOrderIDResponse struct {
 	//in: body
 	data struct {
-		Code string       `json:"code"`
-		Data models.Buyer `json:"data"`
+		Code string                `json:"code"`
+		Data repository.ResultPost `json:"data"`
 	}
 }
 
