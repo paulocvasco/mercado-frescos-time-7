@@ -2,6 +2,7 @@ package repository_test
 
 import (
 	"mercado-frescos-time-7/go-web/internal/models"
+	"mercado-frescos-time-7/go-web/internal/seller"
 	"mercado-frescos-time-7/go-web/internal/seller/repository"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"testing"
@@ -87,4 +88,21 @@ func TestStoreErrorExec(t *testing.T) {
 	assert.Equal(t, err, customerrors.ErrorInvalidDB)
 	assert.NotNil(t, result)
 
+}
+
+func TestEmptyFuncion(t *testing.T) {
+	u := models.Seller{Cid: 195, Company_name: "Apple", Address: "Rua six", Telephone: "38998988978", LocalityID: "abcd"}
+
+	db, _, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
+
+	assert.NoError(t, err)
+
+	repo := repository.NewSQLrepository(db)
+
+	repo.CheckCid(1)
+	repo.Delete(1)
+	repo.GetAll()
+	repo.GetId(1)
+	repo.LastID()
+	repo.Update(seller.Seller(u), 1)	
 }

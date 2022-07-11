@@ -72,15 +72,8 @@ func (r *SQLrepository) CheckCid(cid int) (models.Seller, error) {
 	return models.Seller{}, nil
 }
 
-func (r *SQLrepository) CheckCLocality(cid string) (models.Seller, error) {
-	return models.Seller{}, nil
-}
 
 func (r *SQLrepository) LastID() (int, error) {
 	return 0, nil
 }
 
-func (r *SQLrepository) ReportSellers(id int) (models.ReportSeller, error) {
-	return models.ReportSeller{}, nil
-
-}
