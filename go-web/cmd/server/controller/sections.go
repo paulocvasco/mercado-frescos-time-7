@@ -2,6 +2,8 @@ package controller
 
 import (
 	"mercado-frescos-time-7/go-web/internal/sections/domain"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 	"strconv"
 
@@ -14,8 +16,7 @@ type SectionsController interface {
 	Store(*gin.Context)
 	Update(*gin.Context)
 	Delete(*gin.Context)
-	GetAllReportProducts(ctx *gin.Context)
-	GetReportProductsById(ctx *gin.Context)
+	GetReportProducts(ctx *gin.Context)
 }
 
 type sectionsController struct {
@@ -151,54 +152,29 @@ func (controller *sectionsController) Delete(ctx *gin.Context) {
 	ctx.JSON(http.StatusNoContent, nil)
 }
 
-func (controller *sectionsController) GetAllReportProducts(ctx *gin.Context) {
-
-	section, err := controller.service.GetAllProductReports(ctx)
-	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"message": err.Error(),
-		})
-		return
+func (controller *sectionsController) GetReportProducts(ctx *gin.Context) {
+	queryId := ctx.Query("id")
+	if queryId == "" {
+		queryId = "0"
 	}
-
-	ctx.JSON(http.StatusOK, section)
-	return
-
-}
-
-func (controller *sectionsController) GetReportProductsById(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Param("id"))
+	id, err := strconv.Atoi(queryId)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
-		})
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
+	reports, err := controller.service.GetReportProducts(ctx, id)
 
-	if id == 0 {
-		section, err := controller.service.GetAllProductReports(ctx)
-		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"message": err.Error(),
-			})
-			return
-		}
-
-		ctx.JSON(http.StatusOK, section)
-		return
-	} else {
-		section, err := controller.service.GetById(ctx, id)
-		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"message": err.Error(),
-			})
-			return
-		}
-
-		ctx.JSON(http.StatusOK, section)
+	if err != nil {
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
+	ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, reports, ""))
+
 }
 
 type storeSection struct {
