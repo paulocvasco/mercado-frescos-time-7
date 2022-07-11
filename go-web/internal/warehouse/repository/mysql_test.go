@@ -141,13 +141,13 @@ func TestGetAll(t *testing.T) {
 		repo := mysqlDB{db: db}
 		all, err := repo.GetAll()
 		if v.expectedError != err {
-			t.Errorf("Create test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
+			t.Errorf("GetAll test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
 			continue
 		}
 
 		for i, w := range all.Warehouses {
 			if v.expectedResponse.Warehouses[i] != w {
-				t.Errorf("Create test[%s]: model expected to be:\n%+v\n\t--- but got ---\n%+v\n", v.testName, v.expectedResponse, all)
+				t.Errorf("GetAll test[%s]: model expected to be:\n%+v\n\t--- but got ---\n%+v\n", v.testName, v.expectedResponse, all)
 			}
 		}
 	}
@@ -207,11 +207,11 @@ func TestGetByID(t *testing.T) {
 		repo := mysqlDB{db: db}
 		w, err := repo.GetByID(v.id)
 		if v.expectedError != err {
-			t.Errorf("Create test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
+			t.Errorf("GetById test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
 		}
 
 		if v.expectedResponse != w {
-			t.Errorf("Create test[%s]: model expected to be:\n%+v\n\t--- but got ---\n%+v\n", v.testName, v.expectedResponse, w)
+			t.Errorf("GetById test[%s]: model expected to be:\n%+v\n\t--- but got ---\n%+v\n", v.testName, v.expectedResponse, w)
 		}
 	}
 }
@@ -264,7 +264,7 @@ func TestDelete(t *testing.T) {
 		repo := mysqlDB{db: db}
 		err = repo.Delete(v.id)
 		if v.expectedError != err {
-			t.Errorf("Create test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
+			t.Errorf("Delete test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
 		}
 	}
 }
@@ -318,7 +318,7 @@ func TestUpdate(t *testing.T) {
 		repo := mysqlDB{db: db}
 		err = repo.Update(v.id, v.updatedModel)
 		if v.expectedError != err {
-			t.Errorf("Create test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
+			t.Errorf("Update test[%s]: error expected to be:\n%s\n\t--- but got ---\n%s\n", v.testName, v.expectedError, err)
 		}
 	}
 }
