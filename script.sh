@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
 
-# mysql --user="root" --database="mercado_fresco_db" --execute="INSERT INTO countries(country_name) VALUES ('Brasil')"
-# mysql --user="root" --database="mercado_fresco_db" --execute="INSERT INTO provincies(provincie_name, id_country_fk) VALUES ('Sao Paulo', 1)"
-# mysql --user="root" --database="mercado_fresco_db" --execute="INSERT INTO localities(locality_name, province_id) VALUES ('local 1', 1)"
-# mysql --user="root" --database="mercado_fresco_db" --execute="INSERT INTO localities(locality_name, province_id) VALUES ('local 3', 1)"
-# mysql --user="root" --database="mercado_fresco_db" --execute="INSERT INTO localities(locality_name, province_id) VALUES ('local 4', 1)"
-# mysql --user="root" --database="mercado_fresco_db" --execute="INSERT INTO carriers(cid, company_name, address, locality_id) VALUES (23, 'meli', 'rua 1', 1)"P
-
 function create_database {
     mysql --user="root" --password=${PASS} --execute="DROP DATABASE IF EXISTS mercado_fresco_db;"
     mysql --user="root" --password=${PASS} --execute="CREATE DATABASE mercado_fresco_db;"
@@ -92,5 +85,38 @@ function create_database {
     mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="ALTER TABLE employees ADD UNIQUE(id_card_number);"
 }
 
-export PASS=senha
+function create_dummy_values {
+    # Employees models
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO countries VALUES (1, 'Brasil');"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO countries VALUES (2, 'Argentina');"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO provincies VALUES (1, 'Sao Paulo', '1');"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO localities VALUES (1, 'Sao Paulo', '1');"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO warehouse VALUES (1, 'Av Cantareira', '1198765421', '23546', 1);"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO employees VALUES (1, '34562', 'Vitoria', 'Souza', 1);"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO sellers VALUES (1, '34562', 'Teste', 'Av Cantareira', '1198765342', 1);"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO products_types  VALUES (null, 'Teste');"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO products VALUES (null, 'SEl', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1');"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO sections VALUES (null, '4567', 5, 35.2, 5, 3, 28.2, 1, 1);"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO products_batches VALUES (null, '4563', 1, 35.2, '2022-06-09', 1, '2022-09-09', '19:00:06', 23.5, 1, 1);"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="ALTER TABLE inbound_orders RENAME COLUMN employe_id TO employee_id;"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO inbound_orders VALUES (null, '2022-09-08', '5674', 1, 1, 1);"
+
+    # Products models
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO mercado_fresco_db.countries(country_name)VALUES(“Brasil”);INSERT INTO mercado_fresco_db.provincies(provincie_name,id_country_fk)VALUES(“São Paulo”,1);"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO mercado_fresco_db.localities(locality_name,province_id)VALUES(“São Paulo”,1);"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO mercado_fresco_db.sellers(cid,company_name,address,telephone,locality_id)VALUES(“abc”,“extra”,“av. paulista”,“0011223344”,1);"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO mercado_fresco_db.products_types(description)VALUES(“frutas”);alter table products add constraint unique(product_code);INSERT INTO mercado_fresco_db.products(id,description,expiration_rate,freezing_rate,height,length,net_weight,product_code,recommended_freezing_temperature,width,product_type_id,seller_id)VALUES(10,“carambola”,2.1,2.1,2.1,2.1,2.1,“teste”,2.1,2.1,1,1);"
+
+    # Warehouse models
+    mysql --user="root" --database="mercado_fresco_db" --execute="INSERT INTO countries(country_name) VALUES ('Brasil')"
+    mysql --user="root" --database="mercado_fresco_db" --execute="INSERT INTO pronvices (provincie_name, id_country_fk) VALUES ('Sao Paulo', 1)"
+    mysql --user="root" --database="mercado_fresco_db" --execute="INSERT INTO localities(locality_name, province_id) VALUES ('local 1', 1)"
+    mysql --user="root" --database="mercado_fresco_db" --execute="INSERT INTO localities(locality_name, province_id) VALUES ('local 3', 1)"
+    mysql --user="root" --database="mercado_fresco_db" --execute="INSERT INTO localities(locality_name, province_id) VALUES ('local 4', 1)"
+    mysql --user="root" --database="mercado_fresco_db" --execute="INSERT INTO carriers(cid, company_name, address, locality_id) VALUES (23, 'meli', 'rua 1', 1)"
+}
+
+
+export PASS=
 create_database
+create_dummy_values
