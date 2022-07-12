@@ -146,22 +146,22 @@ func (ph *ProductHandler) DeleteProducts() gin.HandlerFunc {
 }
 
 type saveProduct struct {
-	ProductCode                    string  `json:"product_code" binding:"required"`
-	Description                    string  `json:"description" binding:"required"`
-	Width                          float64 `json:"width" binding:"required"`
-	Height                         float64 `json:"height" binding:"required"`
-	Length                         float64 `json:"length" binding:"required"`
-	NetWeight                      float64 `json:"net_weight" binding:"required"`
-	Expiration_rate                int     `json:"expiration_rate" binding:"required"`
-	RecommendedFreezingTemperature float64 `json:"recommended_freezing_temperature" binding:"required"`
-	FreezingRate                   float64 `json:"freezing_rate" binding:"required"`
-	ProductTypeId                  int     `json:"product_type_id" binding:"required"`
-	SellerId                       int     `json:"seller_id" binding:"required"`
+	ProductCode                    string   `json:"product_code" binding:"required"`
+	Description                    string   `json:"description" binding:"required"`
+	Width                          *float64 `json:"width" binding:"required"`
+	Height                         *float64 `json:"height" binding:"required"`
+	Length                         *float64 `json:"length" binding:"required"`
+	NetWeight                      *float64 `json:"net_weight" binding:"required"`
+	Expiration_rate                *int     `json:"expiration_rate" binding:"required"`
+	RecommendedFreezingTemperature *float64 `json:"recommended_freezing_temperature" binding:"required"`
+	FreezingRate                   *float64 `json:"freezing_rate" binding:"required"`
+	ProductTypeId                  int      `json:"product_type_id" binding:"required"`
+	SellerId                       int      `json:"seller_id" binding:"required"`
 }
 
 type updateProduct struct {
-	ProductCode                    *string  `json:"product_code,omitempty"`
-	Description                    *string  `json:"description,omitempty"`
+	ProductCode                    string   `json:"product_code,omitempty"`
+	Description                    string   `json:"description,omitempty"`
 	Width                          *float64 `json:"width,omitempty"`
 	Height                         *float64 `json:"height,omitempty"`
 	Length                         *float64 `json:"length,omitempty"`
@@ -169,6 +169,6 @@ type updateProduct struct {
 	ExpirationRate                 *int     `json:"expiration_rate,omitempty"`
 	RecommendedFreezingTemperature *float64 `json:"recommended_freezing_temperature,omitempty"`
 	FreezingRate                   *float64 `json:"freezing_rate,omitempty"`
-	ProducTypeId                   *int     `json:"product_type_id,omitempty"`
-	SellerId                       *int     `json:"seller_id,omitempty"`
+	ProducTypeId                   int      `json:"product_type_id,omitempty"`
+	SellerId                       int      `json:"seller_id,omitempty"`
 }
