@@ -14,7 +14,7 @@ import "mercado-frescos-time-7/go-web/internal/productBatch/domain"
 //    404: errorResponse
 //    500: errorServerResponse
 
-// swagger:route POST /productBatches ProductBatch createProductBatch
+// swagger:route POST /productBatches/ ProductBatch createProductBatch
 // Add a new object on db.
 // responses:
 //    201: productBatchesIDResponse
