@@ -17,10 +17,9 @@ require (
 	github.com/joho/godotenv v1.4.0
 )
 
-require github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
+require github.com/DATA-DOG/go-sqlmock v1.5.0
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/assert/v2 v2.0.1
