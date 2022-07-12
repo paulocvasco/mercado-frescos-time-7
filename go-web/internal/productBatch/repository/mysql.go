@@ -37,7 +37,10 @@ func (r *repository) CreateProductBatch(ctx context.Context, productBatch *domai
 		return &domain.ProductBatch{}, err
 	}
 
-	insertedId, _ := result.LastInsertId()
+	insertedId, err := result.LastInsertId()
+	if err != nil {
+		return &domain.ProductBatch{}, err
+	}
 	productBatch.Id = int(insertedId)
 
 	return productBatch, nil
