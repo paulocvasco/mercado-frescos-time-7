@@ -16,16 +16,6 @@ type serviceReport struct {
 	repository ReportInterface
 }
 
-//func (s *serviceReport) GetReportInboundOrders() ([]models.ReportInboundOrders, error) {
-//	report, err := s.repository.GetReportInboundOrders()
-//
-//	if err != nil {
-//		return []models.ReportInboundOrders{}, err
-//	}
-//
-//	return report, nil
-//}
-
 func (s *serviceReport) GetReportInboundOrders(id int) ([]models.ReportInboundOrders, error) {
 	reportId, err := s.repository.GetReportInboundOrders(id)
 

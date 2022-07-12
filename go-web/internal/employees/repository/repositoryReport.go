@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"mercado-frescos-time-7/go-web/internal/employees"
 	"mercado-frescos-time-7/go-web/internal/models"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 )
 
 type InboundReport struct {
@@ -43,6 +44,11 @@ func (r *InboundReport) GetReportInboundOrders(id int) ([]models.ReportInboundOr
 	if err != nil {
 		return []models.ReportInboundOrders{}, err
 	}
+
+	if len(requestReport) == 0 {
+		return []models.ReportInboundOrders{}, customerrors.ErrorItemNotFound
+	}
+
 	return requestReport, nil
 
 }
