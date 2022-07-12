@@ -25,11 +25,6 @@ type service struct {
 
 // Create implements Service
 func (s *service) Create(card_number_id string, first_name string, last_name string, warehouse_id int) (Employee, error) {
-	err := s.repository.ValidationCardNumberID(card_number_id)
-	if err != nil {
-		return Employee{}, err
-	}
-
 	lastID, err := s.repository.LastID()
 
 	if err != nil {
@@ -52,7 +47,7 @@ func (s *service) GetAll() ([]Employee, error) {
 	employees, err := s.repository.GetAll()
 
 	if err != nil {
-		return []Employee{}, err
+		return nil, err
 	}
 
 	return employees, nil
@@ -83,10 +78,6 @@ func (s *service) GetByID(id int) (Employee, error) {
 }
 
 func (s *service) Update(e RequestPatch, id int) (Employee, error) {
-	err := s.repository.ValidationCardNumberID(e.CardNumberId)
-	if err != nil {
-		return Employee{}, err
-	}
 
 	employee, err := s.repository.GetByID(id)
 

@@ -196,7 +196,7 @@ func TestServiceCreate(t *testing.T) {
 				data: responseWeb{
 					Code:  "422",
 					Data:  models.Product{},
-					Error: "validation error in the field(s): product_code, description, width, height, length, net_weight",
+					Error: "validation error in the field(s): productcode, description",
 				},
 				statusCode: 422,
 			},

@@ -146,29 +146,29 @@ func (ph *ProductHandler) DeleteProducts() gin.HandlerFunc {
 }
 
 type saveProduct struct {
-	Product_code                     string  `json:"product_code" binding:"required"`
-	Description                      string  `json:"description" binding:"required"`
-	Width                            float64 `json:"width" binding:"required"`
-	Height                           float64 `json:"height" binding:"required"`
-	Length                           float64 `json:"length" binding:"required"`
-	Net_weight                       float64 `json:"netweight" binding:"required"`
-	Expiration_rate                  int     `json:"expiration_rate" binding:"required"`
-	Recommended_freezing_temperature float64 `json:"recommended_freezing_temperature" binding:"required"`
-	Freezing_rate                    float64 `json:"freezing_rate" binding:"required"`
-	Product_type_id                  int     `json:"product_type_id" binding:"required"`
-	Seller_id                        int     `json:"seller_id" binding:"required"`
+	ProductCode                    string   `json:"product_code" binding:"required"`
+	Description                    string   `json:"description" binding:"required"`
+	Width                          *float64 `json:"width" binding:"required"`
+	Height                         *float64 `json:"height" binding:"required"`
+	Length                         *float64 `json:"length" binding:"required"`
+	NetWeight                      *float64 `json:"net_weight" binding:"required"`
+	Expiration_rate                *int     `json:"expiration_rate" binding:"required"`
+	RecommendedFreezingTemperature *float64 `json:"recommended_freezing_temperature" binding:"required"`
+	FreezingRate                   *float64 `json:"freezing_rate" binding:"required"`
+	ProductTypeId                  int      `json:"product_type_id" binding:"required"`
+	SellerId                       int      `json:"seller_id" binding:"required"`
 }
 
 type updateProduct struct {
-	Product_code                     *string  `json:"product_code,omitempty"`
-	Description                      *string  `json:"description,omitempty"`
-	Width                            *float64 `json:"width,omitempty"`
-	Height                           *float64 `json:"height,omitempty"`
-	Length                           *float64 `json:"length,omitempty"`
-	Net_weight                       *float64 `json:"netweight,omitempty"`
-	Expiration_rate                  *int     `json:"expiration_rate,omitempty"`
-	Recommended_freezing_temperature *float64 `json:"recommended_freezing_temperature,omitempty"`
-	Freezing_rate                    *float64 `json:"freezing_rate,omitempty"`
-	Product_type_id                  *int     `json:"product_type_id,omitempty"`
-	Seller_id                        *int     `json:"seller_id,omitempty"`
+	ProductCode                    string   `json:"product_code,omitempty"`
+	Description                    string   `json:"description,omitempty"`
+	Width                          *float64 `json:"width,omitempty"`
+	Height                         *float64 `json:"height,omitempty"`
+	Length                         *float64 `json:"length,omitempty"`
+	NetWeight                      *float64 `json:"net_weight,omitempty"`
+	ExpirationRate                 *int     `json:"expiration_rate,omitempty"`
+	RecommendedFreezingTemperature *float64 `json:"recommended_freezing_temperature,omitempty"`
+	FreezingRate                   *float64 `json:"freezing_rate,omitempty"`
+	ProducTypeId                   int      `json:"product_type_id,omitempty"`
+	SellerId                       int      `json:"seller_id,omitempty"`
 }
