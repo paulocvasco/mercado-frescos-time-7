@@ -2,6 +2,7 @@ package repository_test
 
 import (
 	"context"
+	"database/sql"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 	"mercado-frescos-time-7/go-web/internal/productBatch/domain"
@@ -107,6 +108,32 @@ func TestSqlRepositoryCreateProductBatchOk(t *testing.T) {
 		_, err = repo.CreateProductBatch(context.TODO(), &domain.ProductBatch{})
 
 		assert.Equal(t, sqlmock.ErrCancelled, err)
+	})
+
+	t.Run("Create Error Last Id", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		repo := repository.NewRepositoryProductBatch(db)
+
+		prepareQuery := mock.ExpectPrepare(regexp.QuoteMeta(queryInsert))
+		prepareQuery.ExpectExec().WithArgs(
+			mockSendProductBatch.BatchNumber,
+			mockSendProductBatch.CurrentQuantity,
+			mockSendProductBatch.CurrentTemperature,
+			mockSendProductBatch.DueDate,
+			mockSendProductBatch.InitialQuantity,
+			mockSendProductBatch.ManufacturingDate,
+			mockSendProductBatch.ManufacturingHour,
+			mockSendProductBatch.MinimumTemperature,
+			mockSendProductBatch.ProductId,
+			mockSendProductBatch.SectionId,
+		).WillReturnResult(sqlmock.NewErrorResult(sql.ErrNoRows))
+
+		_, err = repo.CreateProductBatch(context.TODO(), mockSendProductBatch)
+
+		assert.Error(t, err)
 	})
 
 }
