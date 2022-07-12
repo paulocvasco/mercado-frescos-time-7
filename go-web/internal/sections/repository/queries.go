@@ -16,6 +16,6 @@ const (
 
 	queryDelete = "DELETE FROM sections WHERE id=?;"
 
-	queryReportProductsById   = "SELECT s.id, s.section_number, pb.current_quantity as products_count from sections s INNER JOIN products_batches pb ON s.id = pb.section_id WHERE s.id =?;"
-	queryGetAllReportProducts = "SELECT s.id, s.section_number, COUNT(p.section_id) as products_count from sections s Inner join products_batches p on s.id = p.section_id GROUP BY(s.id);"
+	queryReportProductsById   = "SELECT s.id, s.section_number, COUNT(*) as products_count from sections s INNER JOIN products_batches pb ON s.id = pb.section_id WHERE s.id = ? GROUP BY(s.id);"
+	queryGetAllReportProducts = "SELECT s.id, s.section_number, COUNT(*) as products_count from sections s Inner join products_batches p on s.id = p.section_id WHERE s.id > ? GROUP BY(s.id);"
 )
