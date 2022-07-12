@@ -37,6 +37,7 @@ var (
 	ErrorWarehouseCodeConflict = errors.New("warehouse code already exist")
 	ErrorMarshallJson          = errors.New("malformed json")
 	ErrorInvalidDate           = errors.New("invalid date")
+	ErrorInvalidOrderNumber    = errors.New("invalid order number")
 	ErrorStoreDataDB           = errors.New("failed to store data on database")
 )
 
@@ -110,6 +111,9 @@ func ErrorHandleResponse(err error) (int, string) {
 		}
 		if errors.Is(err, ErrorInvalidDate) {
 			return http.StatusUnprocessableEntity, err.Error()
+    }
+		if errors.Is(err, ErrorInvalidOrderNumber) {
+			return http.StatusConflict, err.Error()
 		}
 		if errors.Is(err, ErrorStoreDataDB) {
 			return http.StatusInternalServerError, err.Error()

@@ -10,7 +10,7 @@ import (
 /////////////////////////////////////////////////////////////////////////////////////
 
 // swagger:route GET /employees/{id} Employee getEmployeeID
-// Get a employee from db.
+// Get a employee from employeesDb.
 // responses:
 //    200: employeeIDResponse
 //    400: errorResponse
@@ -18,14 +18,14 @@ import (
 //    500: errorServerResponse
 
 // swagger:route GET /employees/ Employee EmployeeAll
-// Get all objects stored on db.
+// Get all objects stored on employeesDb.
 // responses:
 //    200: employeeAll
 //    404: errorResponse
 //    500: errorServerResponse
 
 // swagger:route POST /employees/ Employee createEmployee
-// Add a new object on db.
+// Add a new object on employeesDb.
 // responses:
 //    201: employeeIDResponse
 //    400: errorResponse
@@ -34,7 +34,7 @@ import (
 //    500: errorServerResponse
 
 // swagger:route DELETE /employees/{id} Employee deleteEmployeeID
-// Remove a corresponding ID object from db.
+// Remove a corresponding ID object from employeesDb.
 // responses:
 //    204:
 //    400: errorResponse
@@ -42,7 +42,7 @@ import (
 //    500: errorServerResponse
 
 // swagger:route PATCH /employees/{id} Employee patchEmployee
-// Edit an object on db.
+// Edit an object on employeesDb.
 // responses:
 //    200: employeeIDResponse
 //    400: errorResponse
@@ -54,7 +54,7 @@ import (
 //////////////////                  RESPONSES               /////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Corresponding object from db on json format.
+// Corresponding object from employeesDb on json format.
 // swagger:response employeeIDResponse
 type employeeIDResponse struct {
 	//in: body
@@ -64,7 +64,7 @@ type employeeIDResponse struct {
 	}
 }
 
-// Corresponding object from db on json format.
+// Corresponding object from employeesDb on json format.
 // swagger:response employeeAll
 type employeeAllResponse struct {
 	//in: body
@@ -100,7 +100,7 @@ type errorServerResponseEmployee struct {
 
 // swagger:parameters  deleteEmployeeID getEmployeeID
 type employeeRequestID struct {
-	// Value corresponding to object ID on db.
+	// Value corresponding to object ID on employeesDb.
 	// in: path
 	// required: true
 	Id string `json:"id"`
@@ -114,7 +114,7 @@ type employeeNewResquest struct {
 
 // swagger:parameters patchEmployee
 type patchEmployee struct {
-	// Corresponding object on db.
+	// Corresponding object on employeesDb.
 	//in: path
 	Id string `json:"id"`
 	// New values
