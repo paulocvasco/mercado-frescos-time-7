@@ -71,5 +71,9 @@ func (m *mysqlDB) Get(id int) (models.CarriersReport, error) {
 		}
 		report.Data = append(report.Data, r)
 	}
+
+	if report.Data == nil {
+		return models.CarriersReport{}, customerrors.ErrorItemNotFound
+	}
 	return report, nil
 }

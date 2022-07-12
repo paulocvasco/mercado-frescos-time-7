@@ -120,6 +120,11 @@ func TestGet(t *testing.T) {
 			[]mockResponse{}, customerrors.ErrorInvalidDB,
 			models.CarriersReport{Data: []models.CarrierInfo{{LocalityID: 1, LocalityName: "foo", CarriersCount: 10}}}, customerrors.ErrorInvalidDB,
 		},
+		{
+			"ItemNotFound", 4,
+			[]mockResponse{}, nil,
+			models.CarriersReport{}, customerrors.ErrorItemNotFound,
+		},
 	}
 	query := "^SELECT (.*)"
 	for _, v := range testCases {
