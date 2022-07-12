@@ -3,9 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"mercado-frescos-time-7/go-web/internal/sections/domain"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 )
 
 type repositorySql struct {
@@ -63,10 +61,6 @@ func (r *repositorySql) GetById(ctx context.Context, id int) (*domain.Section, e
 		&section.WarehouseId,
 		&section.ProductTypeId,
 	)
-
-	if errors.Is(err, sql.ErrNoRows) {
-		return &section, err
-	}
 
 	if err != nil {
 		return &section, err
@@ -134,10 +128,8 @@ func (r *repositorySql) Update(ctx context.Context, section *domain.Section) (*d
 	if err != nil {
 		return &domain.Section{}, err
 	}
-	if rowsAffected, err := result.RowsAffected(); rowsAffected == 0 {
-		return &domain.Section{}, customerrors.ErrorInvalidID
-	} else if err != nil {
-		return &domain.Section{}, customerrors.ErrorInvalidDB
+	if _, err := result.RowsAffected(); err != nil {
+		return &domain.Section{}, err
 	}
 
 	return section, nil
@@ -151,10 +143,8 @@ func (r *repositorySql) Delete(ctx context.Context, id int) error {
 	if err != nil {
 		return err
 	}
-	if rowsAffected, err := res.RowsAffected(); rowsAffected == 0 {
-		return customerrors.ErrorInvalidID
-	} else if err != nil {
-		return customerrors.ErrorInvalidDB
+	if _, err := res.RowsAffected(); err != nil {
+		return err
 	}
 	return nil
 }
