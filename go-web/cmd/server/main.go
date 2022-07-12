@@ -18,6 +18,7 @@ func main() {
 	routes.InstanceProducts(r)
 	routes.InstanceWarehouse(r)
 	routes.InstanceSection(r)
+	routes.InstanceProductRecords(r)
 	routes.InstanceInboudOrders(r)
 	routes.InstanceLocality(r)
 	routes.InstanceReportSellers(r)
