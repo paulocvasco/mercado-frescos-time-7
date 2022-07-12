@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type Section struct {
 	ID                 int `json:"id"`
 	SectionNumber      int `json:"section_number"`
@@ -87,12 +89,30 @@ type Product struct {
 	Width                          float64 `json:"width"`
 	Height                         float64 `json:"height"`
 	Length                         float64 `json:"length"`
-	NetWeight                      float64 `json:"netweight"`
-	ExpirationRate                 int     `json:"expiration_rate"`
+	NetWeight                      float64 `json:"net_weight"`
+	ExpirationRate                 float64 `json:"expiration_rate"`
 	RecommendedFreezingTemperature float64 `json:"recommended_freezing_temperature"`
 	FreezingRate                   float64 `json:"freezing_rate"`
 	ProductTypeId                  int     `json:"product_type_id" `
 	SellerId                       int     `json:"seller_id"`
+}
+
+type ProductRecord struct {
+	Id             int       `json:"id"`
+	LastUpdateDate time.Time `json:"last_update_date"`
+	PurchasePrice  float64   `json:"purchase_price"`
+	SalePrice      float64   `json:"sale_price"`
+	ProductId      int       `json:"product_id"`
+}
+
+type ProductRecordsResponse struct {
+	ProductId    int    `json:"product_id"`
+	Description  string `json:"description"`
+	RecordsCount int    `json:"records_count"`
+}
+
+type ProductsRecordsResponse struct {
+	Records []ProductRecordsResponse `json:"records"`
 }
 
 type Seller struct {
