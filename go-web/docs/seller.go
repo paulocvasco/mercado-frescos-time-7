@@ -126,4 +126,5 @@ type updateSeller struct {
 	Company_name string `json:"company_name"`
 	Address      string `json:"address"`
 	Telephone    string `json:"telephone"`
+	LocalityID   string `json:"locality_id"`
 }

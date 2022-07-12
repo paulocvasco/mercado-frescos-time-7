@@ -1,4 +1,4 @@
-package warehouse
+package repository
 
 import (
 	"mercado-frescos-time-7/go-web/internal/models"
