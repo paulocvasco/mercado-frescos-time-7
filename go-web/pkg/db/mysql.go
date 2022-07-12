@@ -2,12 +2,10 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/joho/godotenv"
 )
 
 var StorageDB *sql.DB
@@ -17,20 +15,20 @@ func init() {
 	var err error
 
 	// open connection with db
-	db, err = sql.Open("mysql", urlDB)
+	StorageDB, err = sql.Open("mysql", urlDB)
 	if err != nil {
 		panic(err)
 	}
 
 	// test connection
-	if err = db.Ping(); err != nil {
+	if err = StorageDB.Ping(); err != nil {
 		panic(err)
 	}
 
 	// set db options
-	db.SetConnMaxLifetime(time.Minute * 1)
-	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(10)
+	StorageDB.SetConnMaxLifetime(time.Minute * 1)
+	StorageDB.SetMaxOpenConns(10)
+	StorageDB.SetMaxIdleConns(10)
 
 	log.Println("Db connected")
 }
