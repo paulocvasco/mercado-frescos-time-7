@@ -147,4 +147,22 @@ type CarrierInfo struct {
 
 type CarriersReport struct {
 	Data []CarrierInfo `json:"reports"`
+
+type PurchaseOrders struct {
+	OrderNumber   string `json:"order_number" binding:"required"`
+	OrderDate     string `json:"order_date" binding:"required"`
+	TrackingCode  string `json:"tracking_code" binding:"required"`
+	BuyerId       int    `json:"buyer_id" binding:"required"`
+	CarrierID     int    `json:"carrier_id" binding:"required"`
+	OrderStatusId int    `json:"order_status_id" binding:"required"`
+	WareHouseID   int    `json:"wareHouse_id" binding:"required"`
+}
+
+type ResponsePurchaseByBuyer struct {
+	ID                  int    `json:"id" binding:"required"`
+	CardNumberID        string `json:"card_number_id" binding:"required"`
+	FirstName           string `json:"first_name" binding:"required"`
+	LastName            string `json:"last_name" binding:"required"`
+	PurchaseOrdersCount int    `json:"purchase_orders_count" binding:"required"`
+
 }
