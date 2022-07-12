@@ -15,6 +15,7 @@ type Repository interface {
 type SQLrepository struct {
 	db *sql.DB
 }
+
 //go:generate mockery --name=Repository --output=../mocks --outpkg=mockRepository
 func NewSQLrepository(db *sql.DB) Repository {
 	return &SQLrepository{
@@ -29,7 +30,7 @@ func (r *SQLrepository) Store(loc models.Locality) (models.Locality, error) {
 	}*/
 	var exists int
 	db1 := r.db
-	sqlquery := "SELECT a.id FROM provincies a INNER JOIN countries b ON a.id_country_fk = b.Id AND b.country_name = ? AND a.provincie_name = ?;"
+	sqlquery := "SELECT a.id FROM provinces a INNER JOIN countries b ON a.id_country_fk = b.Id AND b.country_name = ? AND a.province_name = ?;"
 	result := db1.QueryRow(sqlquery, loc.Country_name, loc.Province_name)
 	if result.Err() != nil {
 		log.Println(result.Err())
