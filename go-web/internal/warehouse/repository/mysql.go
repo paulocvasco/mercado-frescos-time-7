@@ -36,12 +36,9 @@ func (m *mysqlDB) Update(id int, w models.Warehouse) error {
 	if err != nil {
 		return err
 	}
-	res, err := stmt.Exec(w.Address, w.Telephone, w.WarehouseCode, w.MinimunCapacity, w.MinimunTemperature, w.LocalityID, id)
+	_, err = stmt.Exec(w.Address, w.Telephone, w.WarehouseCode, w.MinimunCapacity, w.MinimunTemperature, w.LocalityID, id)
 	if err != nil {
 		return err
-	}
-	if ra, _ := res.RowsAffected(); ra == 0 {
-		return customerrors.ErrorItemNotFound
 	}
 
 	return nil

@@ -285,11 +285,6 @@ func TestUpdate(t *testing.T) {
 			nil,
 		},
 		{
-			"ItemNotFound", 1, models.Warehouse{},
-			nil, sqlmock.NewResult(1, 0), nil,
-			customerrors.ErrorItemNotFound,
-		},
-		{
 			"ErrorPrep", 1, models.Warehouse{},
 			customerrors.ErrorInvalidDB, sqlmock.NewResult(1, 0), nil,
 			customerrors.ErrorInvalidDB,
