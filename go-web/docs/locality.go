@@ -16,7 +16,7 @@ import "mercado-frescos-time-7/go-web/internal/models"
 //    500: errorServerLocalityResponse
 
 
-// swagger:route GET /localities/reportSellers?id={id} Locality GetAllLocality
+// swagger:route GET /localities/reportSellers Locality GetAllLocality
 // Get all or a specific report from Sellers stored on db.
 // responses:
 //    200: reportsellersResponse
