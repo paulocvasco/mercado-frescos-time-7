@@ -99,17 +99,17 @@ func (db *database) Load(model interface{}) error {
 func getPath(model interface{}) (string, error) {
 	switch model.(type) {
 	case models.BuyersMetaData, *models.BuyersMetaData:
-		return "./buyer.db", nil
+		return "./buyer.employeesDb", nil
 	case models.Employee:
-		return "./employee.db", nil
+		return "./employee.employeesDb", nil
 	case *models.ProductMetaData, models.ProductMetaData:
-		return "./produt.db", nil
+		return "./produt.employeesDb", nil
 	case models.Section, *models.SectionMetaData, models.SectionMetaData:
-		return "./section.db", nil
+		return "./section.employeesDb", nil
 	case models.Seller, *models.Sellers:
-		return "./seller.db", nil
+		return "./seller.employeesDb", nil
 	case models.WarehouseMetaData, *models.WarehouseMetaData:
-		return "./warehouse.db", nil
+		return "./warehouse.employeesDb", nil
 	default:
 		return "", customerrors.ErrorInvalidDB
 	}

@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"log"
 	"mercado-frescos-time-7/go-web/internal/buyer"
+	"mercado-frescos-time-7/go-web/internal/buyer/repository"
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/pkg/web"
@@ -30,6 +32,7 @@ func (b *BuyerController) BuyerGetAll() gin.HandlerFunc {
 			context.JSON(status, res)
 			return
 		}
+		log.Println(all)
 		context.JSON(http.StatusOK, web.NewResponse(http.StatusOK, all, ""))
 	}
 }
@@ -90,7 +93,7 @@ func (b *BuyerController) BuyerUpdate() gin.HandlerFunc {
 			context.JSON(status, res)
 			return
 		}
-		var newInput buyer.RequestPatch
+		var newInput repository.RequestPatch
 		if err := context.ShouldBindJSON(&newInput); err != nil {
 			status, msg := customerrors.ErrorHandleResponse(err)
 			res := web.NewResponse(status, nil, msg)

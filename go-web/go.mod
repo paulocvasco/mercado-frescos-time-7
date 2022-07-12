@@ -13,6 +13,18 @@ require (
 )
 
 require (
+	github.com/go-sql-driver/mysql v1.6.0
+	github.com/joho/godotenv v1.4.0
+)
+
+require github.com/DATA-DOG/go-sqlmock v1.5.0
+
+require github.com/DATA-DOG/go-sqlmock v1.5.0
+
+require github.com/joho/godotenv v1.4.0 // indirect
+
+require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/assert/v2 v2.0.1
@@ -20,6 +32,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/goccy/go-json v0.9.7 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
+	github.com/joho/godotenv v1.4.0
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect

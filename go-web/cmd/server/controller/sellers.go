@@ -22,6 +22,7 @@ type request struct {
 	CompanyName string  `json:"company_name" binding:"required"`
 	Address string  `json:"address" binding:"required"`
 	Telephone  string `json:"telephone" binding:"required"`
+	LocalityID  string `json:"locality_id" binding:"required"`
 }
 
 type getAllResponse struct {
@@ -39,7 +40,7 @@ func (c *Sellers) SellersStore() gin.HandlerFunc  {
 		ctx.JSON(status, res)
 		return
 		}
-		p, err := c.service.Store(req.Cid, req.CompanyName, req.Address, req.Telephone)
+		p, err := c.service.Store(models.Seller{Cid:req.Cid, Company_name:req.CompanyName, Address:req.Address, Telephone:req.Telephone, LocalityID: req.LocalityID})
 		if err != nil {
 			status, msg := customerrors.ErrorHandleResponse(err)
 			res := web.NewResponse(status, nil, msg)

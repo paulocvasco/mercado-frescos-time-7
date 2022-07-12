@@ -19,5 +19,11 @@ func main() {
 	routes.InstanceWarehouse(r)
 	routes.InstanceSection(r)
 	routes.InstanceProductBatch(r)
+	routes.InstancePurchaseOrders(r)
+	routes.InstanceProductRecords(r)
+	routes.InstanceInboudOrders(r)
+	routes.InstanceLocality(r)
+	routes.InstanceReportSellers(r)
+	routes.InstanceCarriers(r)
 	r.Run()
 }
