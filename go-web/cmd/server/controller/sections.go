@@ -34,42 +34,42 @@ func (controller *sectionsController) GetAll(ctx *gin.Context) {
 	sections, err := controller.service.GetAll(ctx.Request.Context())
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-		})
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
-
-	ctx.JSON(http.StatusOK, sections)
+	response := web.NewResponse(http.StatusOK, sections, "")
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (controller *sectionsController) GetById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
-		})
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
 
 	section, err := controller.service.GetById(ctx, id)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"message": err.Error(),
-		})
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
-
-	ctx.JSON(http.StatusOK, section)
+	response := web.NewResponse(http.StatusOK, section, "")
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (controller *sectionsController) Store(ctx *gin.Context) {
 	var req storeSection
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
-		})
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
 
@@ -84,30 +84,31 @@ func (controller *sectionsController) Store(ctx *gin.Context) {
 		ProductTypeId:      req.ProductTypeId,
 	})
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-		})
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, section)
+	response := web.NewResponse(http.StatusCreated, section, "")
+	ctx.JSON(http.StatusCreated, response)
 }
 
 func (controller *sectionsController) Update(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
-		})
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
 
 	var req updateSection
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
 
@@ -123,33 +124,35 @@ func (controller *sectionsController) Update(ctx *gin.Context) {
 		ProductTypeId:      req.ProductTypeId,
 	})
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"message": err.Error(),
-		})
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, section)
+	response := web.NewResponse(http.StatusOK, section, "")
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (controller *sectionsController) Delete(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
-		})
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
 
 	err = controller.service.Delete(ctx, id)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"message": err.Error(),
-		})
+		status, msg := customerrors.ErrorHandleResponse(err)
+		res := web.NewResponse(status, nil, msg)
+		ctx.JSON(status, res)
 		return
 	}
 
-	ctx.JSON(http.StatusNoContent, nil)
+	response := web.NewResponse(http.StatusNoContent, nil, "")
+	ctx.JSON(http.StatusNoContent, response)
 }
 
 func (controller *sectionsController) GetReportProducts(ctx *gin.Context) {
@@ -173,8 +176,8 @@ func (controller *sectionsController) GetReportProducts(ctx *gin.Context) {
 		ctx.JSON(status, res)
 		return
 	}
-	ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, reports, ""))
-
+	response := web.NewResponse(http.StatusOK, reports, "")
+	ctx.JSON(http.StatusOK, response)
 }
 
 type storeSection struct {

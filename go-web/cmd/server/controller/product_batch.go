@@ -54,8 +54,8 @@ func (c productBatchController) Store(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, productBatch)
-	return
+	response := web.NewResponse(http.StatusCreated, productBatch, "")
+	ctx.JSON(http.StatusCreated, response)
 }
 
 type storeProductBatch struct {
