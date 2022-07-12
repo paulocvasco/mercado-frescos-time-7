@@ -92,7 +92,7 @@ func (prc *productRecordsController) InsertProductRecord() gin.HandlerFunc {
 
 type productRecordInsert struct {
 	LastUpdateDate string  `json:"last_update_date" binding:"required"`
-	PurchasePrince float64 `json:"purchase_prince" binding:"required"`
+	PurchasePrice  float64 `json:"purchase_price" binding:"required"`
 	SalePrice      float64 `json:"sale_price" binding:"required"`
 	ProductId      int     `json:"product_id" binding:"required"`
 }
