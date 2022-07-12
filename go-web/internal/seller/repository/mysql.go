@@ -24,7 +24,7 @@ func (r *SQLrepository) LocalityStore(id string, locality_name string, province_
 
 func (r *SQLrepository) Store(sel models.Seller) (models.Seller, error) {
 
-	stmt, err := r.db.Prepare("INSERT INTO mercado_db.sellers (`cid`, `company_name`, `address`, `telephone`, `locality_id`) VALUES (?, ?, ?, ?, ?)")
+	stmt, err := r.db.Prepare("INSERT INTO sellers (`cid`, `company_name`, `address`, `telephone`, `locality_id`) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
 		return models.Seller{}, err
 	}
