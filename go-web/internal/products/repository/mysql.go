@@ -73,12 +73,9 @@ func (r *repositoryMysql) Update(product models.Product) error {
 	if err != nil {
 		return err
 	}
-	res, err := stmt.Exec(&product.Description, &product.ExpirationRate, &product.FreezingRate, &product.Height, &product.Length, &product.NetWeight, &product.ProductCode, &product.RecommendedFreezingTemperature, &product.Width, &product.ProductTypeId, &product.SellerId, &product.Id)
+	_, err = stmt.Exec(&product.Description, &product.ExpirationRate, &product.FreezingRate, &product.Height, &product.Length, &product.NetWeight, &product.ProductCode, &product.RecommendedFreezingTemperature, &product.Width, &product.ProductTypeId, &product.SellerId, &product.Id)
 	if err != nil {
 		return err
-	}
-	if _, err := res.RowsAffected(); err != nil {
-		return customerrors.ErrorInvalidDB
 	}
 	return nil
 }
