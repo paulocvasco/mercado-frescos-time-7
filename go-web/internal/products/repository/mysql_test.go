@@ -313,21 +313,6 @@ func TestUpdateProduct(t *testing.T) {
 		assert.Equal(t, "expected a connection to be available, but it is not", err.Error())
 	})
 
-	t.Run("Should return invalid id after exec statment", func(t *testing.T) {
-		db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		repo := repository.NewRepositoryMysql(db)
-		stmtMock := mock.ExpectPrepare("UPDATE products SET description=?, expiration_rate=?, freezing_rate=?, height=?, length=?, net_weight=?, product_code=?, recommended_freezing_temperature=?, width=?, product_type_id=?, seller_id=? WHERE id=?")
-		stmtMock.ExpectExec().WithArgs(model.Description, model.ExpirationRate, model.FreezingRate, model.Height, model.Length, model.NetWeight, model.ProductCode, model.RecommendedFreezingTemperature, model.Width, model.ProductTypeId, model.SellerId, 1).
-			WillReturnResult(sqlmock.NewResult(0, 0))
-		err = repo.Update(model)
-
-		assert.Equal(t, customerrors.ErrorInvalidID, err)
-	})
-
 	t.Run("Should return error after exec statment", func(t *testing.T) {
 		db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 		if err != nil {

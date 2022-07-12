@@ -77,9 +77,7 @@ func (r *repositoryMysql) Update(product models.Product) error {
 	if err != nil {
 		return err
 	}
-	if rowsAffected, err := res.RowsAffected(); err == nil && rowsAffected == 0 {
-		return customerrors.ErrorInvalidID
-	} else if err != nil {
+	if _, err := res.RowsAffected(); err != nil {
 		return customerrors.ErrorInvalidDB
 	}
 	return nil
