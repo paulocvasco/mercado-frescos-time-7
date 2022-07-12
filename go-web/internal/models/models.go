@@ -50,6 +50,7 @@ type Warehouse struct {
 	WarehouseCode      string `json:"warehouse_code"`
 	MinimunCapacity    int    `json:"minimun_capacity" binding:"required"`
 	MinimunTemperature int    `json:"minimun_temperature" binding:"required"`
+	LocalityID         int    `json:"locality_id"`
 }
 
 type Warehouses struct {
@@ -67,6 +68,7 @@ type PostWarehouse struct {
 	WarehouseCode      string `json:"warehouse_code" binding:"required"`
 	MinimunCapacity    *int   `json:"minimun_capacity" binding:"required"`
 	MinimunTemperature *int   `json:"minimun_temperature" binding:"required"`
+	LocalityID         int    `json:"locality_id"`
 }
 
 type Products struct {
@@ -103,19 +105,46 @@ type Seller struct {
 }
 
 type Locality struct {
-    Id            string `json:"id"`
-    Locality_name string `json:"locality_name"`
-    Province_name string `json:"province_name"`
-    Country_name  string `json:"country_name"`
+	Id            string `json:"id"`
+	Locality_name string `json:"locality_name"`
+	Province_name string `json:"province_name"`
+	Country_name  string `json:"country_name"`
 }
 
 type ReportSeller struct {
-    LocalityID    string `json:"locality_id"`
-    Locality_name string `json:"locality_name"`
-    SellerCount   string `json:"seller_count"`
+	LocalityID    string `json:"locality_id"`
+	Locality_name string `json:"locality_name"`
+	SellerCount   string `json:"seller_count"`
 }
 
 type Sellers struct {
 	Seller []Seller `json:"sellers"`
 	LastID int      `json:"lastid"`
+}
+
+type Carrier struct {
+	ID         int    `json:"id"`
+	Cid        int    `json:"cid"`
+	Company    string `json:"company_name"`
+	Address    string `json:"address"`
+	Telephone  string `json:"telephone"`
+	LocalityID int    `json:"locality_id"`
+}
+
+type CarrierRequest struct {
+	Cid        *int    `json:"cid" binding:"required"`
+	Company    *string `json:"company_name" binding:"required"`
+	Address    *string `json:"address" binding:"required"`
+	Telephone  string  `json:"telephone" binding:"required"`
+	LocalityID *int    `json:"locality_id" binding:"required"`
+}
+
+type CarrierInfo struct {
+	LocalityID    int    `json:"locality_id"`
+	LocalityName  string `json:"locality_name"`
+	CarriersCount int    `json:"carriers_count"`
+}
+
+type CarriersReport struct {
+	Data []CarrierInfo `json:"reports"`
 }

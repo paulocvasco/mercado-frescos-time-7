@@ -58,7 +58,7 @@ import (
 // swagger:route DELETE /warehouses/{id} Warehouse deleteID
 // Remove a corresponding ID object from db.
 // responses:
-//    204: 
+//    204:
 //    400: errorResponse
 //    404: errorResponse
 //    500: errorServerResponse
@@ -140,4 +140,5 @@ type patchModel struct {
 	WarehouseCode      string `json:"warehouse_code"`
 	MinimunCapacity    int    `json:"minimun_capacity"`
 	MinimunTemperature int    `json:"minimun_temperature"`
+	LocalityID         int    `json:"locality_id"`
 }
