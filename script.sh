@@ -114,9 +114,20 @@ function create_dummy_values {
     mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO localities(locality_name, province_id) VALUES ('local 3', 1)"
     mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO localities(locality_name, province_id) VALUES ('local 4', 1)"
     mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO carriers(cid, company_name, address, locality_id) VALUES (23, 'meli', 'rua 1', 1)"
+
+    # Buyers models
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO buyers(id_card_number,first_name,last_name) VALUES ('order#1', 'Pedro', 'Augusto')"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO countries(country_name) VALUES ('Brasil')"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO provinces(province_name,id_country_fk) VALUES ('São Paulo', 1) "
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute=" INSERT INTO localities(locality_name,province_id) VALUES ('São Paulo',1)"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO carriers(cid,company_name,address,telephone,locality_id) VALUES ('order#1', 'Meli01', 'Rua Meli 01','(11) 33333333',1)"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO warehouse(address, telephone, warehouse_code, minimum_capacity, minimum_temperature, locality_id) VALUES ('Rua Melli', '(11) 3333-4444', 'Code#1', 1,1,1)"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO order_status(description) VALUES ('Done')"
+    mysql --user="root" --password=${PASS} --database="mercado_fresco_db" --execute="INSERT INTO purchase_orders(order_number,order_date,tracking_code,buyer_id,carrier_id,order_status_id,warehouse_id) VALUES ('order#1', '2021-04-04', 'abscf123', 1, 1, 1, 1)"
+    
 }
 
 
-export PASS=
+export PASS="12345678"
 create_database
 create_dummy_values
