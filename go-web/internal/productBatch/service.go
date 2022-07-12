@@ -17,7 +17,7 @@ func (s *service) Store(ctx context.Context, batch *domain.ProductBatch) (*domai
 	batch, err := s.repository.CreateProductBatch(ctx, batch)
 
 	if err != nil {
-		return batch, err
+		return &domain.ProductBatch{}, err
 	}
 
 	return batch, nil

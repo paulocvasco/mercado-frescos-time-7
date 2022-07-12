@@ -16,7 +16,7 @@ func NewServiceSection(s domain.SectionRepository) domain.SectionService {
 func (s *serviceSection) GetAll(ctx context.Context) (*domain.Sections, error) {
 	sections, err := s.repository.GetAll(ctx)
 	if err != nil {
-		return sections, err
+		return &domain.Sections{}, err
 	}
 
 	return sections, nil
@@ -25,7 +25,7 @@ func (s *serviceSection) GetAll(ctx context.Context) (*domain.Sections, error) {
 func (s *serviceSection) GetById(ctx context.Context, id int) (*domain.Section, error) {
 	section, err := s.repository.GetById(ctx, id)
 	if err != nil {
-		return section, err
+		return &domain.Section{}, err
 	}
 
 	return section, nil
@@ -34,7 +34,7 @@ func (s *serviceSection) GetById(ctx context.Context, id int) (*domain.Section, 
 func (s *serviceSection) Store(ctx context.Context, section *domain.Section) (*domain.Section, error) {
 	section, err := s.repository.Store(ctx, section)
 	if err != nil {
-		return section, err
+		return &domain.Section{}, err
 	}
 
 	return section, nil
@@ -43,7 +43,7 @@ func (s *serviceSection) Store(ctx context.Context, section *domain.Section) (*d
 func (s *serviceSection) Update(ctx context.Context, section *domain.Section) (*domain.Section, error) {
 	current, err := s.GetById(ctx, section.Id)
 	if err != nil {
-		return section, err
+		return &domain.Section{}, err
 	}
 
 	if section.SectionNumber > 0 {
@@ -81,7 +81,7 @@ func (s *serviceSection) Update(ctx context.Context, section *domain.Section) (*
 	section, err = s.repository.Update(ctx, current)
 
 	if err != nil {
-		return section, err
+		return &domain.Section{}, err
 	}
 
 	return section, nil
@@ -100,7 +100,7 @@ func (s *serviceSection) GetReportProducts(ctx context.Context, id int) (*domain
 	productBatch, err := s.repository.GetReportProducts(ctx, id)
 
 	if err != nil {
-		return productBatch, err
+		return &domain.ProductReports{}, err
 	}
 
 	return productBatch, nil
