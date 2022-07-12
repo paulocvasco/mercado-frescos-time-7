@@ -12,16 +12,15 @@ type EmployeeController struct {
 	service employees.Service
 }
 
-<<<<<<< HEAD
 type requestEmployee struct {
 	CardNumberId string `json:"card_number_id" binding:"required"`
 	FirstName    string `json:"first_name" binding:"required"`
 	LastName     string `json:"last_name" binding:"required"`
->>>>>>> f423d12 (add controller)
 }
 
 type RequestPatch struct {
 	CardNumberId string `json:"card_number_id,omitempty"`
+	FirstName    string `json:"first_name,omitempty`
 	LastName     string `json:"last_name,omitempty"`
 	WareHouseId  int    `json:"warehouse_id,omitempty"`
 }
@@ -100,7 +99,7 @@ func (c *EmployeeController) Update() gin.HandlerFunc {
 func (c *EmployeeController) Create() gin.HandlerFunc {
 
 	return func(ctx *gin.Context) {
-		var req request
+		var req RequestPatch
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),

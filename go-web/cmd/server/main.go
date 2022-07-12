@@ -20,7 +20,6 @@ func main() {
 	routes.InstancePurchaseOrders(r)
 	routes.InstanceLocality(r)
 	routes.InstanceReportSellers(r)
-	r := gin.Default()
 
 	r.Run()
 }
