@@ -19,7 +19,7 @@ func TestStore(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	mock.ExpectPrepare("INSERT INTO mercado_db.sellers (`cid`, `company_name`, `address`, `telephone`, `locality_id`) VALUES (?, ?, ?, ?, ?)").ExpectExec().
+	mock.ExpectPrepare("INSERT INTO sellers (`cid`, `company_name`, `address`, `telephone`, `locality_id`) VALUES (?, ?, ?, ?, ?)").ExpectExec().
 		WithArgs(u.Cid, u.Company_name, u.Address, u.Telephone, 6700).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -39,7 +39,7 @@ func TestStoreErrorConv(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	mock.ExpectPrepare("INSERT INTO mercado_db.sellers (`cid`, `company_name`, `address`, `telephone`, `locality_id`) VALUES (?, ?, ?, ?, ?)").ExpectExec().
+	mock.ExpectPrepare("INSERT INTO sellers (`cid`, `company_name`, `address`, `telephone`, `locality_id`) VALUES (?, ?, ?, ?, ?)").ExpectExec().
 		WithArgs(u.Cid, u.Company_name, u.Address, u.Telephone, 6700).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -58,8 +58,7 @@ func TestStoreErrorPrepare(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	mock.ExpectPrepare("INSERT INTO mercado_db.sellers (`cid`, `company_name`, `address`, `telephone`, `locality_id`) VALUES (?, ?, ?, ?, ?)").WillReturnError(customerrors.ErrorInvalidDB)
-	
+	mock.ExpectPrepare("INSERT INTO sellers (`cid`, `company_name`, `address`, `telephone`, `locality_id`) VALUES (?, ?, ?, ?, ?)").WillReturnError(customerrors.ErrorInvalidDB)
 
 	repo := repository.NewSQLrepository(db)
 
@@ -77,7 +76,7 @@ func TestStoreErrorExec(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	mock.ExpectPrepare("INSERT INTO mercado_db.sellers (`cid`, `company_name`, `address`, `telephone`, `locality_id`) VALUES (?, ?, ?, ?, ?)").
+	mock.ExpectPrepare("INSERT INTO sellers (`cid`, `company_name`, `address`, `telephone`, `locality_id`) VALUES (?, ?, ?, ?, ?)").
 		ExpectExec().
 		WithArgs(u.Cid, u.Company_name, u.Address, u.Telephone, 6700).
 		WillReturnError(customerrors.ErrorInvalidDB)
@@ -104,5 +103,5 @@ func TestEmptyFuncion(t *testing.T) {
 	repo.GetAll()
 	repo.GetId(1)
 	repo.LastID()
-	repo.Update(seller.Seller(u), 1)	
+	repo.Update(seller.Seller(u), 1)
 }

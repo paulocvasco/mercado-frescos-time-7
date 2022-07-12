@@ -20,6 +20,7 @@ func main() {
 	routes.InstancePurchaseOrders(r)
 	routes.InstanceLocality(r)
 	routes.InstanceReportSellers(r)
+	routes.InstanceCarriers(r)
 
 	r.Run()
 }
