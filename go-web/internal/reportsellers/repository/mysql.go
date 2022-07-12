@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"mercado-frescos-time-7/go-web/internal/models"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 )
 
 type Repository interface {
@@ -43,6 +44,11 @@ func (r *SQLrepository) ReportSellers(id int) ([]models.ReportSeller, error) {
 		}
 		reporters = append(reporters, rapp)
 	}
+
+	if len(reporters) == 0 {
+		return []models.ReportSeller{}, customerrors.ErrorItemNotFound
+	}
+
 	return reporters, nil
 
 }
