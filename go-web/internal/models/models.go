@@ -99,6 +99,20 @@ type Seller struct {
 	Company_name string `json:"company_name"`
 	Address      string `json:"address"`
 	Telephone    string `json:"telephone"`
+	LocalityID   string `json:"locality_id"`
+}
+
+type Locality struct {
+    Id            string `json:"id"`
+    Locality_name string `json:"locality_name"`
+    Province_name string `json:"province_name"`
+    Country_name  string `json:"country_name"`
+}
+
+type ReportSeller struct {
+    LocalityID    string `json:"locality_id"`
+    Locality_name string `json:"locality_name"`
+    SellerCount   string `json:"seller_count"`
 }
 
 type Sellers struct {

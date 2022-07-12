@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"mercado-frescos-time-7/go-web/cmd/server/controller"
 	"mercado-frescos-time-7/go-web/internal/models"
 	"mercado-frescos-time-7/go-web/internal/seller/mocks"
@@ -269,10 +270,11 @@ func TestStore(t *testing.T) {
 	}
 
 	type create struct {
-		Cid          int
-		Company_name string
-		Address      string
-		Telephone    string
+		Cid          int    `json:"cid"`
+		Company_name string `json:"company_name"`
+		Address      string `json:"address"`
+		Telephone    string `json:"telephone"`
+		LocalityID   string `json:"locality_id"`
 	}
 
 	type tests struct {
@@ -284,13 +286,13 @@ func TestStore(t *testing.T) {
 		idRequest          string
 		expectedstatuscode int
 	}
-	sendCreate := create{123, "Mercado Livre", "Rua1", "(11) 3334-5564"}
+	sendCreate := create{123, "Mercado Livre", "Rua1", "(11) 3334-5564", "1"}
 
-	response := models.Seller{ID: 1, Cid: 123, Company_name: "Mercalo Livre", Address: "Rua1", Telephone: "(11) 3334-5564"}
+	response := models.Seller{ID: 1, Cid: 123, Company_name: "Mercalo Livre", Address: "Rua1", Telephone: "(11) 3334-5564", LocalityID: "1"}
 
 	testsCases := []tests{
 		{"Store", mockResponse{response, nil}, webResponse{"201", response, ""}, "Store", sendCreate, "1", 201},
-		{"Store Error", mockResponse{models.Seller{}, customerrors.ErrorInvalidIDParameter}, webResponse{"422", models.Seller{}, "validation error in the field(s): cid, companyname, address, telephone"}, "Error GetId", create{}, "1", 422},
+		{"Store Error", mockResponse{models.Seller{}, customerrors.ErrorInvalidIDParameter}, webResponse{"422", models.Seller{}, "validation error in the field(s): cid, companyname, address, telephone, localityid"}, "Error GetId", create{}, "1", 422},
 		{"Store Error", mockResponse{models.Seller{}, customerrors.ErrorInvalidID}, webResponse{"404", models.Seller{}, customerrors.ErrorInvalidID.Error()}, "Error GetId", sendCreate, "1", 404},
 		{"Store Error", mockResponse{models.Seller{}, customerrors.ErrorConflict}, webResponse{"409", models.Seller{}, customerrors.ErrorConflict.Error()}, "Error GetId", sendCreate, "1", 409},
 	}
@@ -305,6 +307,7 @@ func TestStore(t *testing.T) {
 		w := httptest.NewRecorder()
 		_, router := gin.CreateTestContext(w)
 		post, _ := json.Marshal(value.sendCreate)
+		log.Println(sendCreate)
 		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(post))
 		router.POST("/", control.SellersStore())
 		router.ServeHTTP(w, req)
