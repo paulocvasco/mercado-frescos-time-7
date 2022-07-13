@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetAll(t *testing.T) {
+func TestGetAllMysql(t *testing.T) {
 
 	query := `SELECT * FROM buyers`
 
@@ -71,7 +71,7 @@ func TestGetAll(t *testing.T) {
 
 }
 
-func TestGetId(t *testing.T) {
+func TestGetIdMysql(t *testing.T) {
 
 	query := `SELECT * FROM buyers WHERE ID = ? `
 
@@ -137,7 +137,7 @@ func TestGetId(t *testing.T) {
 
 }
 
-func TestCreate(t *testing.T) {
+func TestCreateMysql(t *testing.T) {
 
 	mockSection := models.Buyer{
 		ID:           1,
@@ -216,7 +216,7 @@ func TestCreate(t *testing.T) {
 
 	})
 }
-func TestDelete(t *testing.T) {
+func TestDeleteMysql(t *testing.T) {
 
 	query := `DELETE FROM buyers where id_card_number = ?`
 	t.Run("Success Test Delete buyers", func(t *testing.T) {
@@ -274,7 +274,7 @@ func TestDelete(t *testing.T) {
 
 }
 
-func TestUpdate(t *testing.T) {
+func TestUpdateMysql(t *testing.T) {
 
 	mockSection := models.Buyer{
 		ID:           1,
