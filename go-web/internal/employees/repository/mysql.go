@@ -17,7 +17,7 @@ func (r *repository) ValidationCardNumberID(card_number_id string) error {
 	return nil
 }
 
-func (r *repository) Create(card_number_id string, first_name string, last_name string, warehouse_id int) (employees.Employee, error) {
+func (r *repository) Create(id int, card_number_id string, first_name string, last_name string, warehouse_id int) (employees.Employee, error) {
 	data := r.data
 	query := "INSERT INTO employees (`id_card_number`, `first_name`, `last_name`, `warehouse_id`) " +
 		"VALUES (?, ?, ?, ?)"
