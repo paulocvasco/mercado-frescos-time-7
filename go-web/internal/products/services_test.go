@@ -2,13 +2,14 @@ package products_test
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"mercado-frescos-time-7/go-web/internal/models"
 	"mercado-frescos-time-7/go-web/internal/products"
 	"mercado-frescos-time-7/go-web/internal/products/mock/mockRepository"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestServiceCreateOk(t *testing.T) {
@@ -63,8 +64,8 @@ func TestServiceCreateOk(t *testing.T) {
 		},
 	}
 
-	repository.On("Insert", mock.Anything).Return(body, nil)
-	repository.On("GetAll").Return(bodyList, nil)
+	repository.On("Insert", mock.Anything).Return(body, nil).Maybe()
+	repository.On("GetAll").Return(bodyList, nil).Maybe()
 	response, _ := service.Insert(productByte)
 	assert.Equal(t, body, response)
 }
@@ -121,7 +122,8 @@ func TestServiceCreateConflict(t *testing.T) {
 		},
 	}
 
-	repository.On("GetAll").Return(bodyList, nil)
+	repository.On("GetAll").Return(bodyList, nil).Maybe()
+	repository.On("Insert", mock.Anything).Return(models.Product{}, customerrors.ErrorConflict).Maybe()
 	_, err := service.Insert(productByte)
 	assert.Equal(t, customerrors.ErrorConflict, err)
 }
@@ -371,9 +373,9 @@ func TestServiceUpdateOk(t *testing.T) {
 
 		productByte, _ := json.Marshal(test.expectedResult.data)
 
-		repository.On("GetById", mock.Anything).Return(test.mockResponse.dataGetById, test.mockResponse.errGetById)
-		repository.On("GetAll").Return(test.mockResponse.dataGetAll, test.mockResponse.errGetAll)
-		repository.On("Update", mock.Anything).Return(test.mockResponse.errUpdate)
+		repository.On("GetById", mock.Anything).Return(test.mockResponse.dataGetById, test.mockResponse.errGetById).Maybe()
+		repository.On("GetAll").Return(test.mockResponse.dataGetAll, test.mockResponse.errGetAll).Maybe()
+		repository.On("Update", mock.Anything).Return(test.mockResponse.errUpdate).Maybe()
 
 		newProduct, err := service.Update(1, productByte)
 		assert.Equal(t, newProduct, test.expectedResult.data)
@@ -428,8 +430,8 @@ func TestServiceCreateErrorDatabaseGetAll(t *testing.T) {
 		SellerId:                       2,
 	}
 
-	repository.On("GetAll", mock.Anything).Return(models.Products{}, err)
-
+	repository.On("GetAll", mock.Anything).Return(models.Products{}, err).Maybe()
+	repository.On("Insert", mock.Anything).Return(models.Product{}, err).Maybe()
 	productByte, _ := json.Marshal(update)
 
 	_, erro := service.Insert(productByte)
@@ -490,8 +492,8 @@ func TestServiceCreateErrorDatabaseUpdate(t *testing.T) {
 		SellerId:                       2,
 	}
 
-	repository.On("GetAll", mock.Anything).Return(bodyList, nil)
-	repository.On("Insert", mock.Anything).Return(models.Product{}, err)
+	repository.On("GetAll", mock.Anything).Return(bodyList, nil).Maybe()
+	repository.On("Insert", mock.Anything).Return(models.Product{}, err).Maybe()
 
 	productByte, _ := json.Marshal(update)
 

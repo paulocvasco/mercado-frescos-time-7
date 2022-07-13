@@ -30,17 +30,14 @@ var expectBuyerConflict = model.Buyer{
 	FirstName:    "Alice",
 }
 
-var buyerList = model.Buyers{
-
-	Buyer: []model.Buyer{
-		{CardNumberID: "40543",
-			FirstName: "Alice",
-			LastName:  "Souza"},
-		{
-			CardNumberID: "40544",
-			FirstName:    "Arthur",
-			LastName:     "Santos",
-		},
+var buyerList = []model.Buyer{
+	{CardNumberID: "40543",
+		FirstName: "Alice",
+		LastName:  "Souza"},
+	{
+		CardNumberID: "40544",
+		FirstName:    "Arthur",
+		LastName:     "Santos",
 	},
 }
 
