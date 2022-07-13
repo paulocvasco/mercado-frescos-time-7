@@ -36,6 +36,29 @@ func (_m *Service) Create(data models.PurchaseOrders) (repository.ResultPost, er
 	return r0, r1
 }
 
+// GetPurchaseOrder provides a mock function with given fields: id
+func (_m *Service) GetPurchaseOrder(id int) ([]models.ResponsePurchaseByBuyer, error) {
+	ret := _m.Called(id)
+
+	var r0 []models.ResponsePurchaseByBuyer
+	if rf, ok := ret.Get(0).(func(int) []models.ResponsePurchaseByBuyer); ok {
+		r0 = rf(id)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]models.ResponsePurchaseByBuyer)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(int) error); ok {
+		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 type mockConstructorTestingTNewService interface {
 	mock.TestingT
 	Cleanup(func())

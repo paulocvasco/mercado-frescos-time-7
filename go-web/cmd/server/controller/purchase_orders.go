@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"log"
 	"mercado-frescos-time-7/go-web/internal/models"
 	"mercado-frescos-time-7/go-web/internal/purchaseOrders"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
@@ -46,9 +45,19 @@ func (p *PurchaseOrdersController) CreatePurchaseOrders() gin.HandlerFunc {
 func (p *PurchaseOrdersController) GetPurchaseOrder() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		id := context.Query("id")
-		intId, err := strconv.Atoi(id)
-		if err != nil {
+		var intId int
+		var err error
+		if id == "" {
 			intId = 0
+		} else {
+			intId, err = strconv.Atoi(id)
+
+		}
+		if err != nil {
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			context.JSON(status, res)
+			return
 		}
 		all, err := p.service.GetPurchaseOrder(intId)
 		if err != nil {
@@ -57,7 +66,6 @@ func (p *PurchaseOrdersController) GetPurchaseOrder() gin.HandlerFunc {
 			context.JSON(status, res)
 			return
 		}
-		log.Println(all)
 		context.JSON(http.StatusOK, web.NewResponse(http.StatusOK, all, ""))
 	}
 }
