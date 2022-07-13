@@ -17,9 +17,9 @@ func (r *repository) ValidationCardNumberID(card_number_id string) error {
 	return nil
 }
 
-func (r *repository) Create(id int, card_number_id string, first_name string, last_name string, warehouse_id int) (employees.Employee, error) {
+func (r *repository) Create(card_number_id string, first_name string, last_name string, warehouse_id int) (employees.Employee, error) {
 	data := r.data
-	query := "INSERT INTO mercado_fresco.employees (`id_card_number`, `first_name`, `last_name`, `warehouse_id`) " +
+	query := "INSERT INTO employees (`id_card_number`, `first_name`, `last_name`, `warehouse_id`) " +
 		"VALUES (?, ?, ?, ?)"
 
 	employeeQuery, err := data.Prepare(query)
@@ -37,10 +37,11 @@ func (r *repository) Create(id int, card_number_id string, first_name string, la
 
 	usedID, _ := result.LastInsertId()
 	employeeInsert := employees.Employee{
-		ID:          int(usedID),
-		FirstName:   first_name,
-		LastName:    last_name,
-		WareHouseId: warehouse_id,
+		ID:           int(usedID),
+		CardNumberId: card_number_id,
+		FirstName:    first_name,
+		LastName:     last_name,
+		WareHouseId:  warehouse_id,
 	}
 
 	return employeeInsert, nil
