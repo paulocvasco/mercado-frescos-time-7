@@ -2,10 +2,10 @@ package repository_test
 
 import (
 	"database/sql"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/buyer/repository"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	model "github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
 	"log"
-	"mercado-frescos-time-7/go-web/internal/buyer/repository"
-	"mercado-frescos-time-7/go-web/internal/models"
-	model "mercado-frescos-time-7/go-web/internal/models"
 	"regexp"
 	"testing"
 
@@ -151,7 +151,7 @@ func TestCreateMysql(t *testing.T) {
 		LastName:     "Gol",
 	}
 
-	query := `INSERT INTO buyers(id_card_number,first_name,last_name) 
+	query := `INSERT INTO buyers(id_card_number,first_name,last_name)
 	VALUES (?, ?, ?)`
 
 	t.Run("Success Creat", func(t *testing.T) {

@@ -2,8 +2,8 @@ package products
 
 import (
 	"encoding/json"
-	"mercado-frescos-time-7/go-web/internal/models"
-	"mercado-frescos-time-7/go-web/internal/products/repository"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/products/repository"
 
 	jsonpatch "github.com/evanphx/json-patch/v5"
 )

@@ -3,7 +3,7 @@
 package mockRepository
 
 import (
-	models "mercado-frescos-time-7/go-web/internal/models"
+	models "github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
 
 	mock "github.com/stretchr/testify/mock"
 )

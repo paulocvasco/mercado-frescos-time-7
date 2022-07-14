@@ -2,9 +2,9 @@ package repository
 
 import (
 	"database/sql"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"log"
-	"mercado-frescos-time-7/go-web/internal/models"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 )
 
 type Repository interface {

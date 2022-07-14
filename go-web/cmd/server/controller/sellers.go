@@ -2,11 +2,11 @@ package controller
 
 import (
 	"errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/seller"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/web"
 	"io/ioutil"
-	"mercado-frescos-time-7/go-web/internal/models"
-	"mercado-frescos-time-7/go-web/internal/seller"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 	"strconv"
 
@@ -14,14 +14,14 @@ import (
 )
 
 type Sellers struct {
-	service seller.Service 
+	service seller.Service
 }
 
 type request struct {
-	Cid  int  `json:"cid" binding:"required"`
-	CompanyName string  `json:"company_name" binding:"required"`
-	Address string  `json:"address" binding:"required"`
-	Telephone  string `json:"telephone" binding:"required"`
+	Cid         int    `json:"cid" binding:"required"`
+	CompanyName string `json:"company_name" binding:"required"`
+	Address     string `json:"address" binding:"required"`
+	Telephone   string `json:"telephone" binding:"required"`
 	LocalityID  string `json:"locality_id" binding:"required"`
 }
 
@@ -31,16 +31,16 @@ type getAllResponse struct {
 
 var gar getAllResponse
 
-func (c *Sellers) SellersStore() gin.HandlerFunc  {
+func (c *Sellers) SellersStore() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req request
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-		status, msg := customerrors.ErrorHandleResponse(err)
-		res := web.NewResponse(status, nil, msg)
-		ctx.JSON(status, res)
-		return
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			ctx.JSON(status, res)
+			return
 		}
-		p, err := c.service.Store(models.Seller{Cid:req.Cid, Company_name:req.CompanyName, Address:req.Address, Telephone:req.Telephone, LocalityID: req.LocalityID})
+		p, err := c.service.Store(models.Seller{Cid: req.Cid, Company_name: req.CompanyName, Address: req.Address, Telephone: req.Telephone, LocalityID: req.LocalityID})
 		if err != nil {
 			status, msg := customerrors.ErrorHandleResponse(err)
 			res := web.NewResponse(status, nil, msg)
@@ -51,50 +51,48 @@ func (c *Sellers) SellersStore() gin.HandlerFunc  {
 	}
 }
 
-
-
-func (c *Sellers) SellersGetAll() gin.HandlerFunc  {
+func (c *Sellers) SellersGetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-	p, err := c.service.GetAll()
-	if err != nil {
-		status, msg := customerrors.ErrorHandleResponse(err)
-		res := web.NewResponse(status, nil, msg)
-		ctx.JSON(status, res)
-		return
-	}
-	gar.Seller = p
-	ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, gar, ""))
-	}
-}
-
-func (c *Sellers) SellersGetId() gin.HandlerFunc  {
-	return func(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Param("id"))
-	if err != nil {
-		status, msg := customerrors.ErrorHandleResponse(err)
-		res := web.NewResponse(status, nil, msg)
-		ctx.JSON(status, res)
-		return
-	}
-	p, err := c.service.GetId(int(id))
-	if err != nil {
-		if errors.Is(err, customerrors.ErrorInvalidID) {
-			status, msg := customerrors.ErrorHandleResponse(err)
-			res := web.NewResponse(status, nil, msg)
-			ctx.JSON(status, res)
-			return
-		} else {
+		p, err := c.service.GetAll()
+		if err != nil {
 			status, msg := customerrors.ErrorHandleResponse(err)
 			res := web.NewResponse(status, nil, msg)
 			ctx.JSON(status, res)
 			return
 		}
-	}
-	ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, p, ""))
+		gar.Seller = p
+		ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, gar, ""))
 	}
 }
 
-func (c *Sellers) SellersUpdate() gin.HandlerFunc  {
+func (c *Sellers) SellersGetId() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		id, err := strconv.Atoi(ctx.Param("id"))
+		if err != nil {
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			ctx.JSON(status, res)
+			return
+		}
+		p, err := c.service.GetId(int(id))
+		if err != nil {
+			if errors.Is(err, customerrors.ErrorInvalidID) {
+				status, msg := customerrors.ErrorHandleResponse(err)
+				res := web.NewResponse(status, nil, msg)
+				ctx.JSON(status, res)
+				return
+			} else {
+				status, msg := customerrors.ErrorHandleResponse(err)
+				res := web.NewResponse(status, nil, msg)
+				ctx.JSON(status, res)
+				return
+			}
+		}
+		ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, p, ""))
+	}
+}
+
+func (c *Sellers) SellersUpdate() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
@@ -105,7 +103,7 @@ func (c *Sellers) SellersUpdate() gin.HandlerFunc  {
 		}
 		body := ctx.Request.Body
 		defer body.Close()
-	
+
 		data, err := ioutil.ReadAll(body)
 		if err != nil {
 			status, msg := customerrors.ErrorHandleResponse(err)
@@ -124,7 +122,7 @@ func (c *Sellers) SellersUpdate() gin.HandlerFunc  {
 	}
 }
 
-func (c *Sellers) SellersDelete() gin.HandlerFunc  {
+func (c *Sellers) SellersDelete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
@@ -132,17 +130,16 @@ func (c *Sellers) SellersDelete() gin.HandlerFunc  {
 			res := web.NewResponse(status, nil, msg)
 			ctx.JSON(status, res)
 			return
-		} 
-			err = c.service.Delete(id)
-			if err != nil {
-				status, msg := customerrors.ErrorHandleResponse(err)
-				res := web.NewResponse(status, nil, msg)
-				ctx.JSON(status, res)
-				return	
-			}
-			ctx.JSON(http.StatusNoContent, web.NewResponse(http.StatusNoContent, nil, ""))	
+		}
+		err = c.service.Delete(id)
+		if err != nil {
+			status, msg := customerrors.ErrorHandleResponse(err)
+			res := web.NewResponse(status, nil, msg)
+			ctx.JSON(status, res)
+			return
+		}
+		ctx.JSON(http.StatusNoContent, web.NewResponse(http.StatusNoContent, nil, ""))
 
-			
 	}
 }
 

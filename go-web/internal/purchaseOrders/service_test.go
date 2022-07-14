@@ -2,11 +2,11 @@ package purchaseOrders_test
 
 import (
 	"errors"
-	"mercado-frescos-time-7/go-web/internal/models"
-	"mercado-frescos-time-7/go-web/internal/purchaseOrders"
-	"mercado-frescos-time-7/go-web/internal/purchaseOrders/mocks"
-	"mercado-frescos-time-7/go-web/internal/purchaseOrders/repository"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/purchaseOrders"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/purchaseOrders/mocks"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/purchaseOrders/repository"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

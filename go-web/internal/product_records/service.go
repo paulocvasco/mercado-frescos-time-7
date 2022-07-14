@@ -2,9 +2,9 @@ package productrecords
 
 import (
 	"encoding/json"
-	"mercado-frescos-time-7/go-web/internal/models"
-	"mercado-frescos-time-7/go-web/internal/product_records/repository"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/product_records/repository"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"time"
 
 	jsonpatch "github.com/evanphx/json-patch"

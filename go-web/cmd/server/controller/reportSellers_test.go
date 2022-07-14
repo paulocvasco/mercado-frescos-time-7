@@ -2,11 +2,11 @@ package controller_test
 
 import (
 	"encoding/json"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/cmd/server/controller"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/reportsellers/mocks"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"io/ioutil"
-	"mercado-frescos-time-7/go-web/cmd/server/controller"
-	"mercado-frescos-time-7/go-web/internal/models"
-	"mercado-frescos-time-7/go-web/internal/reportsellers/mocks"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -43,7 +43,7 @@ func TestRepportSellerGetAll(t *testing.T) {
 
 	testsCases := []tests{
 		{"GetAll", mr, webResponse{Code: "200", Data: mr.data, Error: ""}, http.StatusOK},
-		{"GetAll Error", mockResponse{[]models.ReportSeller{}, customerrors.ErrorInvalidDB}, webResponse{Code: "500", Data:[]models.ReportSeller(nil), Error: customerrors.ErrorInvalidDB.Error()}, http.StatusInternalServerError},
+		{"GetAll Error", mockResponse{[]models.ReportSeller{}, customerrors.ErrorInvalidDB}, webResponse{Code: "500", Data: []models.ReportSeller(nil), Error: customerrors.ErrorInvalidDB.Error()}, http.StatusInternalServerError},
 	}
 
 	for _, value := range testsCases {

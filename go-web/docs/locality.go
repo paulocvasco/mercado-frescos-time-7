@@ -1,6 +1,6 @@
 package docs
 
-import "mercado-frescos-time-7/go-web/internal/models"
+import "github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
 
 /////////////////////////////////////////////////////////////////////////////////////
 //////////////////               END POINTS               ///////////////////////////
@@ -14,7 +14,6 @@ import "mercado-frescos-time-7/go-web/internal/models"
 //    409: errorResponse
 //    422: errorLocalityResponse
 //    500: errorServerLocalityResponse
-
 
 // swagger:route GET /localities/reportSellers Locality GetAllLocality
 // Get all or a specific report from Sellers stored on db.
@@ -36,7 +35,7 @@ type newLocalityRequest struct {
 type localityResponse struct {
 	//in: body
 	data struct {
-		Code string        `json:"code"`
+		Code string          `json:"code"`
 		Data models.Locality `json:"data"`
 	}
 }
@@ -46,7 +45,7 @@ type localityResponse struct {
 type reportSellersResponse struct {
 	//in: body
 	data struct {
-		Code string        `json:"code"`
+		Code string              `json:"code"`
 		Data models.ReportSeller `json:"data"`
 	}
 }

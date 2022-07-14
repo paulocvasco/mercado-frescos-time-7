@@ -1,6 +1,6 @@
 package docs
 
-import "mercado-frescos-time-7/go-web/internal/productBatch/domain"
+import "github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/productBatch/domain"
 
 /////////////////////////////////////////////////////////////////////////////////////
 //////////////////               END POINTS               ///////////////////////////

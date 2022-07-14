@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"mercado-frescos-time-7/go-web/internal/models"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/db"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/db"
 )
 
 type repository struct {

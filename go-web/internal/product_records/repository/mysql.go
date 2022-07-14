@@ -2,7 +2,7 @@ package repository
 
 import (
 	"database/sql"
-	"mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
 )
 
 type Repository interface {

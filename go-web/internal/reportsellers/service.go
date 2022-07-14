@@ -1,8 +1,8 @@
 package reportsellers
 
 import (
-	"mercado-frescos-time-7/go-web/internal/models"
-	"mercado-frescos-time-7/go-web/internal/reportsellers/repository"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/reportsellers/repository"
 )
 
 type Service interface {

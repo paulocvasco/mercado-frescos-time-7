@@ -2,7 +2,7 @@ package mockFile
 
 import (
 	"encoding/json"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 )
 
 type DBmock struct {

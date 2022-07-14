@@ -1,9 +1,9 @@
 package seller
 
 import (
-	"mercado-frescos-time-7/go-web/internal/models"
-	"mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/db"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/db"
 	"golang.org/x/exp/slices"
 )
 
@@ -22,7 +22,7 @@ type Repository interface {
 	LastID() (int, error)
 }
 
-type repository struct{
+type repository struct {
 	database db.DB
 }
 
@@ -107,10 +107,10 @@ func (r *repository) Update(newValues Seller, id int) (models.Seller, error) {
 			storage.Seller[k] = v
 			err = r.database.Save(&storage)
 			if err != nil {
-			return models.Seller{}, err
+				return models.Seller{}, err
 			}
 			return v, nil
-		}	
+		}
 	}
 	return models.Seller{}, customerrors.ErrorInvalidID
 }
@@ -134,7 +134,7 @@ func (r *repository) Store(sel models.Seller) (models.Seller, error) {
 	if err != nil {
 		return models.Seller{}, err
 	}
-	p := models.Seller{ID:sel.ID,Cid:sel.Cid,Company_name:sel.Company_name,Address:sel.Address,Telephone:sel.Telephone}
+	p := models.Seller{ID: sel.ID, Cid: sel.Cid, Company_name: sel.Company_name, Address: sel.Address, Telephone: sel.Telephone}
 	storage.Seller = append(storage.Seller, p)
 	storage.LastID = storage.LastID + 1
 	err = r.database.Save(&storage)

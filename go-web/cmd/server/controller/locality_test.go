@@ -3,25 +3,25 @@ package controller_test
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/gin-gonic/gin"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/cmd/server/controller"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/locality/mocks"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"io/ioutil"
 	"log"
-	"mercado-frescos-time-7/go-web/cmd/server/controller"
-	"mercado-frescos-time-7/go-web/internal/models"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"mercado-frescos-time-7/go-web/internal/locality/mocks"
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
 func TestLocalityStore(t *testing.T) {
 	type webResponse struct {
-		Code  string              `json:"code"`
+		Code  string          `json:"code"`
 		Data  models.Locality `json:"data"`
-		Error string              `json:"error"`
+		Error string          `json:"error"`
 	}
 
 	type mockResponse struct {
@@ -45,9 +45,9 @@ func TestLocalityStore(t *testing.T) {
 		idRequest          string
 		expectedstatuscode int
 	}
-	sendCreate :=  create{Id: "1", Locality_name: "juan",Province_name: "minas",Country_name: "brasil"}
+	sendCreate := create{Id: "1", Locality_name: "juan", Province_name: "minas", Country_name: "brasil"}
 
-	response := models.Locality{Id: "1", Locality_name: "juan",Province_name: "minas",Country_name: "brasil"}
+	response := models.Locality{Id: "1", Locality_name: "juan", Province_name: "minas", Country_name: "brasil"}
 
 	testsCases := []tests{
 		{"Store", mockResponse{response, nil}, webResponse{"201", response, ""}, "Store", sendCreate, "1", 201},

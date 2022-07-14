@@ -3,9 +3,9 @@ package controller
 import (
 	"encoding/json"
 	"errors"
-	"mercado-frescos-time-7/go-web/internal/products"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/web"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/products"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 	"strconv"
 

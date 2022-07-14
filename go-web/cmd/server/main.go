@@ -1,7 +1,7 @@
 package main
 
 import (
-	"mercado-frescos-time-7/go-web/cmd/server/routes"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/cmd/server/routes"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"

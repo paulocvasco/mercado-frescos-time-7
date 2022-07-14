@@ -2,9 +2,9 @@ package repository
 
 import (
 	"database/sql"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/seller"
 	"log"
-	"mercado-frescos-time-7/go-web/internal/models"
-	"mercado-frescos-time-7/go-web/internal/seller"
 	"strconv"
 )
 
@@ -72,8 +72,6 @@ func (r *SQLrepository) CheckCid(cid int) (models.Seller, error) {
 	return models.Seller{}, nil
 }
 
-
 func (r *SQLrepository) LastID() (int, error) {
 	return 0, nil
 }
-

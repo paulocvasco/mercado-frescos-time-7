@@ -3,8 +3,8 @@ package repository
 import (
 	"database/sql"
 	"errors"
-	model "mercado-frescos-time-7/go-web/internal/models"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	model "github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 )
 
 type RepositoryMysql interface {
@@ -70,7 +70,7 @@ func (r repositoryDb) GetId(id int) (model.Buyer, error) {
 
 func (r repositoryDb) Create(CardNumberID string, FirstName, LastName string) (model.Buyer, error) {
 
-	query := `INSERT INTO buyers(id_card_number,first_name,last_name) 
+	query := `INSERT INTO buyers(id_card_number,first_name,last_name)
 	VALUES (?, ?, ?)`
 
 	stmt, _ := r.db.Prepare(query)

@@ -2,7 +2,7 @@ package productBatch
 
 import (
 	"context"
-	"mercado-frescos-time-7/go-web/internal/productBatch/domain"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/productBatch/domain"
 )
 
 type service struct {

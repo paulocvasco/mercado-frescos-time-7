@@ -2,8 +2,8 @@ package buyer
 
 import (
 	"encoding/json"
-	"mercado-frescos-time-7/go-web/internal/buyer/repository"
-	model "mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/buyer/repository"
+	model "github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
 
 	jsonpatch "github.com/evanphx/json-patch"
 )

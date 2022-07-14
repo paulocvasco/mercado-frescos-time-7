@@ -1,10 +1,10 @@
 package repository_test
 
 import (
-	"mercado-frescos-time-7/go-web/internal/buyer/mocks/mockFile"
-	"mercado-frescos-time-7/go-web/internal/buyer/repository"
-	"mercado-frescos-time-7/go-web/internal/models"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/buyer/mocks/mockFile"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/buyer/repository"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

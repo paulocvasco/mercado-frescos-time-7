@@ -2,9 +2,9 @@ package repository
 
 import (
 	"database/sql"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	customErrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"log"
-	"mercado-frescos-time-7/go-web/internal/models"
-	customErrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 )
 
 type InboundOrders models.InboundOrders

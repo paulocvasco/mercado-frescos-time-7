@@ -2,9 +2,9 @@ package locality_test
 
 import (
 	"errors"
-	"mercado-frescos-time-7/go-web/internal/locality"
-	"mercado-frescos-time-7/go-web/internal/locality/mocks"
-	"mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/locality"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/locality/mocks"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
 
 	"testing"
 
@@ -21,10 +21,10 @@ func TestStore(t *testing.T) {
 		errorLastID    error
 	}
 	response := models.Locality{
-	Id: "1", 
-	Locality_name: "Juan", 
-	Province_name: "Minas",
-	Country_name: "Argentina",
+		Id:            "1",
+		Locality_name: "Juan",
+		Province_name: "Minas",
+		Country_name:  "Argentina",
 	}
 	testCases := []tests{
 		{"Store", response, response, nil, "Errro created", nil},

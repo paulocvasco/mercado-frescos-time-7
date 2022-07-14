@@ -2,9 +2,9 @@ package repository
 
 import (
 	"database/sql"
-	"mercado-frescos-time-7/go-web/internal/employees"
-	"mercado-frescos-time-7/go-web/internal/models"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/employees"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 )
 
 type InboundReport struct {

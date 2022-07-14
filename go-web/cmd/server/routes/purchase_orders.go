@@ -1,10 +1,10 @@
 package routes
 
 import (
-	"mercado-frescos-time-7/go-web/cmd/server/controller"
-	"mercado-frescos-time-7/go-web/internal/purchaseOrders"
-	"mercado-frescos-time-7/go-web/internal/purchaseOrders/repository"
-	"mercado-frescos-time-7/go-web/pkg/db"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/cmd/server/controller"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/purchaseOrders"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/purchaseOrders/repository"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/db"
 
 	"github.com/gin-gonic/gin"
 )

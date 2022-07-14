@@ -2,10 +2,10 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/inbound_orders"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/web"
 	"log"
-	"mercado-frescos-time-7/go-web/internal/inbound_orders"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 )
 

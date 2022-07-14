@@ -2,10 +2,10 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	ctrl "mercado-frescos-time-7/go-web/cmd/server/controller"
-	"mercado-frescos-time-7/go-web/internal/employees"
-	repository2 "mercado-frescos-time-7/go-web/internal/employees/repository"
-	"mercado-frescos-time-7/go-web/pkg/db"
+	ctrl "github.com/paulocvasco/mercado-frescos-time-7/go-web/cmd/server/controller"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/employees"
+	repository2 "github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/employees/repository"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/db"
 )
 
 func InstanceEmployee(e *gin.Engine) {

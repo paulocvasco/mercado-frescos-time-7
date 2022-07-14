@@ -2,9 +2,9 @@ package reportsellers_test
 
 import (
 	"errors"
-	"mercado-frescos-time-7/go-web/internal/models"
-	"mercado-frescos-time-7/go-web/internal/reportsellers"
-	"mercado-frescos-time-7/go-web/internal/reportsellers/mocks"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/reportsellers"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/reportsellers/mocks"
 	"testing"
 
 	"github.com/go-playground/assert/v2"

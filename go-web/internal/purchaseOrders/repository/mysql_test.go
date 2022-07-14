@@ -2,9 +2,9 @@ package repository_test
 
 import (
 	"database/sql"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/purchaseOrders/repository"
 	"log"
-	"mercado-frescos-time-7/go-web/internal/models"
-	"mercado-frescos-time-7/go-web/internal/purchaseOrders/repository"
 	"regexp"
 	"testing"
 
@@ -111,8 +111,8 @@ func TestCreate(t *testing.T) {
 
 func TestGetAllPurchaseOrder(t *testing.T) {
 	query := `Select b.id,b.id_card_number, b.first_name,b.last_name,
-	count(b.id)  as purchase_orders_count 
-	from purchase_orders as p 
+	count(b.id)  as purchase_orders_count
+	from purchase_orders as p
 	inner JOIN  buyers as b on  p.buyer_id = b.id
 	Group BY b.id ;`
 
@@ -170,8 +170,8 @@ func TestGetAllPurchaseOrder(t *testing.T) {
 }
 func TestGetIdPurchaseOrder(t *testing.T) {
 	query := `Select b.id,b.id_card_number, b.first_name,b.last_name,
-	count(b.id)  as purchase_orders_count 
-	from purchase_orders as p 
+	count(b.id)  as purchase_orders_count
+	from purchase_orders as p
 	inner JOIN  buyers as b on  p.buyer_id = b.id
 	Group BY b.id ;`
 
@@ -181,8 +181,8 @@ func TestGetIdPurchaseOrder(t *testing.T) {
 
 	t.Run("Success Test GetId PurchaseOrder", func(t *testing.T) {
 		query := `Select b.id,b.id_card_number, b.first_name,b.last_name,
-	count(b.id)  as purchase_orders_count 
-	from purchase_orders as p 
+	count(b.id)  as purchase_orders_count
+	from purchase_orders as p
 	inner JOIN  buyers as b on  p.buyer_id = b.id
 	WHERE b.id = ?
 	Group BY b.id ;`

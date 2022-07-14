@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"mercado-frescos-time-7/go-web/internal/sections/domain"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/web"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/sections/domain"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 	"strconv"
 

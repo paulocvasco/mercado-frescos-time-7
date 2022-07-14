@@ -2,10 +2,10 @@ package repository_test
 
 import (
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/inbound_orders/repository"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	customErrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"github.com/stretchr/testify/assert"
-	"mercado-frescos-time-7/go-web/internal/inbound_orders/repository"
-	"mercado-frescos-time-7/go-web/internal/models"
-	customErrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"testing"
 )
 

@@ -2,7 +2,7 @@ package sections
 
 import (
 	"context"
-	"mercado-frescos-time-7/go-web/internal/sections/domain"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/sections/domain"
 )
 
 type serviceSection struct {

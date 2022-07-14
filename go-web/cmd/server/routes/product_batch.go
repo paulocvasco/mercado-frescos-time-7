@@ -2,10 +2,10 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"mercado-frescos-time-7/go-web/cmd/server/controller"
-	"mercado-frescos-time-7/go-web/internal/productBatch"
-	"mercado-frescos-time-7/go-web/internal/productBatch/repository"
-	"mercado-frescos-time-7/go-web/pkg/db"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/cmd/server/controller"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/productBatch"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/productBatch/repository"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/db"
 )
 
 func InstanceProductBatch(eng *gin.Engine) {

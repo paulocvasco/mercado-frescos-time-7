@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"mercado-frescos-time-7/go-web/internal/reportsellers"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/web"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/reportsellers"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 	"strconv"
 
@@ -41,7 +41,7 @@ func (c *ReportSellers) ReportSellers() gin.HandlerFunc {
 }
 
 func NewReportSellers(p reportsellers.Service) *ReportSellers {
-    return &ReportSellers {
-        service: p,
-    }
+	return &ReportSellers{
+		service: p,
+	}
 }

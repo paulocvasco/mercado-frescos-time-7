@@ -1,10 +1,10 @@
 package routes
 
 import (
-	"mercado-frescos-time-7/go-web/cmd/server/controller"
-	"mercado-frescos-time-7/go-web/internal/buyer"
-	"mercado-frescos-time-7/go-web/internal/buyer/repository"
-	"mercado-frescos-time-7/go-web/pkg/db"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/cmd/server/controller"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/buyer"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/buyer/repository"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/db"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,7 +14,7 @@ func InstanceBuyer(r *gin.Engine) {
 	// dataBase, err := db.ConectionDb()
 
 	// if err != nil {
-	// 	log.Fatal("failed to connect to mariadb")
+	//	log.Fatal("failed to connect to mariadb")
 	// }
 	repo := repository.NewRepositoryMySql(db.StorageDB) //(database)
 	service := buyer.NewService(repo)

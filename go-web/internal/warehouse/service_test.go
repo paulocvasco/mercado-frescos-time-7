@@ -3,10 +3,10 @@ package warehouse_test
 import (
 	"encoding/json"
 	"errors"
-	"mercado-frescos-time-7/go-web/internal/models"
-	"mercado-frescos-time-7/go-web/internal/warehouse"
-	mockRepository "mercado-frescos-time-7/go-web/internal/warehouse/mock"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/warehouse"
+	mockRepository "github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/warehouse/mock"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"strconv"
 	"testing"
 

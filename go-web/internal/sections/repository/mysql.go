@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"mercado-frescos-time-7/go-web/internal/sections/domain"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/sections/domain"
 )
 
 type repositorySql struct {

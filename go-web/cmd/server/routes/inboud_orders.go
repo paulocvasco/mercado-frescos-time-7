@@ -2,10 +2,10 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"mercado-frescos-time-7/go-web/cmd/server/controller"
-	"mercado-frescos-time-7/go-web/internal/inbound_orders"
-	repository2 "mercado-frescos-time-7/go-web/internal/inbound_orders/repository"
-	"mercado-frescos-time-7/go-web/pkg/db"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/cmd/server/controller"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/inbound_orders"
+	repository2 "github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/inbound_orders/repository"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/db"
 )
 
 func InstanceInboudOrders(i *gin.Engine) {

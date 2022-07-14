@@ -1,8 +1,8 @@
 package purchaseOrders
 
 import (
-	"mercado-frescos-time-7/go-web/internal/models"
-	"mercado-frescos-time-7/go-web/internal/purchaseOrders/repository"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/purchaseOrders/repository"
 )
 
 type Service interface {

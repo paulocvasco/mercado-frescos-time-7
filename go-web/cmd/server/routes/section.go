@@ -2,10 +2,10 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"mercado-frescos-time-7/go-web/cmd/server/controller"
-	"mercado-frescos-time-7/go-web/internal/sections"
-	"mercado-frescos-time-7/go-web/internal/sections/repository"
-	"mercado-frescos-time-7/go-web/pkg/db"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/cmd/server/controller"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/sections"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/sections/repository"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/db"
 )
 
 func InstanceSection(eng *gin.Engine) {

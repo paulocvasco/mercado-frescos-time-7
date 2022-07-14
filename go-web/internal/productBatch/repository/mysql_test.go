@@ -4,9 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/productBatch/domain"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/productBatch/repository"
 	"github.com/stretchr/testify/assert"
-	"mercado-frescos-time-7/go-web/internal/productBatch/domain"
-	"mercado-frescos-time-7/go-web/internal/productBatch/repository"
 	"regexp"
 	"testing"
 )
@@ -39,8 +39,8 @@ func TestSqlRepositoryCreateProductBatchOk(t *testing.T) {
 		SectionId:          1,
 	}
 
-	queryInsert := `INSERT INTO products_batches (batch_number, current_quantity, current_tempertature, 
-					due_date, initial_quantity, manufacturing_date, manufacturing_hour, minimum_temperature, product_id, section_id) 
+	queryInsert := `INSERT INTO products_batches (batch_number, current_quantity, current_tempertature,
+					due_date, initial_quantity, manufacturing_date, manufacturing_hour, minimum_temperature, product_id, section_id)
 					VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
 	t.Run("Create OK", func(t *testing.T) {

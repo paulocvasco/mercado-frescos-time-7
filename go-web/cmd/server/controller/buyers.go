@@ -1,12 +1,12 @@
 package controller
 
 import (
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/buyer"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/buyer/repository"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/web"
 	"log"
-	"mercado-frescos-time-7/go-web/internal/buyer"
-	"mercado-frescos-time-7/go-web/internal/buyer/repository"
-	"mercado-frescos-time-7/go-web/internal/models"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 	"strconv"
 

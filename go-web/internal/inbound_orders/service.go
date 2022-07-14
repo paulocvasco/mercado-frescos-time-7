@@ -1,8 +1,8 @@
 package inbound_orders
 
 import (
-	"mercado-frescos-time-7/go-web/internal/inbound_orders/repository"
-	"mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/inbound_orders/repository"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
 )
 
 type Service interface {

@@ -2,11 +2,11 @@ package buyer_test
 
 import (
 	"fmt"
-	"mercado-frescos-time-7/go-web/internal/buyer"
-	"mercado-frescos-time-7/go-web/internal/buyer/mocks"
-	r "mercado-frescos-time-7/go-web/internal/buyer/repository"
-	model "mercado-frescos-time-7/go-web/internal/models"
-	customErrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/buyer"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/buyer/mocks"
+	r "github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/buyer/repository"
+	model "github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	customErrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"testing"
 
 	"github.com/go-playground/assert/v2"
@@ -193,18 +193,18 @@ func TestService_Update(t *testing.T) {
 	})
 
 	// t.Run("should return an error card number id", func(t *testing.T) {
-	// 	repository := mocks.NewRepositoryFile(t)
-	// 	// repository.On("GetCardNumberId", "Upd1234").Return(customErrors.ErrorCardIdAlreadyExists).Maybe()
-	// 	repository.On("GetId", 1).Return(model.Buyer{}, customErrors.ErrorCardIdAlreadyExists).Maybe()
-	// 	repository.On("Update", 1, "Upd1234",
-	// 		expectBuyer.FirstName, expectBuyer.LastName).
-	// 		Return(model.Buyer{}, customErrors.ErrorCardIdAlreadyExists).Maybe()
+	//	repository := mocks.NewRepositoryFile(t)
+	//	// repository.On("GetCardNumberId", "Upd1234").Return(customErrors.ErrorCardIdAlreadyExists).Maybe()
+	//	repository.On("GetId", 1).Return(model.Buyer{}, customErrors.ErrorCardIdAlreadyExists).Maybe()
+	//	repository.On("Update", 1, "Upd1234",
+	//		expectBuyer.FirstName, expectBuyer.LastName).
+	//		Return(model.Buyer{}, customErrors.ErrorCardIdAlreadyExists).Maybe()
 
-	// 	service := buyer.NewService(repository)
-	// 	_, err := service.Update(8, r.RequestPatch{CardNumberID: "Upd1234", FirstName: "Alice",
-	// 		LastName: "Souza"})
+	//	service := buyer.NewService(repository)
+	//	_, err := service.Update(8, r.RequestPatch{CardNumberID: "Upd1234", FirstName: "Alice",
+	//		LastName: "Souza"})
 
-	// 	assert.Equal(t, customErrors.ErrorCardIdAlreadyExists, err)
+	//	assert.Equal(t, customErrors.ErrorCardIdAlreadyExists, err)
 	// })
 
 	t.Run("should return an error invalid id", func(t *testing.T) {

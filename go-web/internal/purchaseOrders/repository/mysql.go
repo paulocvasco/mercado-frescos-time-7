@@ -3,8 +3,8 @@ package repository
 import (
 	"database/sql"
 	"errors"
-	"mercado-frescos-time-7/go-web/internal/models"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 )
 
 type ResultPost struct {
@@ -34,7 +34,7 @@ func NewRepositoryMySql(db *sql.DB) RepositoryMysql {
 
 func (r repositoryDb) Create(data models.PurchaseOrders) (ResultPost, error) {
 
-	query := `INSERT INTO purchase_orders(order_number,order_date,tracking_code,buyer_id,carrier_id,order_status_id,warehouse_id) 
+	query := `INSERT INTO purchase_orders(order_number,order_date,tracking_code,buyer_id,carrier_id,order_status_id,warehouse_id)
 	VALUES (?, ?, ?, ?, ?, ?, ?)`
 
 	stmt, _ := r.db.Prepare(query)
@@ -86,8 +86,8 @@ func (r repositoryDb) Create(data models.PurchaseOrders) (ResultPost, error) {
 func (r repositoryDb) GetAllPurchaseOrder() ([]models.ResponsePurchaseByBuyer, error) {
 	var allBuyers []models.ResponsePurchaseByBuyer
 	query := `Select b.id,b.id_card_number, b.first_name,b.last_name,
-	count(b.id)  as purchase_orders_count 
-	from purchase_orders as p 
+	count(b.id)  as purchase_orders_count
+	from purchase_orders as p
 	inner JOIN  buyers as b on  p.buyer_id = b.id
 	Group BY b.id ;`
 	rows, err := r.db.Query(query)
@@ -119,8 +119,8 @@ func (r repositoryDb) GetIdPurchaseOrder(id int) ([]models.ResponsePurchaseByBuy
 	var section models.ResponsePurchaseByBuyer
 	var result []models.ResponsePurchaseByBuyer
 	query := `Select b.id,b.id_card_number, b.first_name,b.last_name,
-	count(b.id)  as purchase_orders_count 
-	from purchase_orders as p 
+	count(b.id)  as purchase_orders_count
+	from purchase_orders as p
 	inner JOIN  buyers as b on  p.buyer_id = b.id
 	WHERE b.id = ?
 	Group BY b.id ;`

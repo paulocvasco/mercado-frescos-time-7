@@ -1,8 +1,8 @@
 package locality
 
 import (
-	"mercado-frescos-time-7/go-web/internal/locality/repository"
-	"mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/locality/repository"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
 )
 
 type Service interface {

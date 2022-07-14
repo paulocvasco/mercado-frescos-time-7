@@ -2,8 +2,8 @@ package repository_test
 
 import (
 	"errors"
-	"mercado-frescos-time-7/go-web/internal/reportsellers/repository"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/reportsellers/repository"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -57,7 +57,7 @@ func TestStoreRepportAllErrorScan(t *testing.T) {
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	assert.NoError(t, err)
 	mock.ExpectQuery("SELECT l.id, l.locality_name, COUNT(*) FROM sellers s INNER JOIN localities l ON s.locality_id = l.id WHERE s.locality_id > ? GROUP BY s.locality_id;").
-	WithArgs(0).WillReturnRows(sqlmock.NewRows([]string{"test"}).AddRow(1))
+		WithArgs(0).WillReturnRows(sqlmock.NewRows([]string{"test"}).AddRow(1))
 
 	repo := repository.NewSQLrepository(db)
 
