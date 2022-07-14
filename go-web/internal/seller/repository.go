@@ -2,9 +2,8 @@ package seller
 
 import (
 	"mercado-frescos-time-7/go-web/internal/models"
-	"mercado-frescos-time-7/go-web/pkg/custom_errors"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/pkg/db"
-	"golang.org/x/exp/slices"
 )
 
 type Seller models.Seller
@@ -22,7 +21,7 @@ type Repository interface {
 	LastID() (int, error)
 }
 
-type repository struct{
+type repository struct {
 	database db.DB
 }
 
@@ -48,7 +47,7 @@ func (r *repository) Delete(id int) error {
 	}
 	for k, v := range storage.Seller {
 		if v.ID == id {
-			storage.Seller = slices.Delete(storage.Seller, k, k+1)
+			storage.Seller = append(storage.Seller[:k], storage.Seller[k+1:]...)
 			err = r.database.Save(&storage)
 			if err != nil {
 				return err
@@ -107,10 +106,10 @@ func (r *repository) Update(newValues Seller, id int) (models.Seller, error) {
 			storage.Seller[k] = v
 			err = r.database.Save(&storage)
 			if err != nil {
-			return models.Seller{}, err
+				return models.Seller{}, err
 			}
 			return v, nil
-		}	
+		}
 	}
 	return models.Seller{}, customerrors.ErrorInvalidID
 }
@@ -134,7 +133,7 @@ func (r *repository) Store(sel models.Seller) (models.Seller, error) {
 	if err != nil {
 		return models.Seller{}, err
 	}
-	p := models.Seller{ID:sel.ID,Cid:sel.Cid,Company_name:sel.Company_name,Address:sel.Address,Telephone:sel.Telephone}
+	p := models.Seller{ID: sel.ID, Cid: sel.Cid, Company_name: sel.Company_name, Address: sel.Address, Telephone: sel.Telephone}
 	storage.Seller = append(storage.Seller, p)
 	storage.LastID = storage.LastID + 1
 	err = r.database.Save(&storage)
