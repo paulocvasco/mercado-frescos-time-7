@@ -24,7 +24,7 @@
 package docs
 
 import (
-	"mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
 )
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ import (
 // swagger:route DELETE /warehouses/{id} Warehouse deleteID
 // Remove a corresponding ID object from db.
 // responses:
-//    204: 
+//    204:
 //    400: errorResponse
 //    404: errorResponse
 //    500: errorServerResponse

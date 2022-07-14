@@ -2,9 +2,9 @@ package controller
 
 import (
 	"encoding/json"
-	"mercado-frescos-time-7/go-web/internal/sections"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/web"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/sections"
+	customerrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

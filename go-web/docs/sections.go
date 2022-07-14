@@ -1,7 +1,7 @@
 package docs
 
 import (
-	"mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
 )
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ import (
 // swagger:route DELETE /sections/{id} Section deleteSectionID
 // Remove a corresponding ID object from db.
 // responses:
-//    204: 
+//    204:
 //    400: errorResponse
 //    404: errorResponse
 //    500: errorServerResponse
@@ -132,4 +132,3 @@ type updateSection struct {
 	WarehouseId        int `json:"warehouse_id"`
 	ProductTypeId      int `json:"product_type_id"`
 }
-

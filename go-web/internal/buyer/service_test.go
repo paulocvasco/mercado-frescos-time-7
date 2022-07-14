@@ -3,12 +3,12 @@ package buyer_test
 import (
 	"fmt"
 	"github.com/go-playground/assert/v2"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/buyer"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/buyer/mocks"
+	model "github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	customErrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 	assert2 "github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"mercado-frescos-time-7/go-web/internal/buyer"
-	"mercado-frescos-time-7/go-web/internal/buyer/mocks"
-	model "mercado-frescos-time-7/go-web/internal/models"
-	customErrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"testing"
 )
 

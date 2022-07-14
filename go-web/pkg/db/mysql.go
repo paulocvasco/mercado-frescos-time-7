@@ -10,7 +10,7 @@ import (
 var StorageDB *sql.DB
 
 func init() {
-	dataSource := "root:@tcp(localhost)/mercado_db?charset=utf8mb4&parseTime=True&loc=Local"
+	dataSource := "root:@tcp(localhost)/mercado_fresco_db?charset=utf8mb4&parseTime=True&loc=Local"
 	var err error
 	StorageDB, err = sql.Open("mysql", dataSource)
 	if err != nil {

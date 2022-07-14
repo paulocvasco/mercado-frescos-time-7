@@ -3,10 +3,10 @@ package sections_test
 import (
 	"encoding/json"
 	"errors"
-	"mercado-frescos-time-7/go-web/internal/models"
-	"mercado-frescos-time-7/go-web/internal/sections"
-	"mercado-frescos-time-7/go-web/internal/sections/mock/mockRepository"
-	customErrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/sections"
+	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/sections/mock/mockRepository"
+	customErrors "github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"testing"
 
 	"github.com/go-playground/assert/v2"
