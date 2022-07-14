@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"github.com/paulocvasco/mercado-frescos-time-7/go-web/cmd/server/routes"
@@ -7,9 +7,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
+func StartServer(r *gin.Engine) error {
 
-	r := gin.Default()
+	if r == nil {
+
+	}
 
 	r.Use(cors.Default())
 	routes.InstanceEmployee(r)
@@ -25,5 +27,6 @@ func main() {
 	routes.InstanceLocality(r)
 	routes.InstanceReportSellers(r)
 	routes.InstanceCarriers(r)
-	r.Run()
+
+	return r.Run()
 }
