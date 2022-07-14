@@ -12,6 +12,7 @@ var StorageDB *sql.DB
 func InstanceDB(db *sql.DB) error {
 	if db != nil {
 		StorageDB = db
+		return nil
 	}
 
 	urlDB := "root:@tcp(localhost)/mercado_fresco_db?charset=utf8mb4&parseTime=True&loc=Local"
