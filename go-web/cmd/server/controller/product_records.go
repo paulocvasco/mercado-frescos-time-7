@@ -2,12 +2,13 @@ package controller
 
 import (
 	"encoding/json"
-	productrecords "mercado-frescos-time-7/go-web/internal/product_records"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"mercado-frescos-time-7/go-web/pkg/web"
 	"net/http"
 	"strconv"
 	"time"
+
+	productrecords "mercado-frescos-time-7/go-web/internal/product_records"
+	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/web"
 
 	"github.com/gin-gonic/gin"
 )
@@ -53,8 +54,8 @@ func (prc *productRecordsController) GetProductRecordsById() gin.HandlerFunc {
 
 func (prc *productRecordsController) InsertProductRecord() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		newRecord := productRecordInsert{}
-		err := c.ShouldBind(&newRecord)
+		newRecord := ProductRecordInsert{}
+		err := c.ShouldBindJSON(&newRecord)
 		if err != nil {
 			status, msg := customerrors.ErrorHandleResponse(err)
 			res := web.NewResponse(status, nil, msg)
@@ -90,7 +91,7 @@ func (prc *productRecordsController) InsertProductRecord() gin.HandlerFunc {
 	}
 }
 
-type productRecordInsert struct {
+type ProductRecordInsert struct {
 	LastUpdateDate string  `json:"last_update_date" binding:"required"`
 	PurchasePrice  float64 `json:"purchase_price" binding:"required"`
 	SalePrice      float64 `json:"sale_price" binding:"required"`
