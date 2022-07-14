@@ -39,6 +39,7 @@ var (
 	ErrorInvalidDate           = errors.New("invalid date")
 	ErrorInvalidOrderNumber    = errors.New("invalid order number")
 	ErrorStoreDataDB           = errors.New("failed to store data on database")
+	ErrorInstaceGin            = errors.New("invalid gin instance")
 )
 
 func ErrorHandleResponse(err error) (int, string) {
@@ -111,7 +112,7 @@ func ErrorHandleResponse(err error) (int, string) {
 		}
 		if errors.Is(err, ErrorInvalidDate) {
 			return http.StatusUnprocessableEntity, err.Error()
-    }
+		}
 		if errors.Is(err, ErrorInvalidOrderNumber) {
 			return http.StatusConflict, err.Error()
 		}
