@@ -5,7 +5,7 @@ import (
 	"github.com/paulocvasco/mercado-frescos-time-7/go-web/cmd/server/routes"
 )
 
-func main() {
+func StartServer() {
 
 	r := gin.Default()
 
