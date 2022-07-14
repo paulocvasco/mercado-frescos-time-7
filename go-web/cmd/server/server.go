@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"mercado-frescos-time-7/go-web/cmd/server/routes"
@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
+func StartServer() {
 
 	r := gin.Default()
 

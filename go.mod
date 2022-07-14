@@ -1,4 +1,4 @@
-module github.com/paulocvasco/mercado-frescos-time-7
+module mercado-frescos-time-7
 
 go 1.18
 
