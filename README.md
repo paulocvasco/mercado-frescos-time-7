@@ -101,7 +101,7 @@ swagger generate spec -o ./swagger.yaml --scan-models\n
 swagger serve -F=swagger swagger.yaml
 
 ```
-Obs: Para geração e vizualição da documentação é necessário que o `go-swagger esteja instalado e adicionado a PATH.
+Obs: Para geração e vizualição da documentação é necessário que o `go-swagger` esteja instalado e adicionado a PATH.
 
 ### Testando as funcionalidades:
 
