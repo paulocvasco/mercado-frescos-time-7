@@ -204,3 +204,13 @@ type CarrierInfo struct {
 type CarriersReport struct {
 	Data []CarrierInfo `json:"reports"`
 }
+
+type LogMessage struct {
+	ID      int    `json:"id"`
+	Message string `json:"message"`
+	Time    string `json:"time"`
+}
+
+type LogReport struct {
+	Report []LogMessage `json:"report"`
+}

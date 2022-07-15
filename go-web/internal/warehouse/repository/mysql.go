@@ -2,8 +2,10 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/logger"
 )
 
 type mysqlDB struct {
@@ -27,6 +29,8 @@ func (m *mysqlDB) Create(new models.Warehouse) (models.Warehouse, error) {
 	}
 	newWarehouse := new
 	newWarehouse.ID = int(lastID)
+
+	logger.Save(fmt.Sprintf(logger.WarehouseCreated, lastID))
 	return newWarehouse, nil
 }
 
@@ -41,6 +45,7 @@ func (m *mysqlDB) Update(id int, w models.Warehouse) error {
 		return err
 	}
 
+	logger.Save(fmt.Sprintf(logger.WarehouseChanged, id))
 	return nil
 }
 
@@ -59,6 +64,7 @@ func (m *mysqlDB) GetAll() (models.Warehouses, error) {
 		}
 		all.Warehouses = append(all.Warehouses, w)
 	}
+	logger.Save(logger.WarehousesResquested)
 	return all, nil
 }
 
@@ -70,6 +76,7 @@ func (m *mysqlDB) GetByID(id int) (models.Warehouse, error) {
 		return models.Warehouse{}, customerrors.ErrorItemNotFound
 	}
 
+	logger.Save(fmt.Sprintf(logger.WarehouseRequested, id))
 	return w, nil
 }
 
@@ -87,5 +94,6 @@ func (m *mysqlDB) Delete(id int) error {
 		return customerrors.ErrorItemNotFound
 	}
 
+	logger.Save(fmt.Sprintf(logger.WarehouseRequested, id))
 	return nil
 }

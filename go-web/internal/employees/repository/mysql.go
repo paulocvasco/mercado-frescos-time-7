@@ -2,9 +2,10 @@ package repository
 
 import (
 	"database/sql"
-	"log"
+	"fmt"
 	"mercado-frescos-time-7/go-web/internal/employees"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/pkg/logger"
 )
 
 type repository struct {
@@ -24,7 +25,8 @@ func (r *repository) Create(id int, card_number_id string, first_name string, la
 
 	employeeQuery, err := data.Prepare(query)
 	if err != nil {
-		log.Fatal(err)
+		logger.Save(err.Error())
+		return employees.Employee{}, err
 	}
 	defer employeeQuery.Close()
 
@@ -32,6 +34,7 @@ func (r *repository) Create(id int, card_number_id string, first_name string, la
 
 	result, err = employeeQuery.Exec(card_number_id, first_name, last_name, warehouse_id)
 	if err != nil {
+		logger.Save(err.Error())
 		return employees.Employee{}, err
 	}
 
@@ -44,6 +47,7 @@ func (r *repository) Create(id int, card_number_id string, first_name string, la
 		WareHouseId:  warehouse_id,
 	}
 
+	logger.Save(fmt.Sprintf(logger.EmployeesCreated, lastID))
 	return employeeInsert, nil
 }
 
@@ -54,22 +58,27 @@ func (r *repository) Delete(id int) error {
 	queryEmployee, err := data.Prepare(query)
 
 	if err != nil {
+		logger.Save(err.Error())
 		return err
 	}
 	result, err := queryEmployee.Exec(id)
 	if err != nil {
+		logger.Save(err.Error())
 		return err
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
+		logger.Save(err.Error())
 		return err
 	}
 
 	if rowsAffected == 0 {
+		logger.Save(err.Error())
 		return customerrors.ErrorInvalidID
 	}
 
+	logger.Save(fmt.Sprintf(logger.EmployeesDeleted, id))
 	return nil
 }
 
@@ -79,18 +88,19 @@ func (r *repository) GetAll() ([]employees.Employee, error) {
 	query := "SELECT * FROM employees"
 	queryEmployee, err := data.Query(query)
 	if err != nil {
-		log.Println(customerrors.ErrorInvalidDB)
+		logger.Save(err.Error())
 		return []employees.Employee{}, err
 	}
 	var result []employees.Employee
 	for queryEmployee.Next() {
 		var employee employees.Employee
 		if err := queryEmployee.Scan(&employee.ID, &employee.CardNumberId, &employee.FirstName, &employee.LastName, &employee.WareHouseId); err != nil {
-			log.Println(err)
+			logger.Save(err.Error())
 		}
 		result = append(result, employee)
 	}
 
+	logger.Save(logger.EmployeessResquested)
 	return result, nil
 }
 
@@ -101,14 +111,14 @@ func (r *repository) GetByID(id int) (employees.Employee, error) {
 
 	queryId, err := data.Query(query, id)
 	if err != nil {
-		log.Println(customerrors.ErrorInvalidDB)
+		logger.Save(err.Error())
 		return employees.Employee{}, err
 	}
 
 	var employee employees.Employee
 	for queryId.Next() {
 		if err := queryId.Scan(&employee.ID, &employee.CardNumberId, &employee.FirstName, &employee.LastName, &employee.WareHouseId); err != nil {
-			log.Println(err)
+			logger.Save(err.Error())
 		}
 	}
 
@@ -116,6 +126,7 @@ func (r *repository) GetByID(id int) (employees.Employee, error) {
 		return employee, customerrors.ErrorInvalidID
 	}
 
+	logger.Save(fmt.Sprintf(logger.EmployeesRequested, id))
 	return employee, nil
 }
 
@@ -130,14 +141,17 @@ func (r *repository) Update(employee employees.Employee, id int) (employees.Empl
 	query := "UPDATE employees SET id_card_number = ?, first_name = ?, last_name = ?, warehouse_id = ? WHERE id = ?"
 	queryEmployee, err := data.Prepare(query)
 	if err != nil {
+		logger.Save(err.Error())
 		return employees.Employee{}, err
 	}
 
 	_, err = queryEmployee.Exec(&employee.CardNumberId, &employee.FirstName, &employee.LastName, &employee.WareHouseId, id)
 	if err != nil {
+		logger.Save(err.Error())
 		return employees.Employee{}, err
 	}
 
+	logger.Save(fmt.Sprintf(logger.EmployeesChanged, id))
 	return employee, nil
 }
 

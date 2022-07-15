@@ -111,7 +111,7 @@ func ErrorHandleResponse(err error) (int, string) {
 		}
 		if errors.Is(err, ErrorInvalidDate) {
 			return http.StatusUnprocessableEntity, err.Error()
-    }
+		}
 		if errors.Is(err, ErrorInvalidOrderNumber) {
 			return http.StatusConflict, err.Error()
 		}

@@ -3,7 +3,9 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"mercado-frescos-time-7/go-web/internal/sections/domain"
+	"mercado-frescos-time-7/go-web/pkg/logger"
 )
 
 type repositorySql struct {
@@ -21,6 +23,7 @@ func (r *repositorySql) GetAll(ctx context.Context) (*domain.Sections, error) {
 
 	rows, err := r.db.QueryContext(ctx, queryGetAll)
 	if err != nil {
+		logger.Save(err.Error())
 		return &domain.Sections{}, err
 	}
 	defer rows.Close()
@@ -38,11 +41,14 @@ func (r *repositorySql) GetAll(ctx context.Context) (*domain.Sections, error) {
 			&section.WarehouseId,
 			&section.ProductTypeId,
 		); err != nil {
+			logger.Save(err.Error())
 			return &sections, err
 		}
 
 		sections.Sections = append(sections.Sections, section)
 	}
+
+	logger.Save(logger.SectionsResquested)
 	return &sections, nil
 }
 func (r *repositorySql) GetById(ctx context.Context, id int) (*domain.Section, error) {
@@ -63,9 +69,11 @@ func (r *repositorySql) GetById(ctx context.Context, id int) (*domain.Section, e
 	)
 
 	if err != nil {
+		logger.Save(err.Error())
 		return &section, err
 	}
 
+	logger.Save(fmt.Sprintf(logger.SectionRequested, id))
 	return &section, nil
 }
 func (r *repositorySql) Store(ctx context.Context, section *domain.Section) (*domain.Section, error) {
@@ -73,6 +81,7 @@ func (r *repositorySql) Store(ctx context.Context, section *domain.Section) (*do
 	stmt, err := r.db.Prepare(queryStore)
 
 	if err != nil {
+		logger.Save(err.Error())
 		return &domain.Section{}, err
 	}
 	defer stmt.Close()
@@ -93,23 +102,27 @@ func (r *repositorySql) Store(ctx context.Context, section *domain.Section) (*do
 	)
 
 	if err != nil {
+		logger.Save(err.Error())
 		return &domain.Section{}, err
 	}
 
 	lastID, err := result.LastInsertId()
 
 	if err != nil {
+		logger.Save(err.Error())
 		return &domain.Section{}, err
 	}
 
 	section.Id = int(lastID)
 
+	logger.Save(fmt.Sprintf(logger.SectionCreated, lastID))
 	return section, nil
 
 }
 func (r *repositorySql) Update(ctx context.Context, section *domain.Section) (*domain.Section, error) {
 	stmt, err := r.db.Prepare(queryUpdate)
 	if err != nil {
+		logger.Save(err.Error())
 		return &domain.Section{}, err
 	}
 
@@ -126,18 +139,22 @@ func (r *repositorySql) Update(ctx context.Context, section *domain.Section) (*d
 		&section.Id,
 	)
 	if err != nil {
+		logger.Save(err.Error())
 		return &domain.Section{}, err
 	}
 
+	logger.Save(fmt.Sprintf(logger.SectionChanged, section.Id))
 	return section, nil
 }
 func (r *repositorySql) Delete(ctx context.Context, id int) error {
 	stmt, err := r.db.Prepare(queryDelete)
 	if err != nil {
+		logger.Save(err.Error())
 		return err
 	}
 	_, err = stmt.ExecContext(ctx, id)
 	if err != nil {
+		logger.Save(err.Error())
 		return err
 	}
 	return nil
@@ -153,10 +170,12 @@ func (r *repositorySql) GetReportProducts(ctx context.Context, id int) (*domain.
 
 	stmt, err := r.db.PrepareContext(ctx, query)
 	if err != nil {
+		logger.Save(err.Error())
 		return &domain.ProductReports{}, err
 	}
 	rows, err := stmt.Query(id)
 	if err != nil {
+		logger.Save(err.Error())
 		return &domain.ProductReports{}, err
 	}
 	reports := domain.ProductReports{ProductReports: []domain.ProductReport{}}
@@ -164,9 +183,12 @@ func (r *repositorySql) GetReportProducts(ctx context.Context, id int) (*domain.
 		report := domain.ProductReport{}
 		err := rows.Scan(&report.SectionId, &report.SectionNumber, &report.ProductsCount)
 		if err != nil {
+			logger.Save(err.Error())
 			return &domain.ProductReports{}, err
 		}
 		reports.ProductReports = append(reports.ProductReports, report)
 	}
+
+	logger.Save(fmt.Sprintf(logger.SectionRequested, id))
 	return &reports, nil
 }
