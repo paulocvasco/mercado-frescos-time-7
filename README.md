@@ -2,6 +2,7 @@
 
 Projeto  Mercado Frescos tem como objetivo implementar uma API REST, aplicando os conhecimentos adquiridos durante o BOOTCAMP-GO MELI.
 
+## Swagger: https://furydocs.io/bootcamp-go-w1-s4-7-4/0.0.4/specs/
 
 ## Habilidades Desenvolvidas:
 - Criar um CRUD com GO.
