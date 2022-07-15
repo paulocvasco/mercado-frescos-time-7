@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"mercado-frescos-time-7/go-web/internal/models"
 )
-
+//go:generate mockery --name=Repository --output=../mock/mockRepository --outpkg=mockRepository
 type Repository interface {
 	InsertProductRecords(record models.ProductRecord) (models.ProductRecord, error)
 	GetProductRecords(id int) (models.ProductsRecordsResponse, error)
