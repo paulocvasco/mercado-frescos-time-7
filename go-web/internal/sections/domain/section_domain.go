@@ -28,6 +28,7 @@ type ProductReports struct {
 	ProductReports []ProductReport `json:"product_reports"`
 }
 
+//go:generate mockery --name=SectionRepository --output=./mock/mockRepository --outpkg=mockRepository
 type SectionRepository interface {
 	GetAll(context.Context) (*Sections, error)
 	GetById(context.Context, int) (*Section, error)
@@ -38,6 +39,7 @@ type SectionRepository interface {
 	GetReportProducts(context.Context, int) (*ProductReports, error)
 }
 
+//go:generate mockery --name=SectionService --output=./mock/mockService --outpkg=mockService
 type SectionService interface {
 	GetAll(context.Context) (*Sections, error)
 	GetById(context.Context, int) (*Section, error)
