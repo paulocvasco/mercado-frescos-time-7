@@ -2,7 +2,6 @@
 
 Projeto  Mercado Frescos tem como objetivo implementar uma API REST, aplicando os conhecimentos adquiridos durante o BOOTCAMP-GO MELI.
 
-## Swagger: https://furydocs.io/bootcamp-go-w1-s4-7-4/0.0.4/specs/
 
 ## Habilidades Desenvolvidas:
 - Criar um CRUD com GO.
@@ -67,11 +66,10 @@ git clone git@github.com:paulocvasco/mercado-frescos-time-7.git
 # Entre na pasta
 cd mercado-frescos-time-7/go-web/cmd/server
 
-# Instale as depêndecias
+# Instalar a aplicação
 go install
 
-
-# Iniciar o servidor
+# Se GOPATH estiver adicionado em PATH, iniciar o servidor:
 server
 
 ```
@@ -79,13 +77,13 @@ server
 ## Rodando os Testes:
 
 ```sh  
-# Rode o comando 
-go test ./...
+# Na raiz do projeto executar o comando:
+go test -v ./...
 
-# Gerando um arquivo de Coverege
+# Vizualizar a cobertura dos testes, na pasta raiz do projeto executar:
 go test ./...  -coverprofile=coverage.out
 
-# Gerando um HTML para melhor visualização
+# Vizulizar o report de coverage:
 go tool cover -html=coverage.out
 
 ```
@@ -100,11 +98,22 @@ go mod vendor
 # Gerando a documentação
 swagger generate spec -o ./swagger.yaml --scan-models\n
 
-# Gerando gerando o server visualização
+# Gerando gerando o server visualização e testes:
 swagger serve -F=swagger swagger.yaml
 
 ```
 
+Para faciliar os testes foi criado um script de criação da tabelas do banco a adição de alguns objetos
+```sh 
+
+# Na pasta raiz do projeto: 
+./script.sh -c|-p --user [USER] --password [PASSWORD]
+
+```
+
+As flags -c e -p representam a opção criar o banco e popular as tabelas respectivamente.
+
+Caso o user no mysql não tenha senha, passar a senha `nopass` no argumento.
 
 
 
