@@ -113,7 +113,7 @@ func (r *repositorySql) Update(ctx context.Context, section *domain.Section) (*d
 		return &domain.Section{}, err
 	}
 
-	result, err := stmt.ExecContext(
+	_, err = stmt.ExecContext(
 		ctx,
 		&section.SectionNumber,
 		&section.CurrentTemperature,
@@ -128,9 +128,6 @@ func (r *repositorySql) Update(ctx context.Context, section *domain.Section) (*d
 	if err != nil {
 		return &domain.Section{}, err
 	}
-	if _, err := result.RowsAffected(); err != nil {
-		return &domain.Section{}, err
-	}
 
 	return section, nil
 }
@@ -139,11 +136,8 @@ func (r *repositorySql) Delete(ctx context.Context, id int) error {
 	if err != nil {
 		return err
 	}
-	res, err := stmt.ExecContext(ctx, id)
+	_, err = stmt.ExecContext(ctx, id)
 	if err != nil {
-		return err
-	}
-	if _, err := res.RowsAffected(); err != nil {
 		return err
 	}
 	return nil

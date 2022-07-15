@@ -4,8 +4,6 @@ import (
 	"mercado-frescos-time-7/go-web/internal/models"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"mercado-frescos-time-7/go-web/pkg/db"
-
-	"golang.org/x/exp/slices"
 )
 
 type Seller models.Seller
@@ -49,7 +47,7 @@ func (r *repository) Delete(id int) error {
 	}
 	for k, v := range storage.Seller {
 		if v.ID == id {
-			storage.Seller = slices.Delete(storage.Seller, k, k+1)
+			storage.Seller = append(storage.Seller[:k], storage.Seller[k+1:]...)
 			err = r.database.Save(&storage)
 			if err != nil {
 				return err
@@ -143,4 +141,36 @@ func (r *repository) Store(sel models.Seller) (models.Seller, error) {
 		return models.Seller{}, err
 	}
 	return p, nil
+}
+
+func Populate() {
+	storage = models.Sellers{Seller: []models.Seller{
+		{
+			ID:           1,
+			Cid:          123,
+			Company_name: "Meli1",
+			Address:      "Rua 1",
+			Telephone:    "(11) 33387767",
+		},
+		{
+			ID:           2,
+			Cid:          1234,
+			Company_name: "Meli2",
+			Address:      "Rua 3",
+			Telephone:    "(11) 33387768",
+		},
+		{
+			ID:           3,
+			Cid:          12356,
+			Company_name: "Meli3",
+			Address:      "Rua 3",
+			Telephone:    "(11) 33387769",
+		},
+	},
+	}
+	storage.LastID = 3
+}
+
+func Clean() {
+	storage = models.Sellers{}
 }

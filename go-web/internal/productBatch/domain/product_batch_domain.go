@@ -16,10 +16,12 @@ type ProductBatch struct {
 	SectionId          int    `json:"section_id"`
 }
 
+//go:generate mockery --name=ProductBatchRepository --output=./mock/mockRepository --outpkg=mockRepository
 type ProductBatchRepository interface {
 	CreateProductBatch(context.Context, *ProductBatch) (*ProductBatch, error)
 }
 
+//go:generate mockery --name=ProductBatchService --output=./mock/mockService --outpkg=mockService
 type ProductBatchService interface {
 	Store(context.Context, *ProductBatch) (*ProductBatch, error)
 }

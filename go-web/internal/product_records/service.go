@@ -2,14 +2,16 @@ package productrecords
 
 import (
 	"encoding/json"
+	"time"
+
 	"mercado-frescos-time-7/go-web/internal/models"
 	"mercado-frescos-time-7/go-web/internal/product_records/repository"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"time"
 
 	jsonpatch "github.com/evanphx/json-patch"
 )
 
+//go:generate mockery --name=Service --output=./mock/mockService --outpkg=mockService
 type Service interface {
 	Insert(record []byte) (models.ProductRecord, error)
 	GetProductRecords(id int) (models.ProductsRecordsResponse, error)

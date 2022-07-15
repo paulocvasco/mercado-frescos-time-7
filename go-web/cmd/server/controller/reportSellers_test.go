@@ -32,6 +32,7 @@ func TestRepportSellerGetAll(t *testing.T) {
 		mockResponse
 		expectResponse   webResponse
 		expectStatusCode int
+		param            string
 	}
 
 	mr := mockResponse{
@@ -42,8 +43,9 @@ func TestRepportSellerGetAll(t *testing.T) {
 		}, nil}
 
 	testsCases := []tests{
-		{"GetAll", mr, webResponse{Code: "200", Data: mr.data, Error: ""}, http.StatusOK},
-		{"GetAll Error", mockResponse{[]models.ReportSeller{}, customerrors.ErrorInvalidDB}, webResponse{Code: "500", Data:[]models.ReportSeller(nil), Error: customerrors.ErrorInvalidDB.Error()}, http.StatusInternalServerError},
+		{"GetAll", mr, webResponse{Code: "200", Data: mr.data, Error: ""}, http.StatusOK, "1"},
+		{"GetAll", mr, webResponse{Code: "400", Data: []models.ReportSeller(nil), Error: "input param: a must be an integer"}, http.StatusBadRequest, "a"},
+		{"GetAll Error", mockResponse{[]models.ReportSeller{}, customerrors.ErrorInvalidDB}, webResponse{Code: "500", Data: []models.ReportSeller(nil), Error: customerrors.ErrorInvalidDB.Error()}, http.StatusInternalServerError,"1"},
 	}
 
 	for _, value := range testsCases {
@@ -51,12 +53,12 @@ func TestRepportSellerGetAll(t *testing.T) {
 		mockService := mocks.NewService(t)
 		control := controller.NewReportSellers(mockService)
 
-		mockService.On("ReportSellers", 1).Return(value.mockResponse.data, value.mockResponse.err)
+		mockService.On("ReportSellers", 1).Return(value.mockResponse.data, value.mockResponse.err).Maybe()
 
 		w := httptest.NewRecorder()
 		_, router := gin.CreateTestContext(w)
 
-		req := httptest.NewRequest(http.MethodGet, "/?id=1", nil)
+		req := httptest.NewRequest(http.MethodGet, "/?id="+value.param, nil)
 		router.GET("/", control.ReportSellers())
 		router.ServeHTTP(w, req)
 
