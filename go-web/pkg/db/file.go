@@ -6,7 +6,7 @@ import (
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"os"
 )
-
+//go:generate mockery --name=DB --output=./mock/mock --outpkg=mockDB
 type DB interface {
 	Save(interface{}) error
 	Load(interface{}) error
