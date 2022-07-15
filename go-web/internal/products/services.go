@@ -3,11 +3,12 @@ package products
 import (
 	"encoding/json"
 	"mercado-frescos-time-7/go-web/internal/models"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
+	"mercado-frescos-time-7/go-web/internal/products/repository"
 
 	jsonpatch "github.com/evanphx/json-patch/v5"
 )
 
+//go:generate mockery --name=Service --output=./mock/mockService --outpkg=mockService
 type Service interface {
 	Insert(newProduct []byte) (models.Product, error)
 	GetAll() (models.Products, error)
@@ -17,10 +18,10 @@ type Service interface {
 }
 
 type service struct {
-	repository Repository
+	repository repository.Repository
 }
 
-func NewService(r Repository) Service {
+func NewService(r repository.Repository) Service {
 	return &service{
 		repository: r,
 	}
@@ -37,18 +38,8 @@ func (s *service) Insert(newProduct []byte) (models.Product, error) {
 	if err != nil {
 		return models.Product{}, err
 	}
-	
+
 	json.Unmarshal(productJSON, &product)
-	
-	if products, err := s.repository.GetAll(); err != nil{
-		return models.Product{}, err
-	} else {
-		for _, v := range products.Products {
-			if v.ProductCode == product.ProductCode{
-				return models.Product{}, customerrors.ErrorConflict
-			}
-		} 
-	}
 
 	p, err := s.repository.Insert(product)
 	if err != nil {
@@ -88,18 +79,6 @@ func (s *service) Update(id int, product []byte) (models.Product, error) {
 	var updateProduct models.Product
 	json.Unmarshal(patch, &updateProduct)
 
-	if oldProduct.ProductCode != updateProduct.ProductCode {
-		if products, err := s.repository.GetAll(); err != nil{
-			return models.Product{}, err
-		} else {
-			for _, v := range products.Products {
-				if v.ProductCode == updateProduct.ProductCode{
-					return models.Product{}, customerrors.ErrorConflict
-				}
-			} 
-		}
-	}
-	
 	err = s.repository.Update(updateProduct)
 	if err != nil {
 		return models.Product{}, err

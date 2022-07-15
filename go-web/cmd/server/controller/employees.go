@@ -28,6 +28,10 @@ type RequestPatch struct {
 	WareHouseId  int    `json:"warehouse_id,omitempty"`
 }
 
+type ResponseGetAll struct {
+	Response []employees.Employee `json:"employees"`
+}
+
 func (c *EmployeeController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		e, err := c.service.GetAll()
@@ -38,8 +42,8 @@ func (c *EmployeeController) GetAll() gin.HandlerFunc {
 			ctx.JSON(status, res)
 			return
 		}
-
-		ctx.JSON(http.StatusOK, e)
+		response := ResponseGetAll{e}
+		ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, response, ""))
 	}
 }
 
@@ -61,7 +65,7 @@ func (c *EmployeeController) GetByID() gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(http.StatusOK, e)
+		ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, e, ""))
 	}
 }
 
@@ -95,7 +99,7 @@ func (c *EmployeeController) Update() gin.HandlerFunc {
 			ctx.JSON(status, res)
 			return
 		}
-		ctx.JSON(200, e)
+		ctx.JSON(http.StatusOK, web.NewResponse(http.StatusOK, e, ""))
 
 	}
 }
@@ -121,7 +125,7 @@ func (c *EmployeeController) Create() gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(http.StatusCreated, e)
+		ctx.JSON(http.StatusCreated, web.NewResponse(http.StatusCreated, e, ""))
 	}
 
 }
@@ -145,7 +149,7 @@ func (c *EmployeeController) Delete() gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(http.StatusNoContent, id)
+		ctx.JSON(http.StatusNoContent, web.NewResponse(http.StatusNoContent, nil, ""))
 
 	}
 }

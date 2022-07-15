@@ -3,25 +3,26 @@ package warehouse
 import (
 	"encoding/json"
 	"mercado-frescos-time-7/go-web/internal/models"
+	"mercado-frescos-time-7/go-web/internal/warehouse/repository"
 	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-	"strconv"
 
 	jsonpatch "github.com/evanphx/json-patch"
 )
 
+//go:generate mockery --name=Service --output=./mock/ --outpkg=mock
 type Service interface {
 	GetAll() (models.Warehouses, error)
 	GetByID(int) (models.Warehouse, error)
-	Create(models.Warehouse) (models.Warehouse, error)
+	Create(models.PostWarehouse) (models.Warehouse, error)
 	Update(int, []byte) (models.Warehouse, error)
-	Delete(string) error
+	Delete(int) error
 }
 
 type service struct {
-	repository Repository
+	repository repository.Repository
 }
 
-func NewService(r Repository) Service {
+func NewService(r repository.Repository) Service {
 	newService := &service{
 		repository: r,
 	}
@@ -45,30 +46,47 @@ func (s *service) GetByID(id int) (models.Warehouse, error) {
 	return data, nil
 }
 
-func (s *service) Create(newWarehouse models.Warehouse) (models.Warehouse, error) {
-	// validate request fields
-	if newWarehouse.Address == "" {
-		return models.Warehouse{}, customerrors.ErrorMissingAddres
+func (s *service) Create(newWarehouse models.PostWarehouse) (models.Warehouse, error) {
+	rawWarehouse, _ := json.Marshal(newWarehouse)
+	var storeWarehouse models.Warehouse
+	json.Unmarshal(rawWarehouse, &storeWarehouse)
+
+	all, err := s.repository.GetAll()
+	if err != nil {
+		return models.Warehouse{}, err
 	}
-	if newWarehouse.Telephone == "" {
-		return models.Warehouse{}, customerrors.ErrorMissingTelephone
-	}
-	if newWarehouse.MinimunCapacity < 0 {
-		return models.Warehouse{}, customerrors.ErrorMissingCapacity
-	}
-	if newWarehouse.MinimunTemperature == 0 {
-		return models.Warehouse{}, customerrors.ErrorMissingTemperature
+	for _, w := range all.Warehouses {
+		if storeWarehouse.WarehouseCode == w.WarehouseCode {
+			return models.Warehouse{}, customerrors.ErrorWarehouseCodeConflict
+		}
 	}
 
-	newWarehouse, err := s.repository.Create(newWarehouse)
+	createdWarehouse, err := s.repository.Create(storeWarehouse)
 	if err != nil {
 		return models.Warehouse{}, err
 	}
 
-	return newWarehouse, nil
+	return createdWarehouse, nil
 }
 
 func (s *service) Update(id int, data []byte) (models.Warehouse, error) {
+	// check if warehouse code is unique
+	var patchModel models.Warehouse
+	err := json.Unmarshal(data, &patchModel)
+	if err != nil {
+		return models.Warehouse{}, customerrors.ErrorMarshallJson
+	}
+	all, err := s.repository.GetAll()
+	if err != nil {
+		return models.Warehouse{}, err
+	}
+	for _, w := range all.Warehouses {
+		if patchModel.WarehouseCode == w.WarehouseCode {
+			return models.Warehouse{}, customerrors.ErrorWarehouseCodeConflict
+		}
+	}
+
+	// if all is ok change the model
 	warehouse, err := s.repository.GetByID(id)
 	if err != nil {
 		return models.Warehouse{}, err
@@ -89,19 +107,14 @@ func (s *service) Update(id int, data []byte) (models.Warehouse, error) {
 
 	err = s.repository.Update(id, warehouse)
 	if err != nil {
-		return models.Warehouse{}, nil
+		return models.Warehouse{}, err
 	}
 
 	return warehouse, nil
 }
 
-func (s *service) Delete(id string) error {
-	index, err := strconv.Atoi(id)
-	if err != nil {
-		return err
-	}
-
-	err = s.repository.Delete(index)
+func (s *service) Delete(id int) error {
+	err := s.repository.Delete(id)
 	if err != nil {
 		return err
 	}
