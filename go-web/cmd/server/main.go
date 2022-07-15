@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func StartServer(r *gin.Engine, connDB *sql.DB) error {
+func ConfigServer(r *gin.Engine, connDB *sql.DB) error {
 	if r == nil {
 		return customerrors.ErrorInstaceGin
 	}
@@ -36,5 +36,5 @@ func StartServer(r *gin.Engine, connDB *sql.DB) error {
 	routes.InstanceReportSellers(r)
 	routes.InstanceCarriers(r)
 
-	return r.Run()
+	return nil
 }
