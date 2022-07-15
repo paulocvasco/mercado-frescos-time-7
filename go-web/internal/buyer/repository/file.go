@@ -33,6 +33,7 @@ func NewRepositoryFile(data db.DB) RepositoryFile {
 
 func (r *repositoryFile) GetAll() ([]model.Buyer, error) {
 	if cache.LastID == 0 {
+
 		err := r.data.Load(&cache)
 		if err != nil {
 			return []model.Buyer{}, err
@@ -141,4 +142,12 @@ func (r *repositoryFile) GetCardNumberId(cardId string) error {
 		}
 	}
 	return nil
+}
+
+func CleanCache() {
+	cache = model.BuyersMetaData{}
+}
+
+func UpdateLastId(data model.BuyersMetaData) {
+	cache = data
 }

@@ -1,37 +1,31 @@
 package mockFile
 
-import (
-	"encoding/json"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
-)
+import "encoding/json"
 
 type DBmock struct {
-	db         interface{}
-	WriteError bool
-	ReadError  bool
+	resultsMock interface{}
+	WriteError  error
+	ReadError   error
 }
 
-func NewDatabaseMock(dbInMemory interface{}, writeError bool, readError bool) *DBmock {
-	return &DBmock{
-		db:         dbInMemory,
-		WriteError: writeError,
-		ReadError:  readError,
+func NewDatabaseMock(resultMock interface{}, writeError, readError error) DBmock {
+	return DBmock{
+		resultsMock: resultMock,
+		WriteError:  writeError,
+		ReadError:   readError,
 	}
+}
+func (db *DBmock) ConfigResult(buyers interface{}) {
+	db.resultsMock = buyers
 }
 
 func (db *DBmock) Save(model interface{}) error {
-	if !db.WriteError {
-		db.db = model
-		return nil
-	}
-	return customerrors.ErrorStoreFailed
+	return db.WriteError
 }
 
 func (db *DBmock) Load(model interface{}) error {
-	if !db.ReadError {
-		dbByte, _ := json.Marshal(db.db)
-		err := json.Unmarshal(dbByte, &model)
-		return err
-	}
-	return customerrors.ErrorStoreFailed
+	changeJson, _ := json.Marshal(db.resultsMock)
+	json.Unmarshal(changeJson, &model)
+
+	return db.ReadError
 }

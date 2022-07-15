@@ -143,7 +143,7 @@ func (r *repository) Store(sel models.Seller) (models.Seller, error) {
 	return p, nil
 }
 
-func Populate(){
+func Populate() {
 	storage = models.Sellers{Seller: []models.Seller{
 		{
 			ID:           1,
@@ -167,9 +167,8 @@ func Populate(){
 			Telephone:    "(11) 33387769",
 		},
 	},
-
-}
-storage.LastID = 3
+	}
+	storage.LastID = 3
 }
 
 func Clean() {
