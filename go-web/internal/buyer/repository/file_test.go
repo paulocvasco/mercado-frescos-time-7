@@ -4,7 +4,6 @@ import (
 	"mercado-frescos-time-7/go-web/internal/buyer/mocks/mockFile"
 	"mercado-frescos-time-7/go-web/internal/buyer/repository"
 	"mercado-frescos-time-7/go-web/internal/models"
-	customerrors "mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -40,13 +39,13 @@ func TestGetAllFile(t *testing.T) {
 
 }
 
-func TestErrorGetAll(t *testing.T) {
-	db := models.BuyersMetaData{}
-	mock := mockFile.NewDatabaseMock(db, true, true)
-	r := repository.NewRepositoryFile(mock)
+// func TestErrorGetAll(t *testing.T) {
+// 	db := models.BuyersMetaData{}
+// 	mock := mockFile.NewDatabaseMock(db, true, true)
+// 	r := repository.NewRepositoryFile(mock)
 
-	buyers := []models.Buyer{}
-	res, err := r.GetAll()
-	assert.Equal(t, buyers, res)
-	assert.ErrorIs(t, customerrors.ErrorStoreFailed, err)
-}
+// 	buyers := []models.Buyer{}
+// 	res, err := r.GetAll()
+// 	assert.Equal(t, buyers, res)
+// 	assert.ErrorIs(t, customerrors.ErrorStoreFailed, err)
+// }
