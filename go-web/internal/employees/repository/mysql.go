@@ -49,18 +49,74 @@ func (r *repository) Create(id int, card_number_id string, first_name string, la
 
 // Delete implements Repository
 func (r *repository) Delete(id int) error {
+	data := r.data
+	query := "DELETE FROM employees WHERE id = ?"
+	queryEmployee, err := data.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+	result, err := queryEmployee.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return customerrors.ErrorInvalidID
+	}
+
 	return nil
 }
 
 // GetAll implements Repository
 func (r *repository) GetAll() ([]employees.Employee, error) {
-	return []employees.Employee{}, nil
+	data := r.data
+	query := "SELECT * FROM employees"
+	queryEmployee, err := data.Query(query)
+	if err != nil {
+		log.Println(customerrors.ErrorInvalidDB)
+		return []employees.Employee{}, err
+	}
+	var result []employees.Employee
+	for queryEmployee.Next() {
+		var employee employees.Employee
+		if err := queryEmployee.Scan(&employee.ID, &employee.CardNumberId, &employee.FirstName, &employee.LastName, &employee.WareHouseId); err != nil {
+			log.Println(err)
+		}
+		result = append(result, employee)
+	}
+
+	return result, nil
 }
 
 // GetByID implements Repository
-func (*repository) GetByID(id int) (employees.Employee, error) {
+func (r *repository) GetByID(id int) (employees.Employee, error) {
+	data := r.data
+	query := "SELECT * FROM employees where id = ?"
 
-	return employees.Employee{}, customerrors.ErrorInvalidID
+	queryId, err := data.Query(query, id)
+	if err != nil {
+		log.Println(customerrors.ErrorInvalidDB)
+		return employees.Employee{}, err
+	}
+
+	var employee employees.Employee
+	for queryId.Next() {
+		if err := queryId.Scan(&employee.ID, &employee.CardNumberId, &employee.FirstName, &employee.LastName, &employee.WareHouseId); err != nil {
+			log.Println(err)
+		}
+	}
+
+	if employee.ID != id {
+		return employee, customerrors.ErrorInvalidID
+	}
+
+	return employee, nil
 }
 
 // LastID implements Repository
@@ -69,8 +125,20 @@ func (r *repository) LastID() (int, error) {
 }
 
 // Update implements Repository
-func (r *repository) Update(e employees.Employee, id int) (employees.Employee, error) {
-	return e, nil
+func (r *repository) Update(employee employees.Employee, id int) (employees.Employee, error) {
+	data := r.data
+	query := "UPDATE employees SET id_card_number = ?, first_name = ?, last_name = ?, warehouse_id = ? WHERE id = ?"
+	queryEmployee, err := data.Prepare(query)
+	if err != nil {
+		return employees.Employee{}, err
+	}
+
+	_, err = queryEmployee.Exec(&employee.CardNumberId, &employee.FirstName, &employee.LastName, &employee.WareHouseId, id)
+	if err != nil {
+		return employees.Employee{}, err
+	}
+
+	return employee, nil
 }
 
 func NewRepository(data *sql.DB) employees.Repository {
