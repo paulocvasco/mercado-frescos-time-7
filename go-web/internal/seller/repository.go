@@ -4,7 +4,7 @@ import (
 	"github.com/paulocvasco/mercado-frescos-time-7/go-web/internal/models"
 	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/custom_errors"
 	"github.com/paulocvasco/mercado-frescos-time-7/go-web/pkg/db"
-	"golang.org/x/exp/slices"
+	// "golang.org/x/exp/slices"
 )
 
 type Seller models.Seller
@@ -46,17 +46,18 @@ func (r *repository) Delete(id int) error {
 	if err != nil {
 		return err
 	}
-	for k, v := range storage.Seller {
-		if v.ID == id {
-			storage.Seller = slices.Delete(storage.Seller, k, k+1)
-			err = r.database.Save(&storage)
-			if err != nil {
-				return err
-			}
-			return nil
-		}
-	}
-	return customerrors.ErrorInvalidID
+	// for k, v := range storage.Seller {
+	//	if v.ID == id {
+	//		storage.Seller = slices.Delete(storage.Seller, k, k+1)
+	//		err = r.database.Save(&storage)
+	//		if err != nil {
+	//			return err
+	//		}
+	//		return nil
+	//	}
+	// }
+	// return customerrors.ErrorInvalidID
+	return nil
 }
 
 func (r *repository) GetId(indice int) (models.Seller, error) {
