@@ -94,10 +94,6 @@ github.com/ugorji/go/codec
 # golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
 ## explicit; go 1.17
 golang.org/x/crypto/sha3
-# golang.org/x/exp v0.0.0-20220602145555-4a0574d9293f
-## explicit; go 1.18
-golang.org/x/exp/constraints
-golang.org/x/exp/slices
 # golang.org/x/net v0.0.0-20220621193019-9d032be2e588
 ## explicit; go 1.17
 golang.org/x/net/http/httpguts
