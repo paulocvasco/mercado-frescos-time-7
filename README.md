@@ -101,6 +101,9 @@ swagger generate spec -o ./swagger.yaml --scan-models\n
 swagger serve -F=swagger swagger.yaml
 
 ```
+Obs: Para geração e vizualição da documentação é necessário que o `go-swagger esteja instalado e adicionado a PATH.
+
+### Testando as funcionalidades:
 
 Para faciliar os testes foi criado um script de criação da tabelas do banco a adição de alguns objetos
 ```sh 
